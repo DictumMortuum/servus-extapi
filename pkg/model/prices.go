@@ -11,6 +11,7 @@ type Price struct {
 	BoardgameId int64     `gorm:"foreignkey" json:"boardgame_id"`
 	CrDate      time.Time `json:"date"`
 	StoreId     int64     `gorm:"foreignkey" json:"store_id"`
+	StoreThumb  string    `json:"store_thumb"`
 	Name        string    `gorm:"index"  json:"name"`
 	Price       float64   `json:"price"`
 	Stock       int       `json:"stock"`

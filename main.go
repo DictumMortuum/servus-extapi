@@ -79,6 +79,8 @@ func main() {
 	Route(router, "bgstatsgames", model.BGStatsGame{})
 	Route(router, "bgstats", model.BGStat{})
 	Route(router, "bgstatsplays", model.BGStatsPlay{})
+	Route(router, "ignoredprices", model.IgnoredPrice{})
+	Route(router, "cachedprices", model.CachedPrice{})
 
 	router.POST("/bgstatsupload", G(CreateBGStats))
 
