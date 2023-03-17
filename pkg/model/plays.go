@@ -71,7 +71,7 @@ func (obj Play) Delete(db *gorm.DB, id int64) (any, error) {
 		return nil, err
 	}
 
-	rs := db.Delete(&Player{}, id)
+	rs := db.Delete(&Play{}, id)
 	if err != nil {
 		return nil, rs.Error
 	}

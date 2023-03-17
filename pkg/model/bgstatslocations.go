@@ -72,7 +72,7 @@ func (obj BGStatsLocation) Delete(db *gorm.DB, id int64) (any, error) {
 		return nil, err
 	}
 
-	rs := db.Delete(&Player{}, id)
+	rs := db.Delete(&BGStatsLocation{}, id)
 	if err != nil {
 		return nil, rs.Error
 	}
