@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/DictumMortuum/servus-extapi/pkg/bgg"
 	"github.com/DictumMortuum/servus-extapi/pkg/model"
 	"github.com/gin-gonic/gin"
 	"github.com/heetch/confita"
@@ -33,7 +34,7 @@ func SetConfig() gin.HandlerFunc {
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.1",
+		"version": "v0.0.2",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -83,6 +84,9 @@ func main() {
 	Route(router, "cachedprices", model.CachedPrice{})
 
 	router.POST("/bgstatsupload", G(CreateBGStats))
+
+	cachedPrices := model.CachedPrice{}
+	router.GET("/cachedprices/search/:id", OpenDB, Id, LoadOne(cachedPrices.Get), G(bgg.SearchCachedPriceOnBgg), CloseDB)
 
 	log.Fatal(router.Run(":10000"))
 }

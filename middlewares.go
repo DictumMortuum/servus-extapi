@@ -57,6 +57,21 @@ func GetOne(f func(*gorm.DB, int64) (any, error)) func(*gin.Context) {
 	}
 }
 
+func LoadOne(f func(*gorm.DB, int64) (any, error)) func(*gin.Context) {
+	return func(c *gin.Context) {
+		id := c.GetInt64("apiid")
+		db := GetDB(c)
+
+		data, err := f(db, id)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"error": err.Error()})
+		}
+
+		c.Set("data", data)
+		c.Next()
+	}
+}
+
 func CountMany(c *gin.Context) {
 	db := GetDB(c)
 	model := GetModel(c)
