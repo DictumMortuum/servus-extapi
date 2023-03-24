@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -67,7 +68,19 @@ func LoadOne(f func(*gorm.DB, int64) (any, error)) func(*gin.Context) {
 			c.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"error": err.Error()})
 		}
 
+		raw, err := json.Marshal(data)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"error": err.Error()})
+		}
+
+		var m map[string]any
+		err = json.Unmarshal(raw, &m)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"error": err.Error()})
+		}
+
 		c.Set("data", data)
+		c.Set("mapped_data", m)
 		c.Next()
 	}
 }
