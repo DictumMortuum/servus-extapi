@@ -1,7 +1,6 @@
 package bgg
 
 import (
-	"github.com/DictumMortuum/servus-extapi/pkg/model"
 	"github.com/DictumMortuum/servus/pkg/boardgames"
 	"github.com/DictumMortuum/servus/pkg/boardgames/bgg"
 	"github.com/gin-gonic/gin"
@@ -17,10 +16,9 @@ type mapping struct {
 func SearchCachedPriceOnBgg(c *gin.Context, db *gorm.DB) (interface{}, error) {
 	rs := []mapping{}
 
-	if val, ok := c.Get("data"); ok {
-		price, _ := val.(model.CachedPrice)
-
-		name := boardgames.TransformName(price.Name)
+	if val, ok := c.Get("mapped_data"); ok {
+		price, _ := val.(map[string]any)
+		name := boardgames.TransformName(price["name"].(string))
 		bgg_results, err := bgg.Search(name)
 		if err != nil {
 			return nil, err
