@@ -2,23 +2,24 @@ package model
 
 import (
 	"encoding/json"
+	"github.com/DictumMortuum/servus/pkg/models"
 	"gorm.io/gorm"
 	"time"
 )
 
 type Price struct {
-	Id          int64     `gorm:"primaryKey" json:"id"`
-	BoardgameId int64     `gorm:"foreignkey" json:"boardgame_id"`
-	CrDate      time.Time `json:"date"`
-	StoreId     int64     `gorm:"foreignkey" json:"store_id"`
-	StoreThumb  string    `json:"store_thumb"`
-	Name        string    `gorm:"index"  json:"name"`
-	Price       float64   `json:"price"`
-	Stock       int       `json:"stock"`
-	Url         string    `json:"url"`
-	Mapped      bool      `json:"mapped"`
-	Ignored     bool      `json:"ignored"`
-	Batch       int       `json:"batch"`
+	Id          int64                `gorm:"primaryKey" json:"id"`
+	BoardgameId models.JsonNullInt64 `gorm:"foreignkey" json:"boardgame_id"`
+	CrDate      time.Time            `json:"date"`
+	StoreId     int64                `gorm:"foreignkey" json:"store_id"`
+	StoreThumb  string               `json:"store_thumb"`
+	Name        string               `gorm:"index"  json:"name"`
+	Price       float64              `json:"price"`
+	Stock       int                  `json:"stock"`
+	Url         string               `json:"url"`
+	Mapped      bool                 `json:"mapped"`
+	Ignored     bool                 `json:"ignored"`
+	Batch       int                  `json:"batch"`
 }
 
 func (Price) TableName() string {

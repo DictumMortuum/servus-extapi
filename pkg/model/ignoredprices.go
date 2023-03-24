@@ -6,8 +6,9 @@ import (
 )
 
 type IgnoredPrice struct {
-	Id   int64  `gorm:"primaryKey" json:"id"`
-	Name string `gorm:"index"  json:"name"`
+	Id      int64  `gorm:"primaryKey" json:"id"`
+	StoreId int64  `gorm:"foreignkey" json:"store_id"`
+	Name    string `gorm:"index"  json:"name"`
 }
 
 func (IgnoredPrice) TableName() string {

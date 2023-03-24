@@ -34,7 +34,7 @@ func SetConfig() gin.HandlerFunc {
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.2",
+		"version": "v0.0.3",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -87,6 +87,10 @@ func main() {
 
 	cachedPrices := model.CachedPrice{}
 	router.GET("/cachedprices/search/:id", OpenDB, Id, LoadOne(cachedPrices.Get), G(bgg.SearchCachedPriceOnBgg), CloseDB)
+	router.POST("/cachedprices/create/:id", OpenDB, Id, G(cachedPrices.CreatePrice), CloseDB)
+
+	prices := model.Price{}
+	router.GET("/prices/search/:id", OpenDB, Id, LoadOne(prices.Get), G(bgg.SearchCachedPriceOnBgg), CloseDB)
 
 	log.Fatal(router.Run(":10000"))
 }
