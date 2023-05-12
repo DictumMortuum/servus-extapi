@@ -29,7 +29,7 @@ func Database() (*gorm.DB, *sql.DB, error) {
 		return nil, nil, err
 	}
 
-	db.AutoMigrate(&model.Boardgame{}, &model.Play{}, &model.Player{}, &model.Stat{}, &model.Price{}, &model.Store{}, &model.Location{}, &model.BGStatsPlayer{}, &model.BGStatsLocation{}, &model.BGStatsGame{}, &model.BGStatsPlay{}, &model.BGStat{}, &model.IgnoredPrice{}, &model.CachedPrice{})
+	db.AutoMigrate(&model.Boardgame{}, &model.Play{}, &model.Player{}, &model.Stat{}, &model.Price{}, &model.Store{}, &model.Location{}, &model.BGStatsPlayer{}, &model.BGStatsLocation{}, &model.BGStatsGame{}, &model.BGStatsPlay{}, &model.BGStat{}, &model.IgnoredPrice{}, &model.CachedPrice{}, &model.IgnoredName{})
 	return db, sqlDB, nil
 }
 

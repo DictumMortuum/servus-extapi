@@ -34,7 +34,7 @@ func SetConfig() gin.HandlerFunc {
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.3",
+		"version": "v0.0.4",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -81,6 +81,7 @@ func main() {
 	Route(router, "bgstats", model.BGStat{})
 	Route(router, "bgstatsplays", model.BGStatsPlay{})
 	Route(router, "ignoredprices", model.IgnoredPrice{})
+	Route(router, "ignorednames", model.IgnoredName{})
 	Route(router, "cachedprices", model.CachedPrice{})
 
 	router.POST("/bgstatsupload", G(CreateBGStats))
