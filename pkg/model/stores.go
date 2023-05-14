@@ -14,6 +14,10 @@ func (Store) TableName() string {
 	return "tboardgamestores"
 }
 
+func (Store) DefaultFilter(db *gorm.DB) *gorm.DB {
+	return db
+}
+
 func (Store) List(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (any, error) {
 	var data []Store
 	rs := db.Scopes(scopes...).Find(&data)

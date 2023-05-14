@@ -10,22 +10,28 @@ import (
 )
 
 type CachedPrice struct {
-	Id         int64   `gorm:"primaryKey" json:"id"`
-	StoreId    int64   `gorm:"foreignkey" json:"store_id"`
-	StoreThumb string  `json:"store_thumb"`
-	Name       string  `gorm:"index"  json:"name"`
-	Price      float64 `json:"price"`
-	Stock      int     `json:"stock"`
-	Url        string  `json:"url"`
+	Id          int64                `gorm:"primaryKey" json:"id"`
+	StoreId     int64                `gorm:"foreignkey" json:"store_id"`
+	BoardgameId models.JsonNullInt64 `gorm:"foreignkey" json:"boardgame_id"`
+	StoreThumb  string               `json:"store_thumb"`
+	Name        string               `gorm:"index" json:"name"`
+	Price       float64              `json:"price"`
+	Stock       int                  `json:"stock"`
+	Url         string               `json:"url"`
+	Deleted     bool                 `json:"deleted"`
 }
 
 func (CachedPrice) TableName() string {
 	return "tboardgamepricescached"
 }
 
-func (CachedPrice) List(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (any, error) {
+func (CachedPrice) DefaultFilter(db *gorm.DB) *gorm.DB {
+	return db.Where("deleted = 0")
+}
+
+func (c CachedPrice) List(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (any, error) {
 	var data []CachedPrice
-	rs := db.Scopes(scopes...).Find(&data)
+	rs := db.Scopes(scopes...).Scopes(c.DefaultFilter).Find(&data)
 	return data, rs.Error
 }
 
@@ -103,13 +109,15 @@ func (obj CachedPrice) CreatePrice(c *gin.Context, db *gorm.DB) (any, error) {
 }
 
 func (obj CachedPrice) Delete(db *gorm.DB, id int64) (any, error) {
-	data, err := obj.Get(db, id)
-	if err != nil {
-		return nil, err
+	var data CachedPrice
+	rs := db.First(&data, id)
+	if rs.Error != nil {
+		return nil, rs.Error
 	}
+	data.Deleted = true
 
-	rs := db.Delete(&CachedPrice{}, id)
-	if err != nil {
+	rs = db.Model(&data).Updates(data)
+	if rs.Error != nil {
 		return nil, rs.Error
 	}
 

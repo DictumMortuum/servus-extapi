@@ -22,11 +22,11 @@ func GetDB(c *gin.Context) *gorm.DB {
 	return nil
 }
 
-func GetModel(c *gin.Context) any {
+func GetModel(c *gin.Context) Routable {
 	val, ok := c.Get("apimodel")
 
 	if ok && val != nil {
-		return val
+		return val.(Routable)
 	}
 
 	return nil
@@ -90,7 +90,7 @@ func CountMany(c *gin.Context) {
 	model := GetModel(c)
 
 	var count int64
-	rs := db.Model(model).Scopes(Filter(c)).Count(&count)
+	rs := db.Model(model).Scopes(Filter(c), model.DefaultFilter).Count(&count)
 	if rs.Error != nil {
 		c.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"error": rs.Error.Error()})
 	}

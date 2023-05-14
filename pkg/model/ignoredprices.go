@@ -15,6 +15,10 @@ func (IgnoredPrice) TableName() string {
 	return "tboardgamepricesignored"
 }
 
+func (IgnoredPrice) DefaultFilter(db *gorm.DB) *gorm.DB {
+	return db
+}
+
 func (IgnoredPrice) List(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (any, error) {
 	var data []IgnoredPrice
 	rs := db.Scopes(scopes...).Find(&data)

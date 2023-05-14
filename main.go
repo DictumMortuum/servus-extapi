@@ -34,7 +34,7 @@ func SetConfig() gin.HandlerFunc {
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.4",
+		"version": "v0.0.6",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }

@@ -29,6 +29,10 @@ func (BGStatsPlay) TableName() string {
 	return "tbgstatsplays"
 }
 
+func (BGStatsPlay) DefaultFilter(db *gorm.DB) *gorm.DB {
+	return db
+}
+
 func (BGStatsPlay) List(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (any, error) {
 	var data []BGStatsPlay
 	rs := db.Scopes(scopes...).Preload("Location").Preload("Stats").Preload("Stats.Player").Preload("Game").Find(&data)

@@ -14,6 +14,10 @@ func (IgnoredName) TableName() string {
 	return "tboardgamenamesignored"
 }
 
+func (IgnoredName) DefaultFilter(db *gorm.DB) *gorm.DB {
+	return db
+}
+
 func (IgnoredName) List(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (any, error) {
 	var data []IgnoredName
 	rs := db.Scopes(scopes...).Find(&data)

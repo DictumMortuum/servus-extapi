@@ -12,6 +12,7 @@ type Routable interface {
 	Update(*gorm.DB, int64, []byte) (any, error)
 	Create(*gorm.DB, []byte) (any, error)
 	Delete(*gorm.DB, int64) (any, error)
+	DefaultFilter(*gorm.DB) *gorm.DB
 }
 
 func G(f func(*gin.Context, *gorm.DB) (interface{}, error)) func(*gin.Context) {

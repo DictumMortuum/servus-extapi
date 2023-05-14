@@ -14,6 +14,10 @@ func (Location) TableName() string {
 	return "tlocation"
 }
 
+func (Location) DefaultFilter(db *gorm.DB) *gorm.DB {
+	return db
+}
+
 func (Location) List(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (any, error) {
 	var data []Location
 	rs := db.Scopes(scopes...).Find(&data)

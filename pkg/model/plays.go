@@ -23,6 +23,10 @@ func (Play) TableName() string {
 	return "tboardgameplays"
 }
 
+func (Play) DefaultFilter(db *gorm.DB) *gorm.DB {
+	return db
+}
+
 func (Play) List(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (any, error) {
 	var data []Play
 	rs := db.Scopes(scopes...).Preload("Boardgame").Preload("Stats").Preload("Location").Preload("Stats.Player").Find(&data)

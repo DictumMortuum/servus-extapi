@@ -23,6 +23,10 @@ func (Boardgame) TableName() string {
 	return "tboardgames"
 }
 
+func (Boardgame) DefaultFilter(db *gorm.DB) *gorm.DB {
+	return db
+}
+
 // func pricesPreload(c *gin.Context, col string) func(db *gorm.DB) *gorm.DB {
 // 	return func(db *gorm.DB) *gorm.DB {
 // 		raw := c.Query("filter")

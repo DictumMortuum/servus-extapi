@@ -26,6 +26,10 @@ func (Price) TableName() string {
 	return "tboardgameprices"
 }
 
+func (Price) DefaultFilter(db *gorm.DB) *gorm.DB {
+	return db
+}
+
 func (Price) List(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (any, error) {
 	var data []Price
 	rs := db.Scopes(scopes...).Find(&data)
