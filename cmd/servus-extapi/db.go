@@ -4,15 +4,17 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"strings"
+
+	"github.com/DictumMortuum/servus-extapi/pkg/config"
 	"github.com/DictumMortuum/servus-extapi/pkg/model"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"strings"
 )
 
 func Database() (*gorm.DB, *sql.DB, error) {
-	dsn := Cfg.Databases["mariadb"]
+	dsn := config.Cfg.Databases["mariadb"]
 
 	sqlDB, err := sql.Open("mysql", dsn)
 	if err != nil {

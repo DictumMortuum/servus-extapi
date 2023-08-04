@@ -1,15 +1,13 @@
 package main
 
 import (
-	"context"
+	"log"
+
 	"github.com/DictumMortuum/servus-extapi/pkg/bgg"
+	"github.com/DictumMortuum/servus-extapi/pkg/config"
+	"github.com/DictumMortuum/servus-extapi/pkg/middleware"
 	"github.com/DictumMortuum/servus-extapi/pkg/model"
 	"github.com/gin-gonic/gin"
-	"github.com/heetch/confita"
-	"github.com/heetch/confita/backend/file"
-	"github.com/itsjamie/gin-cors"
-	"log"
-	"time"
 )
 
 type Config struct {
@@ -20,26 +18,14 @@ var (
 	Cfg Config
 )
 
-func SetConfig() gin.HandlerFunc {
-	return cors.Middleware(cors.Config{
-		Origins:         "*",
-		Methods:         "GET, PUT, POST, DELETE",
-		RequestHeaders:  "Origin, Authorization, Content-Type, Bearer, range, apikey",
-		ExposedHeaders:  "x-total-count, Content-Range",
-		MaxAge:          50 * time.Second,
-		Credentials:     false,
-		ValidateHeaders: false,
-	})
-}
-
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.6",
+		"version": "v0.0.7",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
 
-func Route(router *gin.Engine, endpoint string, obj Routable) {
+func Route(router *gin.RouterGroup, endpoint string, obj Routable) {
 	group := router.Group("/" + endpoint)
 	group.Use(func(c *gin.Context) {
 		c.Set("apimodel", obj)
@@ -55,43 +41,39 @@ func Route(router *gin.Engine, endpoint string, obj Routable) {
 }
 
 func main() {
-	loader := confita.NewLoader(
-		file.NewBackend("/etc/conf.d/servusrc.yml"),
-	)
-
-	err := loader.Load(context.Background(), &Cfg)
+	err := config.Load()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	router := gin.Default()
-	router.Use(SetConfig())
-	// router.Use(CORSMiddleware())
-	router.GET("/version", Version)
-	Route(router, "players", model.Player{})
-	Route(router, "plays", model.Play{})
-	Route(router, "stats", model.Stat{})
-	Route(router, "prices", model.Price{})
-	Route(router, "locations", model.Location{})
-	Route(router, "stores", model.Store{})
-	Route(router, "boardgames", model.Boardgame{})
-	Route(router, "bgstatsplayers", model.BGStatsPlayer{})
-	Route(router, "bgstatslocations", model.BGStatsLocation{})
-	Route(router, "bgstatsgames", model.BGStatsGame{})
-	Route(router, "bgstats", model.BGStat{})
-	Route(router, "bgstatsplays", model.BGStatsPlay{})
-	Route(router, "ignoredprices", model.IgnoredPrice{})
-	Route(router, "ignorednames", model.IgnoredName{})
-	Route(router, "cachedprices", model.CachedPrice{})
+	r := gin.Default()
+	r.Use(middleware.Cors())
+	g := r.Group("/rest")
+	g.GET("/version", Version)
+	Route(g, "players", model.Player{})
+	Route(g, "plays", model.Play{})
+	Route(g, "stats", model.Stat{})
+	Route(g, "prices", model.Price{})
+	Route(g, "locations", model.Location{})
+	Route(g, "stores", model.Store{})
+	Route(g, "boardgames", model.Boardgame{})
+	Route(g, "bgstatsplayers", model.BGStatsPlayer{})
+	Route(g, "bgstatslocations", model.BGStatsLocation{})
+	Route(g, "bgstatsgames", model.BGStatsGame{})
+	Route(g, "bgstats", model.BGStat{})
+	Route(g, "bgstatsplays", model.BGStatsPlay{})
+	Route(g, "ignoredprices", model.IgnoredPrice{})
+	Route(g, "ignorednames", model.IgnoredName{})
+	Route(g, "cachedprices", model.CachedPrice{})
 
-	router.POST("/bgstatsupload", G(CreateBGStats))
+	g.POST("/bgstatsupload", G(CreateBGStats))
 
 	cachedPrices := model.CachedPrice{}
-	router.GET("/cachedprices/search/:id", OpenDB, Id, LoadOne(cachedPrices.Get), G(bgg.SearchCachedPriceOnBgg), CloseDB)
-	router.POST("/cachedprices/create/:id", OpenDB, Id, G(cachedPrices.CreatePrice), CloseDB)
+	g.GET("/cachedprices/search/:id", OpenDB, Id, LoadOne(cachedPrices.Get), G(bgg.SearchCachedPriceOnBgg), CloseDB)
+	g.POST("/cachedprices/create/:id", OpenDB, Id, G(cachedPrices.CreatePrice), CloseDB)
 
 	prices := model.Price{}
-	router.GET("/prices/search/:id", OpenDB, Id, LoadOne(prices.Get), G(bgg.SearchCachedPriceOnBgg), CloseDB)
+	g.GET("/prices/search/:id", OpenDB, Id, LoadOne(prices.Get), G(bgg.SearchCachedPriceOnBgg), CloseDB)
 
-	log.Fatal(router.Run(":10000"))
+	log.Fatal(r.Run(":10000"))
 }
