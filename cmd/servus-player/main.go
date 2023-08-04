@@ -11,7 +11,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.2",
+		"version": "v0.0.3",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -24,16 +24,17 @@ func main() {
 
 	r := gin.Default()
 	r.Use(middleware.Cors())
-	r.GET("/version", Version)
+	g := r.Group("/player")
+	g.GET("/version", Version)
 
-	r.GET(
+	g.GET(
 		"/all",
 		BindYear,
 		adapter.A(GetPlayers),
 		middleware.Result,
 	)
 
-	r.GET(
+	g.GET(
 		"/:id",
 		middleware.Id,
 		BindYear,
