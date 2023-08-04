@@ -83,16 +83,16 @@ func EmbeddedFilter(c *gin.Context, col string) func(db *gorm.DB) *gorm.DB {
 			return db
 		} else {
 			for key, val := range payload {
-				switch val.(type) {
+				switch v := val.(type) {
 				case map[string]any:
-					fmt.Println(val)
+					fmt.Println(v)
 					if key == col {
 						for nested_key, nested_val := range val.(map[string]any) {
 							db = argToGorm(db, nested_key, nested_val)
 						}
 					}
 				default:
-					fmt.Println(val)
+					fmt.Println(v)
 				}
 			}
 
