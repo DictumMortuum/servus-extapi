@@ -11,7 +11,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.1",
+		"version": "v0.0.2",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -27,14 +27,14 @@ func main() {
 	r.GET("/version", Version)
 
 	r.GET(
-		"/players",
+		"/all",
 		BindYear,
 		adapter.A(GetPlayers),
 		middleware.Result,
 	)
 
 	r.GET(
-		"/player/:id",
+		"/:id",
 		middleware.Id,
 		BindYear,
 		adapter.A(GetPlayerDetail),
