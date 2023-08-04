@@ -2,6 +2,9 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
+	"time"
+
 	"github.com/DictumMortuum/servus/pkg/models"
 	"gorm.io/gorm"
 )
@@ -17,6 +20,7 @@ type Boardgame struct {
 	Rank           models.JsonNullInt64 `gorm:"index" json:"rank"`
 	RankNotNull    bool                 `gorm:"-" json:"rank_not_null"`
 	Prices         []Price              `json:"prices"`
+	UpdatedAt      time.Time
 }
 
 func (Boardgame) TableName() string {
@@ -78,13 +82,17 @@ func (obj Boardgame) Update(db *gorm.DB, id int64, body []byte) (any, error) {
 		Id: id,
 	}
 
-	var payload Boardgame
+	payload := Boardgame{
+		Id: id,
+	}
 	err := json.Unmarshal(body, &payload)
 	if err != nil {
 		return nil, err
 	}
 
-	rs := db.Model(&model).Updates(payload)
+	fmt.Println(payload)
+
+	rs := db.Model(&model).Save(payload)
 	if rs.Error != nil {
 		return nil, err
 	}
@@ -119,7 +127,7 @@ func (Boardgame) Create(db *gorm.DB, body []byte) (any, error) {
 		id = int64(val.(float64))
 	}
 
-	rs := db.Debug().Exec("insert into tboardgames (id, bgg_data) values (?, ?) on duplicate key update bgg_data = bgg_data", id, string(body))
+	rs := db.Exec("insert into tboardgames (id, bgg_data) values (?, ?) on duplicate key update bgg_data = ?", id, string(body), string(body))
 	if rs.Error != nil {
 		return nil, err
 	}
@@ -131,7 +139,8 @@ func (Boardgame) Create(db *gorm.DB, body []byte) (any, error) {
 			min_players = CONVERT(REPLACE(json_extract(bgg_data, '$.minplayers'), '"', ''), INT),
 			max_players = CONVERT(REPLACE(json_extract(bgg_data, '$.maxplayers'), '"', ''), INT),
 			square200 = REPLACE(json_extract(bgg_data, '$.images.square200'), '"', ''),
-			name = REPLACE(json_extract(bgg_data, '$.name'), '"', '')
+			name = REPLACE(json_extract(bgg_data, '$.name'), '"', ''),
+			updated_at = NOW()
 		where id = ?
 	`, id)
 	if rs.Error != nil {

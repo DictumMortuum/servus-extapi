@@ -6,10 +6,10 @@ import (
 )
 
 type Player struct {
-	Id      int64  `gorm:"primaryKey" json:"id"`
-	Name    string `json:"name"`
-	Surname string `json:"surname"`
-	Email   string `json:"email"`
+	Id      int64   `gorm:"primaryKey" json:"id"`
+	Name    string  `json:"name"`
+	Surname string  `json:"surname"`
+	Email   *string `json:"email"`
 	// BGStatsPlayers []BGStatsPlayer `json:"bg_stats_players"`
 }
 
