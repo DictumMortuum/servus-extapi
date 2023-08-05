@@ -43,6 +43,16 @@ func ProcessFamilies(req *model.Map, res *model.Map) error {
 		return rs[i].Count >= rs[j].Count
 	})
 
-	res.Set("families", rs)
+	n, err := req.GetInt64("n")
+	if err != nil {
+		return err
+	}
+
+	if len(rs) > int(n) {
+		res.Set("families", rs[0:n])
+	} else {
+		res.Set("families", rs)
+	}
+
 	return nil
 }

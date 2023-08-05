@@ -43,6 +43,16 @@ func ProcessCategories(req *model.Map, res *model.Map) error {
 		return rs[i].Count >= rs[j].Count
 	})
 
-	res.Set("categories", rs)
+	n, err := req.GetInt64("n")
+	if err != nil {
+		return err
+	}
+
+	if len(rs) > int(n) {
+		res.Set("categories", rs[0:n])
+	} else {
+		res.Set("categories", rs)
+	}
+
 	return nil
 }

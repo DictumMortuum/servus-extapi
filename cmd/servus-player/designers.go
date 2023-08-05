@@ -61,6 +61,16 @@ func ProcessDesigners(req *model.Map, res *model.Map) error {
 		return rs[i].Count >= rs[j].Count
 	})
 
-	res.Set("designers", rs)
+	n, err := req.GetInt64("n")
+	if err != nil {
+		return err
+	}
+
+	if len(rs) > int(n) {
+		res.Set("designers", rs[0:n])
+	} else {
+		res.Set("designers", rs)
+	}
+
 	return nil
 }

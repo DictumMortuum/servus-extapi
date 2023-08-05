@@ -13,12 +13,6 @@ func ProcessLocations(req *model.Map, res *model.Map) error {
 		return err
 	}
 
-	q := ""
-	year, err := req.GetInt64("year")
-	if err == nil && year != 0 {
-		q = fmt.Sprintf("and date >= '%d-01-01' and date < '%d-01-01'", year, year+1)
-	}
-
 	db, err := req.GetDB()
 	if err != nil {
 		return err
@@ -40,7 +34,7 @@ func ProcessLocations(req *model.Map, res *model.Map) error {
 			s.player_id = ? %s
 		group by
 			1
-	`, q), id)
+	`, YearConstraint(req, "and")), id)
 	if err != nil {
 		return err
 	}
@@ -49,6 +43,16 @@ func ProcessLocations(req *model.Map, res *model.Map) error {
 		return rs[i].Count >= rs[j].Count
 	})
 
-	res.Set("locations", rs)
+	n, err := req.GetInt64("n")
+	if err != nil {
+		return err
+	}
+
+	if len(rs) > int(n) {
+		res.Set("locations", rs[0:n])
+	} else {
+		res.Set("locations", rs)
+	}
+
 	return nil
 }

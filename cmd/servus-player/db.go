@@ -43,6 +43,7 @@ func BindYear(c *gin.Context) {
 
 	m.Set("year", payload.Year)
 	m.Set("year_flag", payload.YearFlag)
+	m.Set("n", 12)
 }
 
 func YearConstraint(req *model.Map, start string) string {
@@ -122,10 +123,26 @@ func GetPlayerGames(req *model.Map, res *model.Map) error {
 
 	req.Set("stats", rs)
 	res.Set("games", len(rs))
-	res.Set("weight", avg_weight/float64(matches))
-	res.Set("average", average/float64(matches))
-	res.Set("played", rs)
 	res.Set("matches", matches)
+
+	if matches > 0 {
+		res.Set("weight", avg_weight/float64(matches))
+		res.Set("average", average/float64(matches))
+	} else {
+		res.Set("weight", 0.0)
+		res.Set("average", 0.0)
+	}
+
+	n, err := req.GetInt64("n")
+	if err != nil {
+		return err
+	}
+
+	if len(rs) > int(n) {
+		res.Set("played", rs[0:n])
+	} else {
+		res.Set("played", rs)
+	}
 
 	return nil
 }

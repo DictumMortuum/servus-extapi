@@ -20,12 +20,6 @@ func GetNetwork(req *model.Map, res *model.Map) error {
 		return err
 	}
 
-	q := ""
-	year, err := req.GetInt64("year")
-	if err == nil && year != 0 {
-		q = fmt.Sprintf("and date >= '%d-01-01' and date < '%d-01-01'", year, year+1)
-	}
-
 	db, err := req.GetDB()
 	if err != nil {
 		return err
@@ -52,7 +46,7 @@ func GetNetwork(req *model.Map, res *model.Map) error {
 			1
 		order by
 		  4
-	`, q), id, id)
+	`, YearConstraint(req, "and")), id, id)
 	if err != nil {
 		return err
 	}
@@ -61,6 +55,16 @@ func GetNetwork(req *model.Map, res *model.Map) error {
 		return rs[i].Count >= rs[j].Count
 	})
 
-	res.Set("network", rs)
+	n, err := req.GetInt64("n")
+	if err != nil {
+		return err
+	}
+
+	if len(rs) > int(n) {
+		res.Set("network", rs[0:n])
+	} else {
+		res.Set("network", rs)
+	}
+
 	return nil
 }
