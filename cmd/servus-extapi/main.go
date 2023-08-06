@@ -20,7 +20,7 @@ var (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.7",
+		"version": "v0.0.8",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }

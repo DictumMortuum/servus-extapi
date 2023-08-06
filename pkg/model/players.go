@@ -10,6 +10,7 @@ type Player struct {
 	Name    string  `json:"name"`
 	Surname string  `json:"surname"`
 	Email   *string `json:"email"`
+	Hidden  bool    `json:"hidden"`
 	// BGStatsPlayers []BGStatsPlayer `json:"bg_stats_players"`
 }
 
