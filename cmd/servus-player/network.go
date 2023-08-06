@@ -60,6 +60,8 @@ func GetNetwork(req *model.Map, res *model.Map) error {
 		return err
 	}
 
+	res.Set("network_length", len(rs))
+
 	if len(rs) > int(n) {
 		res.Set("network", rs[0:n])
 	} else {

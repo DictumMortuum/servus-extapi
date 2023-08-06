@@ -14,6 +14,7 @@ type Player struct {
 	Surname string  `json:"surname"`
 	Email   *string `json:"email"`
 	Avatar  *string `json:"avatar"`
+	Hidden  bool    `json:"hidden"`
 }
 
 func GetPlayers(req *model.Map, res *model.Map) error {
@@ -35,10 +36,13 @@ func GetPlayers(req *model.Map, res *model.Map) error {
 			tboardgameplays p
 		where
 			pl.id = s.player_id and
-			s.play_id = p.id
+			s.play_id = p.id and
+			pl.hidden = 0
 			%s
 		group by
 			1
+		having 
+			count(*) > 5 
 		order by
 			4
 	`, YearConstraint(req, "and")))
