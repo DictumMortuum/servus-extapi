@@ -41,8 +41,8 @@ func GetPlayers(req *model.Map, res *model.Map) error {
 			%s
 		group by
 			1
-		having 
-			count(*) > 5 
+		having
+			count(*) > 5
 		order by
 			4
 	`, YearConstraint(req, "and")))
@@ -87,8 +87,10 @@ func GetPlayerDetail(req *model.Map, res *model.Map) error {
 }
 
 type Play struct {
-	Id      int64            `json:"id,omitempty"`
-	Winners models.JsonArray `json:"winners,omitempty"`
+	Id             int64                 `json:"id,omitempty"`
+	Winners        models.JsonArray      `json:"winners,omitempty"`
+	Cooperative    models.JsonNullString `json:"cooperative,omitempty"`
+	CooperativeWin models.JsonNullString `json:"cooperative_win,omitempty"`
 }
 
 func GetPlayerPlays(req *model.Map, res *model.Map) error {
@@ -106,7 +108,9 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 	err = db.Select(&rs, fmt.Sprintf(`
 		select
 			p.id,
-			json_extract(p.play_data, '$.winners') winners
+			json_extract(p.play_data, '$.winners') winners,
+			json_extract(p.play_data, '$.cooperative') cooperative,
+			json_extract(s.data, '$.won') cooperative_win
 		from
 			tboardgamestats s,
 			tboardgameplays p
@@ -119,6 +123,9 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 	}
 
 	won := 0
+	cooperative := 0
+	cooperative_won := 0
+
 	for _, play := range rs {
 		var winners []int64
 
@@ -132,6 +139,22 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 				won++
 			}
 		}
+
+		if play.Cooperative.Valid && play.Cooperative.String == "true" {
+			cooperative++
+			if play.CooperativeWin.Valid && play.CooperativeWin.String == "true" {
+				cooperative_won++
+			}
+		}
+	}
+
+	res.Set("cooperative", cooperative)
+	res.Set("cooperative_won", cooperative_won)
+
+	if cooperative > 0 {
+		res.Set("cooperative_per", float64(cooperative_won)/float64(cooperative))
+	} else {
+		res.Set("cooperative_per", 0)
 	}
 
 	res.Set("plays_count", len(rs))

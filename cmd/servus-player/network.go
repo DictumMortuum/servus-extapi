@@ -8,10 +8,11 @@ import (
 )
 
 type Network struct {
-	Id    int64  `json:"id,omitempty"`
-	Name  string `json:"name,omitempty"`
-	Count int    `json:"count,omitempty"`
-	Url   string `json:"url,omitempty"`
+	Id     int64  `json:"id,omitempty"`
+	Name   string `json:"name,omitempty"`
+	Count  int    `json:"count,omitempty"`
+	Url    string `json:"url,omitempty"`
+	Hidden bool   `json:"hidden,omitempty"`
 }
 
 func GetNetwork(req *model.Map, res *model.Map) error {
@@ -31,6 +32,7 @@ func GetNetwork(req *model.Map, res *model.Map) error {
 			pl.id,
 			CONCAT(pl.name, " ", pl.surname) name,
 			pl.avatar url,
+			pl.hidden,
 			count(*) count
 		from
 			tboardgamestats s,
@@ -62,10 +64,17 @@ func GetNetwork(req *model.Map, res *model.Map) error {
 
 	res.Set("network_length", len(rs))
 
-	if len(rs) > int(n) {
-		res.Set("network", rs[0:n])
+	network := []Network{}
+	for _, player := range rs {
+		if !player.Hidden {
+			network = append(network, player)
+		}
+	}
+
+	if len(network) > int(n) {
+		res.Set("network", network[0:n])
 	} else {
-		res.Set("network", rs)
+		res.Set("network", network)
 	}
 
 	return nil
