@@ -57,11 +57,6 @@ func GetNetwork(req *model.Map, res *model.Map) error {
 		return rs[i].Count >= rs[j].Count
 	})
 
-	n, err := req.GetInt64("n")
-	if err != nil {
-		return err
-	}
-
 	res.Set("network_length", len(rs))
 
 	network := []Network{}
@@ -71,11 +66,7 @@ func GetNetwork(req *model.Map, res *model.Map) error {
 		}
 	}
 
-	if len(network) > int(n) {
-		res.Set("network", network[0:n])
-	} else {
-		res.Set("network", network)
-	}
+	res.Set("network", network)
 
 	return nil
 }

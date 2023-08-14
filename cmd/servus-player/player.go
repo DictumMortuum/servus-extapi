@@ -123,7 +123,8 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 	}
 
 	won := 0
-	cooperative := 0
+	count := 0
+	cooperative_count := 0
 	cooperative_won := 0
 
 	for _, play := range rs {
@@ -134,30 +135,41 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 			return err
 		}
 
-		for _, winner := range winners {
-			if winner == id {
-				won++
-			}
-		}
-
 		if play.Cooperative.Valid && play.Cooperative.String == "true" {
-			cooperative++
-			if play.CooperativeWin.Valid && play.CooperativeWin.String == "true" {
-				cooperative_won++
+			cooperative_count++
+
+			for _, winner := range winners {
+				if winner == id {
+					cooperative_won++
+				}
+			}
+		} else {
+			count++
+
+			for _, winner := range winners {
+				if winner == id {
+					won++
+				}
 			}
 		}
 	}
 
-	res.Set("cooperative", cooperative)
+	res.Set("cooperative", cooperative_count)
 	res.Set("cooperative_won", cooperative_won)
+	res.Set("plays_count", count)
+	res.Set("plays_won", won)
 
-	if cooperative > 0 {
-		res.Set("cooperative_per", float64(cooperative_won)/float64(cooperative))
+	if cooperative_count > 0 {
+		res.Set("cooperative_per", float64(cooperative_won)/float64(cooperative_count))
 	} else {
 		res.Set("cooperative_per", 0)
 	}
 
-	res.Set("plays_count", len(rs))
-	res.Set("plays_won", won)
+	if count > 0 {
+		res.Set("per", float64(won)/float64(count))
+	} else {
+		res.Set("per", 0)
+	}
+
 	return nil
 }
