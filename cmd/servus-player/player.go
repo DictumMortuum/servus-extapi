@@ -24,7 +24,7 @@ func GetPlayers(req *model.Map, res *model.Map) error {
 		return err
 	}
 
-	var rs []Network
+	rs := []Network{}
 	err = db.Select(&rs, fmt.Sprintf(`
 		select
 			pl.id,
