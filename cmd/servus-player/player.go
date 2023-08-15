@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"sort"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/model"
@@ -89,6 +90,7 @@ func GetPlayerDetail(req *model.Map, res *model.Map) error {
 type Play struct {
 	Id             int64                 `json:"id,omitempty"`
 	Winners        models.JsonArray      `json:"winners,omitempty"`
+	Players        models.JsonArray      `json:"players,omitempty"`
 	Cooperative    models.JsonNullString `json:"cooperative,omitempty"`
 	CooperativeWin models.JsonNullString `json:"cooperative_win,omitempty"`
 }
@@ -109,6 +111,7 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 		select
 			p.id,
 			json_extract(p.play_data, '$.winners') winners,
+			json_extract(p.play_data, '$.players') players,
 			json_extract(p.play_data, '$.cooperative') cooperative,
 			json_extract(s.data, '$.won') cooperative_win
 		from
@@ -127,33 +130,64 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 	cooperative_count := 0
 	cooperative_won := 0
 
+	type percent struct {
+		Won   int
+		Count int
+	}
+
+	player_counts := map[int]percent{}
+
 	for _, play := range rs {
 		var winners []int64
+		var players []int64
 
 		err := play.Winners.Unmarshal(&winners)
 		if err != nil {
 			return err
 		}
 
+		err = play.Players.Unmarshal(&players)
+		if err != nil {
+			return err
+		}
+
+		n := len(players)
+		if _, ok := player_counts[n]; !ok {
+			player_counts[n] = percent{Won: 0, Count: 0}
+		}
+
+		if n < 1 {
+			log.Println(play.Id)
+		}
+
+		cur := player_counts[n]
+
 		if play.Cooperative.Valid && play.Cooperative.String == "true" {
 			cooperative_count++
+			// cur.Count++
 
 			for _, winner := range winners {
 				if winner == id {
 					cooperative_won++
+					// cur.Won++
 				}
 			}
 		} else {
 			count++
+			cur.Count++
 
 			for _, winner := range winners {
 				if winner == id {
 					won++
+					cur.Won++
 				}
 			}
 		}
+
+		player_counts[n] = cur
 	}
 
+	res.Set("player_counts", player_counts)
 	res.Set("cooperative", cooperative_count)
 	res.Set("cooperative_won", cooperative_won)
 	res.Set("plays_count", count)
