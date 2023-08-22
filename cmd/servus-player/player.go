@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"sort"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/model"
@@ -89,6 +88,9 @@ func GetPlayerDetail(req *model.Map, res *model.Map) error {
 
 type Play struct {
 	Id             int64                 `json:"id,omitempty"`
+	BoardgameId    int64                 `json:"boardgame_id,omitempty"`
+	Name           string                `json:"name,omitempty"`
+	Square200      models.JsonNullString `json:"url,omitempty"`
 	Winners        models.JsonArray      `json:"winners,omitempty"`
 	Players        models.JsonArray      `json:"players,omitempty"`
 	Cooperative    models.JsonNullString `json:"cooperative,omitempty"`
@@ -110,15 +112,20 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 	err = db.Select(&rs, fmt.Sprintf(`
 		select
 			p.id,
+			p.boardgame_id,
+			g.name,
+			g.square200,
 			json_extract(p.play_data, '$.winners') winners,
 			json_extract(p.play_data, '$.players') players,
 			json_extract(p.play_data, '$.cooperative') cooperative,
 			json_extract(s.data, '$.won') cooperative_win
 		from
 			tboardgamestats s,
-			tboardgameplays p
+			tboardgameplays p,
+			tboardgames g
 		where
 			s.player_id = ? and
+			g.id = s.boardgame_id and
 			p.id = s.play_id %s
 	`, YearConstraint(req, "and")), id)
 	if err != nil {
@@ -131,13 +138,24 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 	cooperative_won := 0
 
 	type percent struct {
+		Idx   int
 		Won   int
 		Count int
 	}
 
-	player_counts := map[int]percent{}
+	type best_game struct {
+		Id        int64                 `json:"id,omitempty"`
+		Name      string                `json:"name,omitempty"`
+		Square200 models.JsonNullString `json:"url,omitempty"`
+		Won       int                   `json:"won,omitempty"`
+		Count     int
+		Percent   float64 `json:"count,omitempty"`
+	}
 
-	for _, play := range rs {
+	player_counts := map[int]percent{}
+	game_counts := map[int64]percent{}
+
+	for i, play := range rs {
 		var winners []int64
 		var players []int64
 
@@ -156,11 +174,12 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 			player_counts[n] = percent{Won: 0, Count: 0}
 		}
 
-		if n < 1 {
-			log.Println(play.Id)
+		if _, ok := game_counts[play.BoardgameId]; !ok {
+			game_counts[play.BoardgameId] = percent{Won: 0, Count: 0}
 		}
 
-		cur := player_counts[n]
+		cur_player := player_counts[n]
+		cur_games := game_counts[play.BoardgameId]
 
 		if play.Cooperative.Valid && play.Cooperative.String == "true" {
 			cooperative_count++
@@ -174,20 +193,48 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 			}
 		} else {
 			count++
-			cur.Count++
+			cur_player.Count++
+			cur_games.Count++
 
 			for _, winner := range winners {
 				if winner == id {
 					won++
-					cur.Won++
+					cur_player.Won++
+					cur_games.Won++
 				}
 			}
 		}
 
-		player_counts[n] = cur
+		cur_games.Idx = i
+		player_counts[n] = cur_player
+		game_counts[play.BoardgameId] = cur_games
 	}
 
+	best_games := []best_game{}
+	for key, val := range game_counts {
+		tmp := best_game{
+			Id:        key,
+			Name:      rs[val.Idx].Name,
+			Square200: rs[val.Idx].Square200,
+			Won:       val.Won,
+			Count:     val.Count,
+		}
+
+		if tmp.Count > 0 {
+			tmp.Percent = float64(tmp.Won) / float64(tmp.Count)
+		}
+
+		if tmp.Count > 10 {
+			best_games = append(best_games, tmp)
+		}
+	}
+
+	sort.Slice(best_games, func(i, j int) bool {
+		return best_games[i].Percent > best_games[j].Percent
+	})
+
 	res.Set("player_counts", player_counts)
+	res.Set("best_games", best_games)
 	res.Set("cooperative", cooperative_count)
 	res.Set("cooperative_won", cooperative_won)
 	res.Set("plays_count", count)
