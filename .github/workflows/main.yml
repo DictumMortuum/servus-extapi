@@ -3,6 +3,7 @@ jobs:
   trigger:
     runs-on: ubuntu-latest
     name: "📦 Trigger Project Test"
+    environment: default
     steps:
     - uses: passeidireto/trigger-external-workflow-action@main
       env:
