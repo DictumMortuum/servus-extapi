@@ -149,7 +149,8 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 		Square200 models.JsonNullString `json:"url,omitempty"`
 		Won       int                   `json:"won,omitempty"`
 		Count     int
-		Percent   float64 `json:"count,omitempty"`
+		Percent   float64
+		Printable string `json:"count,omitempty"`
 	}
 
 	player_counts := map[int]percent{}
@@ -222,6 +223,7 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 
 		if tmp.Count > 0 {
 			tmp.Percent = float64(tmp.Won) / float64(tmp.Count)
+			tmp.Printable = fmt.Sprintf("%.2f%%", tmp.Percent)
 		}
 
 		if tmp.Count > 10 {
