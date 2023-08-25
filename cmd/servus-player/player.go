@@ -226,7 +226,7 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 			tmp.Printable = fmt.Sprintf("%.2f%%", tmp.Percent)
 		}
 
-		if tmp.Count > 5 {
+		if tmp.Count > 5 && tmp.Percent > 0.40 {
 			best_games = append(best_games, tmp)
 		}
 	}
