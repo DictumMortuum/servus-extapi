@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/DictumMortuum/servus-extapi/pkg/db"
 	"github.com/DictumMortuum/servus-extapi/pkg/model"
 	"github.com/DictumMortuum/servus/pkg/models"
 )
@@ -18,13 +19,13 @@ type Player struct {
 }
 
 func GetPlayers(req *model.Map, res *model.Map) error {
-	db, err := req.GetDB()
+	DB, err := req.GetDB()
 	if err != nil {
 		return err
 	}
 
 	rs := []Network{}
-	err = db.Select(&rs, fmt.Sprintf(`
+	err = DB.Select(&rs, fmt.Sprintf(`
 		select
 			pl.id,
 			CONCAT(pl.name, " ", pl.surname) name,
@@ -45,7 +46,7 @@ func GetPlayers(req *model.Map, res *model.Map) error {
 			count(*) > 5
 		order by
 			4
-	`, YearConstraint(req, "and")))
+	`, db.YearConstraint(req, "and")))
 	if err != nil {
 		return err
 	}
@@ -64,13 +65,13 @@ func GetPlayerDetail(req *model.Map, res *model.Map) error {
 		return err
 	}
 
-	db, err := req.GetDB()
+	DB, err := req.GetDB()
 	if err != nil {
 		return err
 	}
 
 	var rs Player
-	err = db.QueryRowx(`
+	err = DB.QueryRowx(`
 		select
 			*
 		from
@@ -103,13 +104,13 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 		return err
 	}
 
-	db, err := req.GetDB()
+	DB, err := req.GetDB()
 	if err != nil {
 		return err
 	}
 
 	var rs []Play
-	err = db.Select(&rs, fmt.Sprintf(`
+	err = DB.Select(&rs, fmt.Sprintf(`
 		select
 			p.id,
 			p.boardgame_id,
@@ -127,7 +128,7 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 			s.player_id = ? and
 			g.id = s.boardgame_id and
 			p.id = s.play_id %s
-	`, YearConstraint(req, "and")), id)
+	`, db.YearConstraint(req, "and")), id)
 	if err != nil {
 		return err
 	}

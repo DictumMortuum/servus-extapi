@@ -26,12 +26,7 @@ type Boardgame struct {
 	Average    models.JsonNullString  `json:"average,omitempty"`
 }
 
-func GetPlayerGames(req *model.Map, res *model.Map) error {
-	id, err := req.GetInt64("id")
-	if err != nil {
-		return err
-	}
-
+func GetPlayedGames(req *model.Map, res *model.Map) error {
 	DB, err := req.GetDB()
 	if err != nil {
 		return err
@@ -54,15 +49,12 @@ func GetPlayerGames(req *model.Map, res *model.Map) error {
 			count(*) count
 		from
 			tboardgames g,
-			tboardgamestats s,
 			tboardgameplays p
 		where
-			g.id = s.boardgame_id and
-			s.play_id = p.id and
-			s.player_id = ? %s
+			g.id = p.boardgame_id %s
 		group by
 			1
-	`, db.YearConstraint(req, "and")), id)
+	`, db.YearConstraint(req, "and")))
 	if err != nil {
 		return err
 	}
@@ -122,54 +114,6 @@ func GetPlayerGames(req *model.Map, res *model.Map) error {
 	} else {
 		res.Set("played", rs)
 	}
-
-	return nil
-}
-
-type LatestBoardgame struct {
-	Id        int64                 `json:"id,omitempty"`
-	Name      string                `json:"name,omitempty"`
-	Square200 models.JsonNullString `json:"url,omitempty"`
-	Winners   models.JsonArray      `json:"winners,omitempty"`
-	Players   models.JsonArray      `json:"players,omitempty"`
-}
-
-func GetLatestGames(req *model.Map, res *model.Map) error {
-	id, err := req.GetInt64("id")
-	if err != nil {
-		return err
-	}
-
-	DB, err := req.GetDB()
-	if err != nil {
-		return err
-	}
-
-	rs := []LatestBoardgame{}
-	err = DB.Select(&rs, fmt.Sprintf(`
-		select
-			g.id,
-			g.name,
-			g.square200,
-			json_extract(p.play_data, '$.winners') winners,
-			json_extract(p.play_data, '$.players') players
-		from
-			tboardgames g,
-			tboardgamestats s,
-			tboardgameplays p
-		where
-			g.id = s.boardgame_id and
-			s.play_id = p.id and
-			s.player_id = ? %s
-		order by
-			p.date desc, p.id desc
-		limit 12
-	`, db.YearConstraint(req, "and")), id)
-	if err != nil {
-		return err
-	}
-
-	res.Set("latest", rs)
 
 	return nil
 }

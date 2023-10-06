@@ -11,7 +11,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.11",
+		"version": "v0.0.1",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -24,13 +24,13 @@ func main() {
 
 	r := gin.Default()
 	r.Use(middleware.Cors())
-	g := r.Group("/player")
+	g := r.Group("/boardgames")
 	g.GET("/version", Version)
 
 	g.GET(
 		"/all",
 		middleware.BindYear,
-		adapter.A(GetPlayers),
+		adapter.A(GetPlayedGames),
 		middleware.Result,
 	)
 
@@ -38,19 +38,8 @@ func main() {
 		"/:id",
 		middleware.Id,
 		middleware.BindYear,
-		adapter.A(GetPlayerDetail),
-		adapter.A(GetPlayerGames),
-		adapter.A(GetPlayerPlays),
-		adapter.A(GetLatestGames),
-		adapter.A(ProcessMechanics),
-		adapter.A(ProcessDesigners),
-		adapter.A(ProcessCategories),
-		adapter.A(ProcessFamilies),
-		adapter.A(ProcessSubdomains),
-		adapter.A(ProcessLocations),
-		adapter.A(GetNetwork),
 		middleware.Result,
 	)
 
-	r.Run(":10001")
+	r.Run(":10002")
 }

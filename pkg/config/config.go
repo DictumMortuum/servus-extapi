@@ -2,12 +2,14 @@ package config
 
 import (
 	"context"
+
 	"github.com/heetch/confita"
 	"github.com/heetch/confita/backend/file"
 )
 
 type Config struct {
 	Databases map[string]string `config:"databases"`
+	Port      string            `config:"port"`
 }
 
 var (

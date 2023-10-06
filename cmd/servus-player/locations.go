@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/DictumMortuum/servus-extapi/pkg/db"
 	"github.com/DictumMortuum/servus-extapi/pkg/model"
 )
 
@@ -13,13 +14,13 @@ func ProcessLocations(req *model.Map, res *model.Map) error {
 		return err
 	}
 
-	db, err := req.GetDB()
+	DB, err := req.GetDB()
 	if err != nil {
 		return err
 	}
 
 	rs := []Mechanic{}
-	err = db.Select(&rs, fmt.Sprintf(`
+	err = DB.Select(&rs, fmt.Sprintf(`
 		select
 			l.id,
 			l.name,
@@ -34,7 +35,7 @@ func ProcessLocations(req *model.Map, res *model.Map) error {
 			s.player_id = ? %s
 		group by
 			1
-	`, YearConstraint(req, "and")), id)
+	`, db.YearConstraint(req, "and")), id)
 	if err != nil {
 		return err
 	}

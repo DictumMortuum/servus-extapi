@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/DictumMortuum/servus-extapi/pkg/db"
 	"github.com/DictumMortuum/servus-extapi/pkg/model"
 )
 
@@ -21,13 +22,13 @@ func GetNetwork(req *model.Map, res *model.Map) error {
 		return err
 	}
 
-	db, err := req.GetDB()
+	DB, err := req.GetDB()
 	if err != nil {
 		return err
 	}
 
 	rs := []Network{}
-	err = db.Select(&rs, fmt.Sprintf(`
+	err = DB.Select(&rs, fmt.Sprintf(`
 		select
 			pl.id,
 			CONCAT(pl.name, " ", pl.surname) name,
@@ -48,7 +49,7 @@ func GetNetwork(req *model.Map, res *model.Map) error {
 			1
 		order by
 		  4
-	`, YearConstraint(req, "and")), id, id)
+	`, db.YearConstraint(req, "and")), id, id)
 	if err != nil {
 		return err
 	}

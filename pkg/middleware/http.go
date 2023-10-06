@@ -60,3 +60,23 @@ func Result(c *gin.Context) {
 		c.JSON(http.StatusOK, res.Internal)
 	}
 }
+
+func BindYear(c *gin.Context) {
+	m, err := model.ToMap(c, "req")
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	type Args struct {
+		Year     string `form:"year"`
+		YearFlag bool   `form:"year_flag"`
+	}
+
+	var payload Args
+	c.ShouldBind(&payload)
+
+	m.Set("year", payload.Year)
+	m.Set("year_flag", payload.YearFlag)
+	m.Set("n", 12)
+}
