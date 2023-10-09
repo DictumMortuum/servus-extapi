@@ -1,0 +1,25 @@
+on:
+  push:
+    paths:
+      - 'cmd/servus-magissa/**.go'
+      - 'cmd/servus-modem-a/**.go'
+      - 'cmd/servus-modem-restart-a/**.go'
+      - 'cmd/servus-modem-b/**.go'
+      - 'cmd/servus-modem-c/**.go'
+      - 'cmd/servus-modem-d/**.go'
+  workflow_dispatch: {}
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    name: "package servus-utils"
+    environment: default
+    steps:
+    - uses: passeidireto/trigger-external-workflow-action@main
+      env:
+        PAYLOAD_REPO: "servus-utils"
+        PAYLOAD_ARCH: "aarch64"
+      with:
+        repository: DictumMortuum/pacman
+        event: package
+        github_pat: ${{ secrets.PAT }}
