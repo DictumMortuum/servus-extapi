@@ -7,9 +7,19 @@ import (
 	"github.com/heetch/confita/backend/file"
 )
 
+type ModemConfig struct {
+	Host  string            `config:"host"`
+	Modem string            `config:"modem"`
+	User  string            `config:"user"`
+	Pass  string            `config:"pass"`
+	Voip  string            `config:"voip"`
+	Extra map[string]string `config:"extra"`
+}
+
 type Config struct {
-	Databases map[string]string `config:"databases"`
-	Port      string            `config:"port"`
+	Databases map[string]string      `config:"databases"`
+	Port      string                 `config:"port"`
+	Modem     map[string]ModemConfig `config:"modem"`
 }
 
 var (

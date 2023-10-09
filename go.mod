@@ -13,8 +13,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/spf13/cast v1.5.1
 	github.com/urfave/cli/v2 v2.25.7
-	github.com/ysmood/gson v0.7.3
-	golang.org/x/text v0.12.0
+	github.com/ziutek/telnet v0.0.0-20180329124119-c3b780dc415b
 	gorm.io/datatypes v1.1.0
 	gorm.io/driver/mysql v1.4.5
 	gorm.io/gorm v1.24.3
@@ -65,11 +64,13 @@ require (
 	github.com/ysmood/fetchup v0.2.3 // indirect
 	github.com/ysmood/goob v0.4.0 // indirect
 	github.com/ysmood/got v0.36.1 // indirect
+	github.com/ysmood/gson v0.7.3 // indirect
 	github.com/ysmood/leakless v0.8.0 // indirect
 	golang.org/x/arch v0.4.0 // indirect
 	golang.org/x/crypto v0.12.0 // indirect
 	golang.org/x/net v0.14.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect
+	golang.org/x/text v0.12.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

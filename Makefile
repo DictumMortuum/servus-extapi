@@ -1,4 +1,15 @@
-BINARIES = servus-extapi servus-player servus-tragedy servus-boardgames servus-magissa
+BINARIES = \
+	servus-extapi \
+	servus-player \
+	servus-tragedy \
+	servus-boardgames \
+	servus-magissa \
+	servus-modem-a \
+	servus-modem-restart-a \
+	servus-modem-b \
+	servus-modem-c \
+	servus-modem-d
+
 GOOPTS = -buildmode=pie -trimpath -mod=readonly -modcacherw -ldflags=-s -ldflags=-w
 
 build: format $(BINARIES)
