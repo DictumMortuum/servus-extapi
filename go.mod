@@ -6,12 +6,14 @@ require (
 	github.com/DictumMortuum/servus v0.7.23
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.9.1
+	github.com/go-rod/rod v0.114.3
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/heetch/confita v0.10.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/spf13/cast v1.5.1
 	github.com/urfave/cli/v2 v2.25.7
+	github.com/ysmood/gson v0.7.3
 	golang.org/x/text v0.12.0
 	gorm.io/datatypes v1.1.0
 	gorm.io/driver/mysql v1.4.5
@@ -60,6 +62,10 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
+	github.com/ysmood/fetchup v0.2.3 // indirect
+	github.com/ysmood/goob v0.4.0 // indirect
+	github.com/ysmood/got v0.36.1 // indirect
+	github.com/ysmood/leakless v0.8.0 // indirect
 	golang.org/x/arch v0.4.0 // indirect
 	golang.org/x/crypto v0.12.0 // indirect
 	golang.org/x/net v0.14.0 // indirect
