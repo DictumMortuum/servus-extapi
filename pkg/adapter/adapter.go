@@ -1,7 +1,11 @@
 package adapter
 
 import (
+	"time"
+
 	"github.com/DictumMortuum/servus-extapi/pkg/model"
+	"github.com/gin-contrib/cache"
+	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,4 +33,8 @@ func A(f func(*model.Map, *model.Map) error) func(*gin.Context) {
 			return
 		}
 	}
+}
+
+func C(store *persistence.InMemoryStore, t time.Duration, f func(*model.Map, *model.Map) error) func(*gin.Context) {
+	return cache.CachePage(store, t, A(f))
 }

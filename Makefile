@@ -8,7 +8,8 @@ BINARIES = \
 	servus-modem-restart-a \
 	servus-modem-b \
 	servus-modem-c \
-	servus-modem-d
+	servus-modem-d \
+	servus-bgstats
 
 GOOPTS = -buildmode=pie -trimpath -mod=readonly -modcacherw -ldflags=-s -ldflags=-w
 

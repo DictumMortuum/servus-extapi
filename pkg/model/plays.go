@@ -2,10 +2,11 @@ package model
 
 import (
 	"encoding/json"
+	"time"
+
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"time"
 )
 
 type Play struct {

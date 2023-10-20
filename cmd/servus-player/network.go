@@ -40,16 +40,15 @@ func GetNetwork(req *model.Map, res *model.Map) error {
 			tboardgameplays p,
 			tboardgameplayers pl
 		where
-			play_id in (select play_id from tboardgamestats where player_id = ?) and
+			s.play_id in (select play_id from tboardgamestats where player_id = ?) and
 			s.player_id = pl.id and
-			s.play_id = p.id and
-			s.player_id <> ?
+			s.play_id = p.id
 			%s
 		group by
 			1
 		order by
 		  4
-	`, db.YearConstraint(req, "and")), id, id)
+	`, db.YearConstraint(req, "and")), id)
 	if err != nil {
 		return err
 	}

@@ -227,7 +227,7 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 			tmp.Printable = fmt.Sprintf("%.2f%%", tmp.Percent)
 		}
 
-		if tmp.Count > 5 && tmp.Percent > 0.40 {
+		if tmp.Count > 5 && tmp.Percent > 0.10 {
 			best_games = append(best_games, tmp)
 		}
 	}
@@ -236,12 +236,22 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 		return best_games[i].Percent > best_games[j].Percent
 	})
 
+	plays3_won := 0
+	plays3_count := 0
+
+	for i := 3; i < len(player_counts); i++ {
+		plays3_won += player_counts[i].Won
+		plays3_count += player_counts[i].Count
+	}
+
 	res.Set("player_counts", player_counts)
 	res.Set("best_games", best_games)
 	res.Set("cooperative", cooperative_count)
 	res.Set("cooperative_won", cooperative_won)
 	res.Set("plays_count", count)
 	res.Set("plays_won", won)
+	res.Set("plays3_won", plays3_won)
+	res.Set("plays3_count", plays3_count)
 
 	if cooperative_count > 0 {
 		res.Set("cooperative_per", float64(cooperative_won)/float64(cooperative_count))
@@ -253,6 +263,12 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 		res.Set("per", float64(won)/float64(count))
 	} else {
 		res.Set("per", 0)
+	}
+
+	if plays3_count > 0 {
+		res.Set("plays3_per", float64(plays3_won)/float64(plays3_count))
+	} else {
+		res.Set("playes3_per", 0)
 	}
 
 	return nil
