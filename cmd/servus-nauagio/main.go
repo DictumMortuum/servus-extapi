@@ -7,18 +7,16 @@ import (
 )
 
 func main() {
-	episodes := scrapeEpisodes("https://www.antenna.gr/magissa")
+	episodes := scrapeEpisodes("https://www.megatv.com/ekpompes/1110551/to-nayagio/")
 
 	if len(episodes) == 0 {
 		return
 	}
 
 	for _, episode := range episodes[0:1] {
-		part := "https://www.antenna.gr" + episode
-
 		payload := map[string]any{
-			"url":   part,
-			"path":  "/volume1/plex/greek series/Magissa/",
+			"url":   episode,
+			"path":  "/volume1/plex/greek series/Nauagio/",
 			"owner": "dimitris@dictummortuum.com",
 			"group": "dimitris@dictummortuum.com",
 		}

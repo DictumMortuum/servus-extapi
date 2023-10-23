@@ -9,7 +9,8 @@ BINARIES = \
 	servus-modem-b \
 	servus-modem-c \
 	servus-modem-d \
-	servus-bgstats
+	servus-bgstats \
+	servus-nauagio
 
 GOOPTS = -buildmode=pie -trimpath -mod=readonly -modcacherw -ldflags=-s -ldflags=-w
 
