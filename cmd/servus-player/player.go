@@ -88,14 +88,13 @@ func GetPlayerDetail(req *model.Map, res *model.Map) error {
 }
 
 type Play struct {
-	Id             int64                 `json:"id,omitempty"`
-	BoardgameId    int64                 `json:"boardgame_id,omitempty"`
-	Name           string                `json:"name,omitempty"`
-	Square200      models.JsonNullString `json:"url,omitempty"`
-	Winners        models.JsonArray      `json:"winners,omitempty"`
-	Players        models.JsonArray      `json:"players,omitempty"`
-	Cooperative    models.JsonNullString `json:"cooperative,omitempty"`
-	CooperativeWin models.JsonNullString `json:"cooperative_win,omitempty"`
+	Id          int64                 `json:"id,omitempty"`
+	BoardgameId int64                 `json:"boardgame_id,omitempty"`
+	Name        string                `json:"name,omitempty"`
+	Square200   models.JsonNullString `json:"url,omitempty"`
+	Winners     models.JsonArray      `json:"winners,omitempty"`
+	Players     models.JsonArray      `json:"players,omitempty"`
+	Cooperative models.JsonNullString `json:"cooperative,omitempty"`
 }
 
 func GetPlayerPlays(req *model.Map, res *model.Map) error {
@@ -118,8 +117,7 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 			g.square200,
 			json_extract(p.play_data, '$.winners') winners,
 			json_extract(p.play_data, '$.players') players,
-			json_extract(p.play_data, '$.cooperative') cooperative,
-			json_extract(s.data, '$.won') cooperative_win
+			json_extract(p.play_data, '$.cooperative') cooperative
 		from
 			tboardgamestats s,
 			tboardgameplays p,
