@@ -1,10 +1,9 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"log"
-	"strings"
+
+	"github.com/DictumMortuum/servus-extapi/pkg/nas"
 )
 
 func main() {
@@ -14,20 +13,21 @@ func main() {
 		return
 	}
 
-	part := "https://www.antenna.gr" + episodes[0]
-	video := scrapeVideo(part)
-	name := strings.Split(part, "/")
+	for _, episode := range episodes {
+		part := "https://www.antenna.gr" + episode
 
-	output, err := json.Marshal(map[string]any{
-		"name":  name[len(name)-1],
-		"url":   video,
-		"path":  "/volume1/plex/greek series/Magissa/",
-		"owner": "dimitris@dictummortuum.com",
-		"group": "dimitris@dictummortuum.com",
-	})
-	if err != nil {
-		log.Fatal(err)
+		payload := map[string]any{
+			"url":   part,
+			"path":  "/volume1/plex/greek series/Magissa/",
+			"owner": "dimitris@dictummortuum.com",
+			"group": "dimitris@dictummortuum.com",
+		}
+
+		err := nas.YoutubeDL(payload)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Println(payload)
 	}
-
-	fmt.Println(string(output))
 }
