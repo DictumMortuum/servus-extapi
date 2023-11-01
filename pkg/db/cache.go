@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -45,8 +44,6 @@ func CachedSelect(DB *sqlx.DB, RDB *redis.Client, key string, dest any, query st
 		if err != nil {
 			return err
 		}
-	} else {
-		log.Println("cached")
 	}
 
 	return nil

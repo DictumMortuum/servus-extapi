@@ -11,7 +11,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.12",
+		"version": "v0.0.13",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }

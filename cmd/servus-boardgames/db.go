@@ -33,8 +33,18 @@ func GetPlayedGames(req *model.Map, res *model.Map) error {
 		return err
 	}
 
+	RDB, err := req.GetRedis()
+	if err != nil {
+		return err
+	}
+
+	url, err := req.GetString("url")
+	if err != nil {
+		return err
+	}
+
 	rs := []Boardgame{}
-	err = DB.Select(&rs, fmt.Sprintf(`
+	err = db.CachedSelect(DB, RDB, "GetPlayedGames"+url, &rs, fmt.Sprintf(`
 		select
 			g.id,
 			g.name,
@@ -119,7 +129,7 @@ type LatestBoardgame struct {
 	Date      time.Time             `json:"date,omitempty"`
 }
 
-func GetLatestGames(req *model.Map, res *model.Map) error {
+func GetLatestBoardgames(req *model.Map, res *model.Map) error {
 	id, err := req.GetInt64("id")
 	if err != nil {
 		return err
@@ -135,8 +145,18 @@ func GetLatestGames(req *model.Map, res *model.Map) error {
 		return err
 	}
 
+	RDB, err := req.GetRedis()
+	if err != nil {
+		return err
+	}
+
+	url, err := req.GetString("url")
+	if err != nil {
+		return err
+	}
+
 	rs := []LatestBoardgame{}
-	err = DB.Select(&rs, fmt.Sprintf(`
+	err = db.CachedSelect(DB, RDB, "GetLatestBoardgames"+url, &rs, fmt.Sprintf(`
 		select
 			g.id,
 			g.name,
