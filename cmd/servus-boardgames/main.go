@@ -38,6 +38,7 @@ func main() {
 		"/:id",
 		middleware.Id,
 		middleware.BindYear,
+		middleware.BindN,
 		adapter.A(GetBoardgamePlays),
 		adapter.A(GetLatestGames),
 		adapter.A(GetBoardgameDetail),

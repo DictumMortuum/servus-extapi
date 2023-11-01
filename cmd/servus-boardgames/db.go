@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/db"
 	"github.com/DictumMortuum/servus-extapi/pkg/model"
@@ -115,10 +116,16 @@ type LatestBoardgame struct {
 	Square200 models.JsonNullString `json:"url,omitempty"`
 	Winners   models.JsonArray      `json:"winners,omitempty"`
 	Players   models.JsonArray      `json:"players,omitempty"`
+	Date      time.Time             `json:"date,omitempty"`
 }
 
 func GetLatestGames(req *model.Map, res *model.Map) error {
 	id, err := req.GetInt64("id")
+	if err != nil {
+		return err
+	}
+
+	n, err := req.GetInt64("n")
 	if err != nil {
 		return err
 	}
@@ -135,7 +142,8 @@ func GetLatestGames(req *model.Map, res *model.Map) error {
 			g.name,
 			g.square200,
 			json_extract(p.play_data, '$.winners') winners,
-			json_extract(p.play_data, '$.players') players
+			json_extract(p.play_data, '$.players') players,
+			p.date date
 		from
 			tboardgames g,
 			tboardgameplays p
@@ -144,8 +152,8 @@ func GetLatestGames(req *model.Map, res *model.Map) error {
 			p.boardgame_id = g.id %s
 		order by
 			p.date desc, p.id desc
-		limit 12
-	`, db.YearConstraint(req, "and")), id)
+		limit %d
+	`, db.YearConstraint(req, "and"), n), id)
 	if err != nil {
 		return err
 	}

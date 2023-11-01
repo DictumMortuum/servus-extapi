@@ -13,11 +13,16 @@ type Network struct {
 	Name   string `json:"name,omitempty"`
 	Count  int    `json:"count,omitempty"`
 	Url    string `json:"url,omitempty"`
-	Hidden bool   `json:"hidden,omitempty"`
+	Hidden bool   `json:"hidden"`
 }
 
 func GetNetwork(req *model.Map, res *model.Map) error {
 	id, err := req.GetInt64("id")
+	if err != nil {
+		return err
+	}
+
+	url, err := req.GetString("url")
 	if err != nil {
 		return err
 	}
@@ -27,8 +32,13 @@ func GetNetwork(req *model.Map, res *model.Map) error {
 		return err
 	}
 
+	RDB, err := req.GetRedis()
+	if err != nil {
+		return err
+	}
+
 	rs := []Network{}
-	err = DB.Select(&rs, fmt.Sprintf(`
+	err = db.CachedSelect(DB, RDB, "GetNetwork"+url, &rs, fmt.Sprintf(`
 		select
 			pl.id,
 			CONCAT(pl.name, " ", pl.surname) name,

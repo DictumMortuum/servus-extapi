@@ -24,12 +24,23 @@ func GetPlayers(req *model.Map, res *model.Map) error {
 		return err
 	}
 
+	RDB, err := req.GetRedis()
+	if err != nil {
+		return err
+	}
+
+	url, err := req.GetString("url")
+	if err != nil {
+		return err
+	}
+
 	rs := []Network{}
-	err = DB.Select(&rs, fmt.Sprintf(`
+	err = db.CachedSelect(DB, RDB, "GetPlayers"+url, &rs, fmt.Sprintf(`
 		select
 			pl.id,
 			CONCAT(pl.name, " ", pl.surname) name,
 			pl.avatar url,
+			pl.hidden hidden,
 			count(*) count
 		from
 			tboardgameplayers pl,
@@ -37,13 +48,10 @@ func GetPlayers(req *model.Map, res *model.Map) error {
 			tboardgameplays p
 		where
 			pl.id = s.player_id and
-			s.play_id = p.id and
-			pl.hidden = 0
+			s.play_id = p.id
 			%s
 		group by
 			1
-		having
-			count(*) > 5
 		order by
 			4
 	`, db.YearConstraint(req, "and")))
@@ -103,13 +111,23 @@ func GetPlayerPlays(req *model.Map, res *model.Map) error {
 		return err
 	}
 
+	url, err := req.GetString("url")
+	if err != nil {
+		return err
+	}
+
 	DB, err := req.GetDB()
 	if err != nil {
 		return err
 	}
 
+	RDB, err := req.GetRedis()
+	if err != nil {
+		return err
+	}
+
 	var rs []Play
-	err = DB.Select(&rs, fmt.Sprintf(`
+	err = db.CachedSelect(DB, RDB, "GetPlayerPlays"+url, &rs, fmt.Sprintf(`
 		select
 			p.id,
 			p.boardgame_id,

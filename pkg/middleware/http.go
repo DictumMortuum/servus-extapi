@@ -18,6 +18,7 @@ func Id(c *gin.Context) {
 	}
 
 	m.Set("id", id)
+	m.Set("url", c.Request.URL.String())
 }
 
 func Body(c *gin.Context) {
@@ -78,5 +79,21 @@ func BindYear(c *gin.Context) {
 
 	m.Set("year", payload.Year)
 	m.Set("year_flag", payload.YearFlag)
-	m.Set("n", 12)
+}
+
+func BindN(c *gin.Context) {
+	m, err := model.ToMap(c, "req")
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	type Args struct {
+		Count int64 `form:"count"`
+	}
+
+	var payload Args
+	c.ShouldBind(&payload)
+
+	m.Set("n", payload.Count)
 }

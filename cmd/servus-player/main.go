@@ -38,6 +38,7 @@ func main() {
 		"/:id",
 		middleware.Id,
 		middleware.BindYear,
+		middleware.BindN,
 		adapter.A(GetPlayerDetail),
 		adapter.A(GetPlayerGames),
 		adapter.A(GetPlayerPlays),

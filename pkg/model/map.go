@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	"github.com/redis/go-redis/v9"
 	"github.com/spf13/cast"
 )
 
@@ -82,5 +83,25 @@ func (m *Map) GetDB() (*sqlx.DB, error) {
 		db.MapperFunc(util.ToSnake)
 		m.Internal["db"] = db
 		return db, nil
+	}
+}
+
+func (m *Map) GetRedis() (*redis.Client, error) {
+	if val, ok := m.Internal["redis"]; ok {
+		conn, ok := val.(*redis.Client)
+		if !ok {
+			return nil, fmt.Errorf("error with retrieving redis pointer")
+		} else {
+			return conn, nil
+		}
+	} else {
+		rdb := redis.NewClient(&redis.Options{
+			Addr:     "localhost:6379",
+			Password: "", // no password set
+			DB:       0,  // use default DB
+		})
+
+		m.Internal["redis"] = rdb
+		return rdb, nil
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/db"
 	"github.com/DictumMortuum/servus-extapi/pkg/model"
@@ -32,13 +33,23 @@ func GetPlayerGames(req *model.Map, res *model.Map) error {
 		return err
 	}
 
+	url, err := req.GetString("url")
+	if err != nil {
+		return err
+	}
+
 	DB, err := req.GetDB()
 	if err != nil {
 		return err
 	}
 
+	RDB, err := req.GetRedis()
+	if err != nil {
+		return err
+	}
+
 	rs := []Boardgame{}
-	err = DB.Select(&rs, fmt.Sprintf(`
+	err = db.CachedSelect(DB, RDB, "GetPlayerGames"+url, &rs, fmt.Sprintf(`
 		select
 			g.id,
 			g.name,
@@ -132,10 +143,21 @@ type LatestBoardgame struct {
 	Square200 models.JsonNullString `json:"url,omitempty"`
 	Winners   models.JsonArray      `json:"winners,omitempty"`
 	Players   models.JsonArray      `json:"players,omitempty"`
+	Date      time.Time             `json:"date,omitempty"`
 }
 
 func GetLatestGames(req *model.Map, res *model.Map) error {
 	id, err := req.GetInt64("id")
+	if err != nil {
+		return err
+	}
+
+	url, err := req.GetString("url")
+	if err != nil {
+		return err
+	}
+
+	n, err := req.GetInt64("n")
 	if err != nil {
 		return err
 	}
@@ -145,14 +167,20 @@ func GetLatestGames(req *model.Map, res *model.Map) error {
 		return err
 	}
 
+	RDB, err := req.GetRedis()
+	if err != nil {
+		return err
+	}
+
 	rs := []LatestBoardgame{}
-	err = DB.Select(&rs, fmt.Sprintf(`
+	err = db.CachedSelect(DB, RDB, "GetLatestGames"+url, &rs, fmt.Sprintf(`
 		select
 			g.id,
 			g.name,
 			g.square200,
 			json_extract(p.play_data, '$.winners') winners,
-			json_extract(p.play_data, '$.players') players
+			json_extract(p.play_data, '$.players') players,
+			p.date date
 		from
 			tboardgames g,
 			tboardgamestats s,
@@ -163,8 +191,8 @@ func GetLatestGames(req *model.Map, res *model.Map) error {
 			s.player_id = ? %s
 		order by
 			p.date desc, p.id desc
-		limit 12
-	`, db.YearConstraint(req, "and")), id)
+		limit %d
+	`, db.YearConstraint(req, "and"), n), id)
 	if err != nil {
 		return err
 	}

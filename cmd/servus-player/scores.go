@@ -27,13 +27,23 @@ func GetPlayerScores(req *model.Map, res *model.Map) error {
 		return err
 	}
 
+	url, err := req.GetString("url")
+	if err != nil {
+		return err
+	}
+
 	DB, err := req.GetDB()
 	if err != nil {
 		return err
 	}
 
+	RDB, err := req.GetRedis()
+	if err != nil {
+		return err
+	}
+
 	var rs []Score
-	err = DB.Select(&rs, fmt.Sprintf(`
+	err = db.CachedSelect(DB, RDB, "GetPlayerScores"+url, &rs, fmt.Sprintf(`
 		select
 			s.player_id,
 			p.boardgame_id,
@@ -84,8 +94,13 @@ func GetPlayerScores(req *model.Map, res *model.Map) error {
 		return temp[i].Date.After(temp[j].Date)
 	})
 
-	if len(temp) > 6 {
-		res.Set("scores", temp[0:6])
+	n, err := req.GetInt64("n")
+	if err != nil {
+		return err
+	}
+
+	if len(temp) > int(n) {
+		res.Set("scores", temp[0:n])
 	} else {
 		res.Set("scores", temp)
 	}
