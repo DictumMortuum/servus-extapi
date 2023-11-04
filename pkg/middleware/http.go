@@ -18,6 +18,15 @@ func Id(c *gin.Context) {
 	}
 
 	m.Set("id", id)
+}
+
+func Url(c *gin.Context) {
+	m, err := model.ToMap(c, "req")
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
 	m.Set("url", c.Request.URL.String())
 }
 

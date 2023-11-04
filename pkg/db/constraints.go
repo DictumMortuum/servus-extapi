@@ -19,3 +19,11 @@ func YearConstraint(req *model.Map, start string) string {
 
 	return q
 }
+
+func Limit(req *model.Map, n int64) string {
+	if n == -1 {
+		return ""
+	} else {
+		return fmt.Sprintf("limit %d", n)
+	}
+}

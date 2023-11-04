@@ -29,6 +29,7 @@ func main() {
 
 	g.GET(
 		"/all",
+		middleware.Url,
 		middleware.BindYear,
 		adapter.A(GetPlayedGames),
 		middleware.Result,
@@ -37,6 +38,7 @@ func main() {
 	g.GET(
 		"/:id",
 		middleware.Id,
+		middleware.Url,
 		middleware.BindYear,
 		middleware.BindN,
 		adapter.A(GetBoardgamePlays),

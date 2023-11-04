@@ -172,8 +172,8 @@ func GetLatestBoardgames(req *model.Map, res *model.Map) error {
 			p.boardgame_id = g.id %s
 		order by
 			p.date desc, p.id desc
-		limit %d
-	`, db.YearConstraint(req, "and"), n), id)
+		%s
+	`, db.YearConstraint(req, "and"), db.Limit(req, n)), id)
 	if err != nil {
 		return err
 	}
