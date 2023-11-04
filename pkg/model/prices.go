@@ -2,37 +2,37 @@ package model
 
 import (
 	"encoding/json"
+	"time"
+
 	"github.com/DictumMortuum/servus/pkg/models"
 	"gorm.io/gorm"
-	"time"
 )
 
 type Price struct {
 	Id          int64                `gorm:"primaryKey" json:"id"`
-	BoardgameId models.JsonNullInt64 `gorm:"foreignkey" json:"boardgame_id"`
-	CrDate      time.Time            `json:"date"`
+	Created     time.Time            `json:"created"`
+	Updated     time.Time            `json:"updated"`
+	Name        string               `gorm:"index" json:"name"`
 	StoreId     int64                `gorm:"foreignkey" json:"store_id"`
 	StoreThumb  string               `json:"store_thumb"`
-	Name        string               `gorm:"index"  json:"name"`
 	Price       float64              `json:"price"`
 	Stock       int                  `json:"stock"`
 	Url         string               `json:"url"`
-	Mapped      bool                 `json:"mapped"`
-	Ignored     bool                 `json:"ignored"`
-	Batch       int                  `json:"batch"`
+	Deleted     bool                 `json:"deleted"`
+	BoardgameId models.JsonNullInt64 `gorm:"foreignkey" json:"boardgame_id"`
 }
 
 func (Price) TableName() string {
-	return "tboardgameprices"
+	return "tprices"
 }
 
 func (Price) DefaultFilter(db *gorm.DB) *gorm.DB {
-	return db
+	return db.Where("deleted = 0")
 }
 
-func (Price) List(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (any, error) {
+func (c Price) List(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (any, error) {
 	var data []Price
-	rs := db.Scopes(scopes...).Find(&data)
+	rs := db.Debug().Scopes(scopes...).Scopes(c.DefaultFilter).Find(&data)
 	return data, rs.Error
 }
 
@@ -53,7 +53,7 @@ func (obj Price) Update(db *gorm.DB, id int64, body []byte) (any, error) {
 		return nil, err
 	}
 
-	rs := db.Model(&model).Updates(payload)
+	rs := db.Model(&model).Save(payload)
 	if rs.Error != nil {
 		return nil, err
 	}
@@ -77,13 +77,15 @@ func (Price) Create(db *gorm.DB, body []byte) (any, error) {
 }
 
 func (obj Price) Delete(db *gorm.DB, id int64) (any, error) {
-	data, err := obj.Get(db, id)
-	if err != nil {
-		return nil, err
+	var data Price
+	rs := db.First(&data, id)
+	if rs.Error != nil {
+		return nil, rs.Error
 	}
+	data.Deleted = true
 
-	rs := db.Delete(&Price{}, id)
-	if err != nil {
+	rs = db.Model(&data).Updates(data)
+	if rs.Error != nil {
 		return nil, rs.Error
 	}
 

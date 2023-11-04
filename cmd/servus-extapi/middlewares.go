@@ -4,11 +4,15 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"io"
 	"net/http"
 	"strconv"
+
+	"github.com/DictumMortuum/servus-extapi/pkg/db"
+	"github.com/DictumMortuum/servus-extapi/pkg/middleware"
+	"github.com/DictumMortuum/servus-extapi/pkg/model"
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func GetDB(c *gin.Context) *gorm.DB {
@@ -22,11 +26,11 @@ func GetDB(c *gin.Context) *gorm.DB {
 	return nil
 }
 
-func GetModel(c *gin.Context) Routable {
+func GetModel(c *gin.Context) model.Routable {
 	val, ok := c.Get("apimodel")
 
 	if ok && val != nil {
-		return val.(Routable)
+		return val.(model.Routable)
 	}
 
 	return nil
@@ -90,7 +94,7 @@ func CountMany(c *gin.Context) {
 	model := GetModel(c)
 
 	var count int64
-	rs := db.Model(model).Scopes(Filter(c), model.DefaultFilter).Count(&count)
+	rs := db.Model(model).Scopes(middleware.Filter(c), model.DefaultFilter).Count(&count)
 	if rs.Error != nil {
 		c.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"error": rs.Error.Error()})
 	}
@@ -103,7 +107,7 @@ func GetMany(f func(*gorm.DB, ...func(*gorm.DB) *gorm.DB) (any, error)) func(*gi
 	return func(c *gin.Context) {
 		db := GetDB(c)
 
-		data, err := f(db, Filter(c), Paginate(c), Sort(c))
+		data, err := f(db, middleware.Filter(c), middleware.Paginate(c), middleware.Sort(c))
 		// data, err := f(db, Filter(c), Paginate(c))
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"error": err.Error()})
@@ -161,7 +165,7 @@ func DeleteOne(f func(*gorm.DB, int64) (any, error)) func(*gin.Context) {
 }
 
 func OpenDB(c *gin.Context) {
-	db, conn, err := Database()
+	db, conn, err := db.Gorm()
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"error": err.Error()})
 	}

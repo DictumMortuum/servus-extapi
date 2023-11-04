@@ -2,11 +2,12 @@ package model
 
 import (
 	"encoding/json"
+	"time"
+
 	"github.com/DictumMortuum/servus/pkg/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"time"
 )
 
 type CachedPrice struct {
@@ -81,7 +82,7 @@ func (obj CachedPrice) CreatePrice(c *gin.Context, db *gorm.DB) (any, error) {
 	var data CachedPrice
 	db.First(&data, id)
 
-	payload := Price{
+	payload := BoardgamePrice{
 		CrDate:     time.Now(),
 		StoreId:    data.StoreId,
 		StoreThumb: data.StoreThumb,

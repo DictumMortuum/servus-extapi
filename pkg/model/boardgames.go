@@ -19,7 +19,7 @@ type Boardgame struct {
 	BggDataNotNull bool                 `gorm:"-" json:"bgg_data_not_null"`
 	Rank           models.JsonNullInt64 `gorm:"index" json:"rank"`
 	RankNotNull    bool                 `gorm:"-" json:"rank_not_null"`
-	Prices         []Price              `json:"prices"`
+	Prices         []BoardgamePrice     `json:"prices"`
 	UpdatedAt      time.Time
 }
 

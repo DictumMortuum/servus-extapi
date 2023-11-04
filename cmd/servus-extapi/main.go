@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/DictumMortuum/servus-extapi/pkg/bgg"
+	"github.com/DictumMortuum/servus-extapi/pkg/adapter"
 	"github.com/DictumMortuum/servus-extapi/pkg/config"
 	"github.com/DictumMortuum/servus-extapi/pkg/middleware"
 	"github.com/DictumMortuum/servus-extapi/pkg/model"
@@ -20,12 +20,12 @@ var (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.9",
+		"version": "v0.0.10",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
 
-func Route(router *gin.RouterGroup, endpoint string, obj Routable) {
+func Route(router *gin.RouterGroup, endpoint string, obj model.Routable) {
 	group := router.Group("/" + endpoint)
 	group.Use(func(c *gin.Context) {
 		c.Set("apimodel", obj)
@@ -53,6 +53,7 @@ func main() {
 	Route(g, "players", model.Player{})
 	Route(g, "plays", model.Play{})
 	Route(g, "stats", model.Stat{})
+	Route(g, "boardgameprices", model.BoardgamePrice{})
 	Route(g, "prices", model.Price{})
 	Route(g, "locations", model.Location{})
 	Route(g, "stores", model.Store{})
@@ -66,14 +67,14 @@ func main() {
 	Route(g, "ignorednames", model.IgnoredName{})
 	Route(g, "cachedprices", model.CachedPrice{})
 
-	g.POST("/bgstatsupload", G(CreateBGStats))
+	g.POST("/bgstatsupload", adapter.G(CreateBGStats))
 
-	cachedPrices := model.CachedPrice{}
-	g.GET("/cachedprices/search/:id", OpenDB, Id, LoadOne(cachedPrices.Get), G(bgg.SearchCachedPriceOnBgg), CloseDB)
-	g.POST("/cachedprices/create/:id", OpenDB, Id, G(cachedPrices.CreatePrice), CloseDB)
+	// cachedPrices := model.CachedPrice{}
+	// g.GET("/cachedprices/search/:id", OpenDB, Id, LoadOne(cachedPrices.Get), adapter.G(bgg.SearchCachedPriceOnBgg), CloseDB)
+	// g.POST("/cachedprices/create/:id", OpenDB, Id, adapter.G(cachedPrices.CreatePrice), CloseDB)
 
-	prices := model.Price{}
-	g.GET("/prices/search/:id", OpenDB, Id, LoadOne(prices.Get), G(bgg.SearchCachedPriceOnBgg), CloseDB)
+	// prices := model.BoardgamePrice{}
+	// g.GET("/prices/search/:id", OpenDB, Id, LoadOne(prices.Get), adapter.G(bgg.SearchCachedPriceOnBgg), CloseDB)
 
 	log.Fatal(r.Run(":10000"))
 }
