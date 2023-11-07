@@ -6,12 +6,13 @@ import (
 	"github.com/DictumMortuum/servus-extapi/pkg/adapter"
 	"github.com/DictumMortuum/servus-extapi/pkg/config"
 	"github.com/DictumMortuum/servus-extapi/pkg/middleware"
+	"github.com/DictumMortuum/servus-extapi/pkg/queries"
 	"github.com/gin-gonic/gin"
 )
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.3",
+		"version": "v0.0.4",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -44,6 +45,7 @@ func main() {
 		adapter.A(GetBoardgamePlays),
 		adapter.A(GetLatestBoardgames),
 		adapter.A(GetBoardgameDetail),
+		adapter.A(queries.GetPlayers),
 		middleware.Result,
 	)
 

@@ -18,55 +18,6 @@ type Player struct {
 	Hidden  bool    `json:"hidden"`
 }
 
-func GetPlayers(req *model.Map, res *model.Map) error {
-	DB, err := req.GetDB()
-	if err != nil {
-		return err
-	}
-
-	RDB, err := req.GetRedis()
-	if err != nil {
-		return err
-	}
-
-	url, err := req.GetString("url")
-	if err != nil {
-		return err
-	}
-
-	rs := []Network{}
-	err = db.CachedSelect(DB, RDB, "GetPlayers"+url, &rs, fmt.Sprintf(`
-		select
-			pl.id,
-			CONCAT(pl.name, " ", pl.surname) name,
-			pl.avatar url,
-			pl.hidden hidden,
-			count(*) count
-		from
-			tboardgameplayers pl,
-			tboardgamestats s,
-			tboardgameplays p
-		where
-			pl.id = s.player_id and
-			s.play_id = p.id
-			%s
-		group by
-			1
-		order by
-			4
-	`, db.YearConstraint(req, "and")))
-	if err != nil {
-		return err
-	}
-
-	sort.Slice(rs, func(i int, j int) bool {
-		return rs[i].Count >= rs[j].Count
-	})
-
-	res.Set("players", rs)
-	return nil
-}
-
 func GetPlayerDetail(req *model.Map, res *model.Map) error {
 	id, err := req.GetInt64("id")
 	if err != nil {
