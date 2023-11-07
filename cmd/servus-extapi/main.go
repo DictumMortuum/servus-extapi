@@ -12,7 +12,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.11",
+		"version": "v0.0.12",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -27,22 +27,22 @@ func main() {
 	r.Use(middleware.Cors())
 	g := r.Group("/rest")
 	g.GET("/version", Version)
-	adapter.Route(g, "players", model.Player{})
-	adapter.Route(g, "plays", model.Play{})
-	adapter.Route(g, "stats", model.Stat{})
-	adapter.Route(g, "boardgameprices", model.BoardgamePrice{})
-	adapter.Route(g, "prices", model.Price{})
-	adapter.Route(g, "locations", model.Location{})
-	adapter.Route(g, "stores", model.Store{})
-	adapter.Route(g, "boardgames", model.Boardgame{})
-	adapter.Route(g, "bgstatsplayers", model.BGStatsPlayer{})
-	adapter.Route(g, "bgstatslocations", model.BGStatsLocation{})
-	adapter.Route(g, "bgstatsgames", model.BGStatsGame{})
-	adapter.Route(g, "bgstats", model.BGStat{})
-	adapter.Route(g, "bgstatsplays", model.BGStatsPlay{})
-	adapter.Route(g, "ignoredprices", model.IgnoredPrice{})
-	adapter.Route(g, "ignorednames", model.IgnoredName{})
-	adapter.Route(g, "cachedprices", model.CachedPrice{})
+	adapter.RaRoute(g, "players", model.Player{})
+	adapter.RaRoute(g, "plays", model.Play{})
+	adapter.RaRoute(g, "stats", model.Stat{})
+	adapter.RaRoute(g, "boardgameprices", model.BoardgamePrice{})
+	adapter.RaRoute(g, "prices", model.Price{})
+	adapter.RaRoute(g, "locations", model.Location{})
+	adapter.RaRoute(g, "stores", model.Store{})
+	adapter.RaRoute(g, "boardgames", model.Boardgame{})
+	adapter.RaRoute(g, "bgstatsplayers", model.BGStatsPlayer{})
+	adapter.RaRoute(g, "bgstatslocations", model.BGStatsLocation{})
+	adapter.RaRoute(g, "bgstatsgames", model.BGStatsGame{})
+	adapter.RaRoute(g, "bgstats", model.BGStat{})
+	adapter.RaRoute(g, "bgstatsplays", model.BGStatsPlay{})
+	adapter.RaRoute(g, "ignoredprices", model.IgnoredPrice{})
+	adapter.RaRoute(g, "ignorednames", model.IgnoredName{})
+	adapter.RaRoute(g, "cachedprices", model.CachedPrice{})
 
 	g.POST("/bgstatsupload", adapter.G(CreateBGStats))
 
