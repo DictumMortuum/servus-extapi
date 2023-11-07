@@ -2,25 +2,20 @@ package scrape
 
 import (
 	"log"
-	"net/http"
 	"strings"
 
-	"github.com/DictumMortuum/servus/pkg/w3m"
 	"github.com/gocolly/colly/v2"
 )
 
-func ScrapeCrystalLotus() (map[string]any, []map[string]any, error) {
+func ScrapeCrystalLotus2() (map[string]any, []map[string]any, error) {
 	store_id := int64(24)
 	rs := []map[string]any{}
 
-	t := &http.Transport{}
-	t.RegisterProtocol("file", http.NewFileTransport(http.Dir("/")))
-
 	collector := colly.NewCollector(
+		colly.AllowedDomains("crystallotus.eu"),
 		user_agent,
 		colly.CacheDir("/tmp"),
 	)
-	collector.WithTransport(t)
 
 	collector.OnHTML(".grid__item", func(e *colly.HTMLElement) {
 		link := e.ChildAttr(".motion-reduce", "src")
@@ -44,16 +39,10 @@ func ScrapeCrystalLotus() (map[string]any, []map[string]any, error) {
 	collector.OnHTML(".pagination__list li:last-child a", func(e *colly.HTMLElement) {
 		link := "https://crystallotus.eu" + e.Attr("href")
 		log.Println("Visiting: " + link)
-		local_link, _ := w3m.BypassCloudflare(link)
-		collector.Visit(local_link)
+		collector.Visit(link)
 	})
 
-	local, err := w3m.BypassCloudflare("https://crystallotus.eu/collections/tabletop-games")
-	if err != nil {
-		return nil, nil, err
-	}
-
-	collector.Visit(local)
+	collector.Visit("https://crystallotus.eu/collections/tabletop-games/")
 	collector.Wait()
 
 	return map[string]interface{}{

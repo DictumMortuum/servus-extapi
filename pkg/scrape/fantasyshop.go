@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/DictumMortuum/servus/pkg/w3m"
+	"github.com/DictumMortuum/servus-extapi/pkg/w3m"
 	"github.com/gocolly/colly/v2"
 )
 
