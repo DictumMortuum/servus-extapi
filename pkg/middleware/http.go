@@ -62,12 +62,49 @@ func Result(c *gin.Context) {
 		c.Error(err)
 	}
 
+	for key, val := range res.Headers {
+		c.Header(key, val)
+	}
+
 	if len(c.Errors) > 0 {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"errors": c.Errors,
 		})
 	} else {
 		c.JSON(http.StatusOK, res.Internal)
+	}
+}
+
+func ResultRa(c *gin.Context) {
+	req, err := model.ToMap(c, "req")
+	if err != nil {
+		c.Error(err)
+	}
+
+	res, err := model.ToMap(c, "res")
+	if err != nil {
+		c.Error(err)
+	}
+
+	err = req.Close()
+	if err != nil {
+		c.Error(err)
+	}
+
+	for key, val := range res.Headers {
+		c.Header(key, val)
+	}
+
+	if len(c.Errors) > 0 {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"errors": c.Errors,
+		})
+	} else {
+		if val, ok := res.Internal["data"]; ok {
+			c.JSON(http.StatusOK, val)
+		} else {
+			c.JSON(http.StatusOK, []any{})
+		}
 	}
 }
 

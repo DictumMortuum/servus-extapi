@@ -13,6 +13,7 @@ require (
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/heetch/confita v0.10.0
 	github.com/jmoiron/sqlx v1.3.5
+	github.com/mrz1836/go-sanitize v1.3.1
 	github.com/redis/go-redis/v9 v9.3.0
 	github.com/spf13/cast v1.5.1
 	github.com/urfave/cli/v2 v2.25.7

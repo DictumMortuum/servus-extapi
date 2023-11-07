@@ -5,26 +5,35 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/DictumMortuum/servus-extapi/pkg/model"
 	"github.com/gin-gonic/gin"
+	"github.com/mrz1836/go-sanitize"
 	"gorm.io/gorm"
 )
 
-func Paginate(c *gin.Context) func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		raw_range := c.Query("range")
+func Paginate(c *gin.Context) {
+	m, err := model.ToMap(c, "req")
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
-		var payload []int
-		var offset int
-		var limit int
-		err := json.Unmarshal([]byte(raw_range), &payload)
-		if err != nil {
-			offset = 0
-			limit = 50
-		} else {
-			offset = payload[0]
-			limit = payload[1] - payload[0] + 1
-		}
+	raw_range := c.Query("range")
+	var payload []int
+	var offset int
+	var limit int
+	err = json.Unmarshal([]byte(raw_range), &payload)
+	if err != nil {
+		offset = 0
+		limit = 50
+		m.Set("range", fmt.Sprintf("%d-%d", 0, 50))
+	} else {
+		offset = payload[0]
+		limit = payload[1] - payload[0] + 1
+		m.Set("range", fmt.Sprintf("%d-%d", payload[0], payload[1]))
+	}
 
+	m.Paginate = func(db *gorm.DB) *gorm.DB {
 		return db.Offset(offset).Limit(limit)
 	}
 }
@@ -40,6 +49,16 @@ func argToGorm(db *gorm.DB, key string, val any) *gorm.DB {
 		if term != "%%" {
 			return db.Where(key+" LIKE ?", val)
 		}
+	} else if strings.Contains(key, "@autolike") {
+		key = strings.Split(key, "@")[0]
+		terms := strings.Split(sanitize.AlphaNumeric(val.(string), true), " ")
+
+		for _, term := range terms {
+			term = "%" + term + "%"
+			db = db.Where(key+" COLLATE utf8mb4_unicode_ci LIKE ?", term)
+		}
+
+		return db
 	} else {
 		return db.Where(key, val)
 	}
@@ -47,35 +66,17 @@ func argToGorm(db *gorm.DB, key string, val any) *gorm.DB {
 	return db
 }
 
-func EmbeddedFilter(c *gin.Context, col string) func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		raw := c.Query("filter")
-
-		var payload map[string]any
-		err := json.Unmarshal([]byte(raw), &payload)
-		if err != nil {
-			return db
-		} else {
-			for key, val := range payload {
-				switch v := val.(type) {
-				case map[string]any:
-					fmt.Println(v)
-					if key == col {
-						for nested_key, nested_val := range val.(map[string]any) {
-							db = argToGorm(db, nested_key, nested_val)
-						}
-					}
-				default:
-					fmt.Println(v)
-				}
-			}
-
-			return db
-		}
+func Filter(c *gin.Context) {
+	m, err := model.ToMap(c, "req")
+	if err != nil {
+		c.Error(err)
+		return
 	}
+
+	m.Filter = filter(c)
 }
 
-func Filter(c *gin.Context) func(db *gorm.DB) *gorm.DB {
+func filter(c *gin.Context) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		raw := c.Query("filter")
 		var payload map[string]any
@@ -97,7 +98,17 @@ func Filter(c *gin.Context) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func Sort(c *gin.Context) func(db *gorm.DB) *gorm.DB {
+func Sort(c *gin.Context) {
+	m, err := model.ToMap(c, "req")
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	m.Sort = sort(c)
+}
+
+func sort(c *gin.Context) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		raw := c.Query("sort")
 

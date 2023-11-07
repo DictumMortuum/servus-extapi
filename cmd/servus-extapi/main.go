@@ -10,34 +10,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Config struct {
-	Databases map[string]string `config:"databases"`
-}
-
-var (
-	Cfg Config
-)
-
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.10",
+		"version": "v0.0.11",
 	}
 	c.AbortWithStatusJSON(200, rs)
-}
-
-func Route(router *gin.RouterGroup, endpoint string, obj model.Routable) {
-	group := router.Group("/" + endpoint)
-	group.Use(func(c *gin.Context) {
-		c.Set("apimodel", obj)
-		c.Next()
-	})
-	{
-		group.GET("", OpenDB, CountMany, GetMany(obj.List), CloseDB)
-		group.GET("/:id", OpenDB, Id, GetOne(obj.Get), CloseDB)
-		group.PUT("/:id", OpenDB, Id, Body, UpdateOne(obj.Update), CloseDB)
-		group.POST("", OpenDB, Body, CreateOne(obj.Create), CloseDB)
-		group.DELETE("/:id", OpenDB, Id, DeleteOne(obj.Delete), CloseDB)
-	}
 }
 
 func main() {
@@ -50,22 +27,22 @@ func main() {
 	r.Use(middleware.Cors())
 	g := r.Group("/rest")
 	g.GET("/version", Version)
-	Route(g, "players", model.Player{})
-	Route(g, "plays", model.Play{})
-	Route(g, "stats", model.Stat{})
-	Route(g, "boardgameprices", model.BoardgamePrice{})
-	Route(g, "prices", model.Price{})
-	Route(g, "locations", model.Location{})
-	Route(g, "stores", model.Store{})
-	Route(g, "boardgames", model.Boardgame{})
-	Route(g, "bgstatsplayers", model.BGStatsPlayer{})
-	Route(g, "bgstatslocations", model.BGStatsLocation{})
-	Route(g, "bgstatsgames", model.BGStatsGame{})
-	Route(g, "bgstats", model.BGStat{})
-	Route(g, "bgstatsplays", model.BGStatsPlay{})
-	Route(g, "ignoredprices", model.IgnoredPrice{})
-	Route(g, "ignorednames", model.IgnoredName{})
-	Route(g, "cachedprices", model.CachedPrice{})
+	adapter.Route(g, "players", model.Player{})
+	adapter.Route(g, "plays", model.Play{})
+	adapter.Route(g, "stats", model.Stat{})
+	adapter.Route(g, "boardgameprices", model.BoardgamePrice{})
+	adapter.Route(g, "prices", model.Price{})
+	adapter.Route(g, "locations", model.Location{})
+	adapter.Route(g, "stores", model.Store{})
+	adapter.Route(g, "boardgames", model.Boardgame{})
+	adapter.Route(g, "bgstatsplayers", model.BGStatsPlayer{})
+	adapter.Route(g, "bgstatslocations", model.BGStatsLocation{})
+	adapter.Route(g, "bgstatsgames", model.BGStatsGame{})
+	adapter.Route(g, "bgstats", model.BGStat{})
+	adapter.Route(g, "bgstatsplays", model.BGStatsPlay{})
+	adapter.Route(g, "ignoredprices", model.IgnoredPrice{})
+	adapter.Route(g, "ignorednames", model.IgnoredName{})
+	adapter.Route(g, "cachedprices", model.CachedPrice{})
 
 	g.POST("/bgstatsupload", adapter.G(CreateBGStats))
 

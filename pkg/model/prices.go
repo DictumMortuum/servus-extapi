@@ -32,7 +32,7 @@ func (Price) DefaultFilter(db *gorm.DB) *gorm.DB {
 
 func (c Price) List(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (any, error) {
 	var data []Price
-	rs := db.Debug().Scopes(scopes...).Scopes(c.DefaultFilter).Find(&data)
+	rs := db.Scopes(scopes...).Scopes(c.DefaultFilter).Find(&data)
 	return data, rs.Error
 }
 
@@ -47,7 +47,7 @@ func (obj Price) Update(db *gorm.DB, id int64, body []byte) (any, error) {
 		Id: id,
 	}
 
-	var payload Price
+	var payload map[string]any
 	err := json.Unmarshal(body, &payload)
 	if err != nil {
 		return nil, err

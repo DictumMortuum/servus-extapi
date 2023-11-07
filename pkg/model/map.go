@@ -10,6 +10,8 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/redis/go-redis/v9"
 	"github.com/spf13/cast"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 func ToMap(c *gin.Context, key string) (*Map, error) {
@@ -23,12 +25,18 @@ func ToMap(c *gin.Context, key string) (*Map, error) {
 	}
 
 	v := Map{}
+	v.Internal = make(map[string]any)
+	v.Headers = make(map[string]string)
 	c.Set(key, &v)
 	return &v, nil
 }
 
 type Map struct {
 	Internal map[string]any
+	Headers  map[string]string
+	Paginate func(*gorm.DB) *gorm.DB
+	Sort     func(*gorm.DB) *gorm.DB
+	Filter   func(*gorm.DB) *gorm.DB
 }
 
 func (m *Map) Close() error {
@@ -61,9 +69,35 @@ func (m *Map) GetBool(key string) (bool, error) {
 	return cast.ToBoolE(m.Internal[key])
 }
 
+func (m *Map) GetByte(key string) ([]byte, error) {
+	if val, ok := m.Internal[key]; ok {
+		switch s := val.(type) {
+		case []byte:
+			return s, nil
+		default:
+			return nil, fmt.Errorf("not a valid type")
+		}
+	} else {
+		return nil, fmt.Errorf("could not find key")
+	}
+}
+
 func (m *Map) Get(key string) (any, bool) {
 	val, ok := m.Internal[key]
 	return val, ok
+}
+
+func (m *Map) GetModel() (Routable, error) {
+	if val, ok := m.Internal["apimodel"]; ok {
+		conn, ok := val.(Routable)
+		if !ok {
+			return nil, fmt.Errorf("error with retrieving routable")
+		} else {
+			return conn, nil
+		}
+	}
+
+	return nil, nil
 }
 
 func (m *Map) GetDB() (*sqlx.DB, error) {
@@ -82,6 +116,35 @@ func (m *Map) GetDB() (*sqlx.DB, error) {
 
 		db.MapperFunc(util.ToSnake)
 		m.Internal["db"] = db
+		return db, nil
+	}
+}
+
+func (m *Map) GetGorm() (*gorm.DB, error) {
+	if val, ok := m.Internal["gorm"]; ok {
+		conn, ok := val.(*gorm.DB)
+		if !ok {
+			return nil, fmt.Errorf("error with retrieving gorm pointer")
+		} else {
+			return conn, nil
+		}
+	} else {
+		DB, err := m.GetDB()
+		if err != nil {
+			return nil, err
+		}
+
+		db, err := gorm.Open(mysql.New(mysql.Config{
+			Conn:              DB,
+			DefaultStringSize: 512,
+		}), &gorm.Config{
+			PrepareStmt: true,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		m.Internal["gorm"] = db
 		return db, nil
 	}
 }
