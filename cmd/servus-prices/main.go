@@ -12,7 +12,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.2",
+		"version": "v0.0.3",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -25,7 +25,7 @@ func main() {
 
 	r := gin.Default()
 	r.Use(middleware.Cors())
-	g := r.Group("/rest")
+	g := r.Group("/prices")
 	g.GET("/version", Version)
 	adapter.RaRoute(g, "prices", model.Price{})
 	adapter.RaRoute(g, "stores", model.Store{})
