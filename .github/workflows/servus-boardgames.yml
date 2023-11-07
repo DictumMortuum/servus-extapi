@@ -1,0 +1,20 @@
+on:
+  push:
+    paths:
+      'cmd/servus-boardgames/**.go'
+  workflow_dispatch: {}
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    name: "package servus-boardgames"
+    environment: default
+    steps:
+    - uses: passeidireto/trigger-external-workflow-action@main
+      env:
+        PAYLOAD_REPO: "servus-boardgames"
+        PAYLOAD_ARCH: "aarch64"
+      with:
+        repository: DictumMortuum/pacman
+        event: package
+        github_pat: ${{ secrets.PAT }}

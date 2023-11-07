@@ -8,6 +8,7 @@ on:
       - 'cmd/servus-modem-b/**.go'
       - 'cmd/servus-modem-c/**.go'
       - 'cmd/servus-modem-d/**.go'
+      - 'cmd/servus-scrape/**.go'
   workflow_dispatch: {}
 
 jobs:
