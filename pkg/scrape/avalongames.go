@@ -48,7 +48,11 @@ func ScrapeAvalon() (map[string]any, []map[string]any, error) {
 		pageCount := getPages(e.Text)
 		for i := 2; i <= pageCount; i++ {
 			link := fmt.Sprintf("https://avalongames.gr/index.php?route=product/category&path=59&limit=100&page=%d", i)
-			log.Println("Visiting: ", link)
+
+			if Debug {
+				log.Println("Visiting: ", link)
+			}
+
 			collector.Visit(link)
 		}
 	})

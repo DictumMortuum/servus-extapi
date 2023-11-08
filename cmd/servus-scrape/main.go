@@ -21,6 +21,11 @@ func unique(col []map[string]any) []map[string]any {
 		if val, ok := item["name"]; ok {
 			if name, ok := val.(string); ok {
 				name = strings.TrimSpace(name)
+
+				if name == "" {
+					continue
+				}
+
 				temp[name] = item
 			}
 		}
@@ -123,6 +128,11 @@ func main() {
 								return err
 							}
 						}
+
+						err := UpdateCounts(DB, scrape.IDs[val])
+						if err != nil {
+							return err
+						}
 					}
 
 					return nil
@@ -137,6 +147,13 @@ func main() {
 							if err != nil {
 								return err
 							}
+						}
+					}
+
+					for _, id := range scrape.IDs {
+						err := UpdateCounts(DB, id)
+						if err != nil {
+							return err
 						}
 					}
 

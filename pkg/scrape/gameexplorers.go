@@ -33,7 +33,11 @@ func ScrapeGameExplorers() (map[string]any, []map[string]any, error) {
 	collector.OnHTML(".product-pagination > a", func(e *colly.HTMLElement) {
 		if e.Attr("title") == "επόμενη σελίδα" {
 			link := e.Attr("href")
-			log.Println("Visiting: " + link)
+
+			if Debug {
+				log.Println("Visiting: " + link)
+			}
+
 			collector.Visit(link)
 		}
 	})

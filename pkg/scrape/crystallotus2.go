@@ -38,7 +38,11 @@ func ScrapeCrystalLotus2() (map[string]any, []map[string]any, error) {
 
 	collector.OnHTML(".pagination__list li:last-child a", func(e *colly.HTMLElement) {
 		link := "https://crystallotus.eu" + e.Attr("href")
-		log.Println("Visiting: " + link)
+
+		if Debug {
+			log.Println("Visiting: " + link)
+		}
+
 		collector.Visit(link)
 	})
 

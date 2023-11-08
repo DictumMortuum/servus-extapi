@@ -35,7 +35,11 @@ func ScrapeFantasyShop() (map[string]any, []map[string]any, error) {
 
 	collector.OnHTML("a.ty-pagination__next", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
-		log.Println("Visiting: " + link)
+
+		if Debug {
+			log.Println("Visiting: " + link)
+		}
+
 		local_link, _ := w3m.BypassCloudflare(link)
 		collector.Visit(local_link)
 	})

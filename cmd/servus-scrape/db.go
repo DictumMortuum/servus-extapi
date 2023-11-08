@@ -42,6 +42,25 @@ func Exists(DB *sqlx.DB, payload map[string]any) (bool, error) {
 	return rs, nil
 }
 
+func UpdateCounts(DB *sqlx.DB, store_id int64) error {
+	q := `
+		update
+			tboardgamestores
+		set
+			count = (select count(*) from tprices where store_id = ?),
+			latest_count = (select count(*) from tprices where store_id = ? and updated > NOW() - interval 7 day)
+		where
+			id = ?
+	`
+
+	_, err := DB.Exec(q, store_id, store_id, store_id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func Insert(DB *sqlx.DB, payload map[string]any) (int64, error) {
 	exists, err := Exists(DB, payload)
 	if err != nil {

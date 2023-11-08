@@ -43,14 +43,16 @@ func ScrapeGameRules() (map[string]any, []map[string]any, error) {
 			"url":         e.ChildAttr(".name a", "href"),
 		}
 
-		log.Println(item["store_thumb"])
-
 		rs = append(rs, item)
 	})
 
 	collector.OnHTML("a.next", func(e *colly.HTMLElement) {
 		link := e.Request.AbsoluteURL(e.Attr("href"))
-		log.Println("Visiting: " + link)
+
+		if Debug {
+			log.Println("Visiting: " + link)
+		}
+
 		collector.Visit(link)
 	})
 

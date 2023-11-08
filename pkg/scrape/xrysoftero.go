@@ -37,7 +37,11 @@ func ScrapeXrysoFtero() (map[string]any, []map[string]any, error) {
 
 	collector.OnHTML("a.next", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
-		log.Println("Visiting: " + link)
+
+		if Debug {
+			log.Println("Visiting: " + link)
+		}
+
 		collector.Visit(link)
 	})
 
