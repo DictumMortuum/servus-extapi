@@ -2,12 +2,16 @@ package model
 
 import (
 	"encoding/json"
+
 	"gorm.io/gorm"
 )
 
 type Store struct {
-	Id   int64  `gorm:"primaryKey" json:"id"`
-	Name string `json:"name"`
+	Id          int64  `gorm:"primaryKey" json:"id"`
+	Name        string `json:"name"`
+	Hidden      bool   `json:"hidden"`
+	Count       int    `json:"count"`
+	LatestCount int    `json:"latest_count"`
 }
 
 func (Store) TableName() string {
@@ -15,7 +19,7 @@ func (Store) TableName() string {
 }
 
 func (Store) DefaultFilter(db *gorm.DB) *gorm.DB {
-	return db
+	return db.Where("hidden = 0")
 }
 
 func (Store) List(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (any, error) {

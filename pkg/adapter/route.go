@@ -168,7 +168,7 @@ func GetMany(req *model.Map, res *model.Map) error {
 		return err
 	}
 
-	data, err := m.List(DB, req.Filter, req.Sort, req.Paginate)
+	data, err := m.List(DB, m.DefaultFilter, req.Filter, req.Sort, req.Paginate)
 	if err != nil {
 		return err
 	}
