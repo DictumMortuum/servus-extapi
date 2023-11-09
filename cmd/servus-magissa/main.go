@@ -26,6 +26,8 @@ func main() {
 		return
 	}
 
+	// version
+
 	for _, episode := range episodes {
 		part := "https://www.antenna.gr" + episode
 
