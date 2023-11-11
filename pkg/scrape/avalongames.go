@@ -14,7 +14,7 @@ func ScrapeAvalon() (map[string]any, []map[string]any, error) {
 	collector := colly.NewCollector(
 		colly.AllowedDomains("avalongames.gr"),
 		user_agent,
-		colly.CacheDir("/tmp"),
+		colly.CacheDir(CacheDir),
 	)
 
 	collector.OnHTML(".product-layout", func(e *colly.HTMLElement) {

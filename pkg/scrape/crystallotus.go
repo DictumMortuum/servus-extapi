@@ -18,7 +18,7 @@ func ScrapeCrystalLotus() (map[string]any, []map[string]any, error) {
 
 	collector := colly.NewCollector(
 		user_agent,
-		colly.CacheDir("/tmp"),
+		colly.CacheDir(CacheDir),
 	)
 	collector.WithTransport(t)
 

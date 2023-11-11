@@ -13,7 +13,7 @@ func ScrapeXrysoFtero() (map[string]any, []map[string]any, error) {
 	collector := colly.NewCollector(
 		colly.AllowedDomains("xrysoftero.gr"),
 		user_agent,
-		colly.CacheDir("/tmp"),
+		colly.CacheDir(CacheDir),
 	)
 
 	collector.OnHTML(".thumbnail-container", func(e *colly.HTMLElement) {

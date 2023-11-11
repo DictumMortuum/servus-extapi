@@ -14,7 +14,7 @@ func ScrapeMeeplePlanet() (map[string]any, []map[string]any, error) {
 	collector := colly.NewCollector(
 		colly.AllowedDomains("meeple-planet.com"),
 		user_agent,
-		colly.CacheDir("/tmp"),
+		colly.CacheDir(CacheDir),
 	)
 
 	collector.OnHTML("div.product-small.product-type-simple", func(e *colly.HTMLElement) {

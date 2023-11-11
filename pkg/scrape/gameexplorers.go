@@ -13,7 +13,7 @@ func ScrapeGameExplorers() (map[string]any, []map[string]any, error) {
 	collector := colly.NewCollector(
 		colly.AllowedDomains("www.gameexplorers.gr"),
 		user_agent,
-		colly.CacheDir("/tmp"),
+		colly.CacheDir(CacheDir),
 	)
 
 	collector.OnHTML(".single-product-item", func(e *colly.HTMLElement) {

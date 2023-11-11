@@ -14,7 +14,7 @@ func ScrapeFantasyGate() (map[string]any, []map[string]any, error) {
 	collector := colly.NewCollector(
 		colly.AllowedDomains("fantasygate.gr"),
 		user_agent,
-		colly.CacheDir("/tmp"),
+		colly.CacheDir(CacheDir),
 	)
 
 	collector.OnHTML(".sblock4", func(e *colly.HTMLElement) {

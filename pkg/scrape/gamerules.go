@@ -13,7 +13,7 @@ func ScrapeGameRules() (map[string]any, []map[string]any, error) {
 	collector := colly.NewCollector(
 		colly.AllowedDomains("www.thegamerules.com"),
 		user_agent,
-		colly.CacheDir("/tmp"),
+		colly.CacheDir(CacheDir),
 	)
 
 	collector.OnHTML(".product-layout", func(e *colly.HTMLElement) {

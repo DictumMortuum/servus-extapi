@@ -15,7 +15,7 @@ func ScrapeKaissaPagkrati() (map[string]any, []map[string]any, error) {
 	collector := colly.NewCollector(
 		colly.AllowedDomains("kaissapagrati.gr"),
 		user_agent,
-		colly.CacheDir("/tmp"),
+		colly.CacheDir(CacheDir),
 	)
 
 	collector.OnHTML(".product-grid-container", func(e *colly.HTMLElement) {

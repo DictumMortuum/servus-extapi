@@ -13,7 +13,7 @@ func ScrapePoliteia() (map[string]any, []map[string]any, error) {
 	collector := colly.NewCollector(
 		colly.AllowedDomains("www.politeianet.gr"),
 		user_agent,
-		colly.CacheDir("/tmp"),
+		colly.CacheDir(CacheDir),
 	)
 
 	collector.OnHTML(".browse-page-block", func(e *colly.HTMLElement) {

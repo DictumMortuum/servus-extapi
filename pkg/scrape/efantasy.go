@@ -13,7 +13,7 @@ func ScrapeEfantasy() (map[string]any, []map[string]any, error) {
 	collector := colly.NewCollector(
 		colly.AllowedDomains("www.efantasy.gr"),
 		user_agent,
-		colly.CacheDir("/tmp"),
+		colly.CacheDir(CacheDir),
 	)
 
 	collector.OnHTML("div.product.product-box", func(e *colly.HTMLElement) {

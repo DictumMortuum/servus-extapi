@@ -13,7 +13,7 @@ func ScrapeOzon() (map[string]any, []map[string]any, error) {
 	collector := colly.NewCollector(
 		colly.AllowedDomains("www.ozon.gr"),
 		user_agent,
-		colly.CacheDir("/tmp"),
+		colly.CacheDir(CacheDir),
 	)
 
 	collector.OnHTML(".products-list div.col-xs-3", func(e *colly.HTMLElement) {

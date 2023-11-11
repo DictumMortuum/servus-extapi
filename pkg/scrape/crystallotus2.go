@@ -14,7 +14,7 @@ func ScrapeCrystalLotus2() (map[string]any, []map[string]any, error) {
 	collector := colly.NewCollector(
 		colly.AllowedDomains("crystallotus.eu"),
 		user_agent,
-		colly.CacheDir("/tmp"),
+		colly.CacheDir(CacheDir),
 	)
 
 	collector.OnHTML(".grid__item", func(e *colly.HTMLElement) {

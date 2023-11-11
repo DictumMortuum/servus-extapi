@@ -13,7 +13,7 @@ func ScrapeKaissaEu() (map[string]any, []map[string]any, error) {
 	collector := colly.NewCollector(
 		colly.AllowedDomains("www.kaissa.eu"),
 		user_agent,
-		colly.CacheDir("/tmp"),
+		colly.CacheDir(CacheDir),
 	)
 
 	collector.OnHTML("article.product", func(e *colly.HTMLElement) {

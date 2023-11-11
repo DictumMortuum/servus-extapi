@@ -13,7 +13,7 @@ func ScrapeVgames() (map[string]any, []map[string]any, error) {
 	collector := colly.NewCollector(
 		colly.AllowedDomains("store.v-games.gr"),
 		user_agent,
-		colly.CacheDir("/tmp"),
+		colly.CacheDir(CacheDir),
 	)
 
 	collector.OnHTML("li.product.type-product", func(e *colly.HTMLElement) {

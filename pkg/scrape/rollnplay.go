@@ -14,7 +14,7 @@ func ScrapeRollnplay() (map[string]any, []map[string]any, error) {
 	collector := colly.NewCollector(
 		colly.AllowedDomains("rollnplay.gr"),
 		user_agent,
-		colly.CacheDir("/tmp"),
+		colly.CacheDir(CacheDir),
 	)
 
 	collector.OnHTML(".product.type-product", func(e *colly.HTMLElement) {
