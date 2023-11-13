@@ -41,6 +41,7 @@ var (
 		"kaissapagkrati": ScrapeKaissaPagkrati,
 		"fantasygate":    ScrapeFantasyGate,
 		"gamescom":       ScrapeGamescom,
+		"nolabelx":       ScrapeNoLabelX,
 	}
 	IDs = map[string]int64{
 		"avalongames":     25,
@@ -68,6 +69,7 @@ var (
 		"kaissapagkrati":  31,
 		"fantasygate":     2,
 		"gamescom":        18,
+		"nolabelx":        32,
 	}
 )
 
