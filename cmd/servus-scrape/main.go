@@ -122,6 +122,11 @@ func main() {
 					}
 
 					for _, val := range scrapers {
+						err := Stale(DB, scrape.IDs[val])
+						if err != nil {
+							return err
+						}
+
 						if f, ok := scrape.Scrapers[val].(func() (map[string]any, []map[string]any, error)); ok {
 							err := scrapeSingle(DB, f)
 							if err != nil {
@@ -129,7 +134,7 @@ func main() {
 							}
 						}
 
-						err := UpdateCounts(DB, scrape.IDs[val])
+						err = UpdateCounts(DB, scrape.IDs[val])
 						if err != nil {
 							return err
 						}
@@ -141,6 +146,13 @@ func main() {
 			{
 				Name: "scrapeall",
 				Action: func(ctx *cli.Context) error {
+					for _, id := range scrape.IDs {
+						err := Stale(DB, id)
+						if err != nil {
+							return err
+						}
+					}
+
 					for _, scraper := range scrape.Scrapers {
 						if f, ok := scraper.(func() (map[string]any, []map[string]any, error)); ok {
 							err := scrapeSingle(DB, f)

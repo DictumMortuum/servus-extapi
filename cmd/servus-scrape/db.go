@@ -10,11 +10,11 @@ var (
 	nstmt *sqlx.NamedStmt
 )
 
-func Exists(DB *sqlx.DB, payload map[string]any) (bool, error) {
+func Exists(DB *sqlx.DB, payload map[string]any) (int64, error) {
 	if nstmt == nil {
 		q := `
 			select
-				1
+				id
 			from
 				tprices
 			where
@@ -27,16 +27,16 @@ func Exists(DB *sqlx.DB, payload map[string]any) (bool, error) {
 
 		tx, err := DB.PrepareNamed(q)
 		if err != nil {
-			return false, err
+			return -1, err
 		}
 
 		nstmt = tx
 	}
 
-	var rs bool
+	var rs int64
 	err := nstmt.Get(&rs, payload)
 	if err != nil && err != sql.ErrNoRows {
-		return false, err
+		return -1, err
 	}
 
 	return rs, nil
@@ -62,11 +62,23 @@ func UpdateCounts(DB *sqlx.DB, store_id int64) error {
 }
 
 func Insert(DB *sqlx.DB, payload map[string]any) (int64, error) {
+	if val, ok := payload["store_thumb"]; ok {
+		if val.(string) == "" {
+			payload["store_thumb"] = "https://placehold.co/200x200"
+		}
+	}
+
 	exists, err := Exists(DB, payload)
 	if err != nil {
 		return -1, err
 	}
-	if exists {
+
+	if exists != -1 {
+		err := Fresh(DB, exists)
+		if err != nil {
+			return -1, err
+		}
+
 		return -1, nil
 	}
 
@@ -93,7 +105,7 @@ func Insert(DB *sqlx.DB, payload map[string]any) (int64, error) {
 			NULL,
 			NOW(),
 			NOW()
-		) on duplicate key update updated = NOW(), store_thumb = :store_thumb, price = :price, stock = :stock
+		) on duplicate key update updated = NOW(), store_thumb = :store_thumb, price = :price, stock = :stock, updated = 0
 	`
 	row, err := DB.NamedExec(q, payload)
 	if err != nil {
@@ -106,4 +118,24 @@ func Insert(DB *sqlx.DB, payload map[string]any) (int64, error) {
 	}
 
 	return id, nil
+}
+
+func Stale(DB *sqlx.DB, id int64) error {
+	q := `update tprices set deleted = 1 where store_id = ?`
+	_, err := DB.Exec(q, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func Fresh(DB *sqlx.DB, id int64) error {
+	q := `update tprices set deleted = 0 where id = ?`
+	_, err := DB.Exec(q, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
