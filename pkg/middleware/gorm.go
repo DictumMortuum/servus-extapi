@@ -49,6 +49,9 @@ func argToGorm(db *gorm.DB, key string, val any) *gorm.DB {
 		if term != "%%" {
 			return db.Where(key+" LIKE ?", val)
 		}
+	} else if strings.Contains(key, "@gt") {
+		key = strings.Split(key, "@")[0]
+		return db.Where(key+" >= ?", val)
 	} else if strings.Contains(key, "@autolike") {
 		key = strings.Split(key, "@")[0]
 		terms := strings.Split(sanitize.AlphaNumeric(val.(string), true), " ")
