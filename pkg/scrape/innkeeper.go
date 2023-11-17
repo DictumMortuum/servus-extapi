@@ -29,13 +29,20 @@ func ScrapeInnkeeper() (map[string]any, []map[string]any, error) {
 
 		// log.Println(e.(".product-img-link img"))
 
+		var url string
+		if e.ChildAttr(".hover-img a", "href") != "" {
+			url = e.ChildAttr(".hover-img a", "href")
+		} else {
+			url = e.ChildAttr("a.product-image-link", "href")
+		}
+
 		item := map[string]any{
 			"name":        e.ChildText(".wd-entities-title"),
 			"store_id":    store_id,
 			"store_thumb": e.ChildAttr(".size-woocommerce_thumbnail", "data-lazy-src"),
 			"stock":       stock,
 			"price":       getPrice(e.ChildText(".woocommerce-Price-amount")),
-			"url":         e.Request.AbsoluteURL(e.ChildAttr(".product-img-link", "href")),
+			"url":         e.Request.AbsoluteURL(url),
 		}
 
 		rs = append(rs, item)
