@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RaRoute(router *gin.RouterGroup, endpoint string, obj model.Routable) {
+func RaRoute(router *gin.RouterGroup, endpoint string, obj model.Routable, funcs ...func(*gin.Context)) {
 	group := router.Group("/" + endpoint)
 	group.Use(func(c *gin.Context) {
 		m, err := model.ToMap(c, "req")
@@ -19,8 +19,14 @@ func RaRoute(router *gin.RouterGroup, endpoint string, obj model.Routable) {
 
 		m.Set("apimodel", obj)
 	})
+
+	listgroup := group.Group("")
+	for _, fn := range funcs {
+		listgroup.Use(fn)
+	}
+
 	{
-		group.GET(
+		listgroup.GET(
 			"",
 			middleware.Filter,
 			middleware.Paginate,
@@ -148,7 +154,7 @@ func CountMany(req *model.Map, res *model.Map) error {
 	}
 
 	var count int64
-	rs := DB.Model(m).Scopes(req.Filter).Count(&count)
+	rs := DB.Model(m).Scopes(m.DefaultFilter, req.Filter).Count(&count)
 	if rs.Error != nil {
 		return rs.Error
 	}
