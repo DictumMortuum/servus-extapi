@@ -3,16 +3,15 @@ BINARIES = \
 	servus-player \
 	servus-tragedy \
 	servus-boardgames \
-	servus-magissa \
 	servus-modem-a \
 	servus-modem-restart-a \
 	servus-modem-b \
 	servus-modem-c \
 	servus-modem-d \
 	servus-bgstats \
-	servus-nauagio \
 	servus-prices \
-	servus-scrape
+	servus-scrape \
+	servus-series
 
 GOOPTS = -buildmode=pie -trimpath -mod=readonly -modcacherw -ldflags=-s -ldflags=-w
 

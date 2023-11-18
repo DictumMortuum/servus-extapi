@@ -1,14 +1,13 @@
 on:
   push:
     paths:
-      - 'cmd/servus-magissa/**.go'
-      - 'cmd/servus-nauagio/**.go'
       - 'cmd/servus-modem-a/**.go'
       - 'cmd/servus-modem-restart-a/**.go'
       - 'cmd/servus-modem-b/**.go'
       - 'cmd/servus-modem-c/**.go'
       - 'cmd/servus-modem-d/**.go'
       - 'cmd/servus-scrape/**.go'
+      - 'cmd/servus-series/**.go'
   workflow_dispatch: {}
 
 jobs:

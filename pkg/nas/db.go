@@ -1,6 +1,8 @@
 package nas
 
 import (
+	"log"
+
 	"github.com/jmoiron/sqlx"
 )
 
@@ -27,20 +29,27 @@ func Exists(DB *sqlx.DB, url string) (*Download, error) {
 	return &rs, nil
 }
 
-func Insert(DB *sqlx.DB, url string) (int64, error) {
+func Insert(DB *sqlx.DB, series, url string) (int64, error) {
 	q := `
 		insert into tyoutubedl (
-			url
+			series,
+			url,
+			processed
 		) values (
-			:url
-		)
+			:series,
+			:url,
+			0
+		) on duplicate key update id = id
 	`
 	row, err := DB.NamedExec(q, map[string]any{
-		"url": url,
+		"series": series,
+		"url":    url,
 	})
 	if err != nil {
 		return -1, err
 	}
+
+	log.Println(series, url)
 
 	id, err := row.LastInsertId()
 	if err != nil {
