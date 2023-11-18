@@ -35,6 +35,9 @@ func Exists(DB *sqlx.DB, payload map[string]any) (int64, error) {
 
 	var rs int64
 	err := nstmt.Get(&rs, payload)
+	if err == sql.ErrNoRows {
+		return -1, nil
+	}
 	if err != nil && err != sql.ErrNoRows {
 		return -1, err
 	}
