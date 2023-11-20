@@ -2,6 +2,8 @@ package model
 
 import (
 	"encoding/json"
+	"log"
+	"sort"
 	"time"
 
 	"gorm.io/datatypes"
@@ -47,7 +49,130 @@ func (obj Play) Update(db *gorm.DB, id int64, body []byte) (any, error) {
 		return nil, err
 	}
 
-	rs := db.Debug().Omit("Boardgame").Omit("Location").Clauses(clause.OnConflict{UpdateAll: true}).Session(&gorm.Session{FullSaveAssociations: true}).Create(&payload)
+	var play_data map[string]any
+	err = json.Unmarshal(payload.PlayData, &play_data)
+	if err != nil {
+		return nil, err
+	}
+
+	stats := payload.Stats
+	sort.Slice(stats, func(i, j int) bool {
+		scorei, err := payload.Boardgame.Score(&stats[i])
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		scorej, err := payload.Boardgame.Score(&stats[j])
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		return scorei > scorej
+	})
+
+	players := []int64{}
+	for _, item := range stats {
+		players = append(players, item.PlayerId)
+	}
+
+	data := map[string]any{
+		"players": players,
+	}
+
+	if payload.Boardgame.Solitaire && len(payload.Stats) == 1 {
+		data["solo"] = true
+	}
+
+	if payload.Boardgame.Cooperative {
+		data["cooperative"] = true
+	}
+
+	if payload.Boardgame.Cooperative {
+		winners := []int64{}
+
+		for _, stat := range payload.Stats {
+			var stat_data map[string]any
+			err := json.Unmarshal(stat.Data, &stat_data)
+			if err != nil {
+				return nil, err
+			}
+
+			if val, ok := stat_data["won"]; ok {
+				if val.(bool) {
+					winners = append(winners, stat.PlayerId)
+				}
+			}
+		}
+
+		data["winners"] = winners
+	} else {
+		draws := []bool{}
+		// if there are teams present
+		if val, ok := play_data["teams"]; ok {
+			data["teams"] = val
+
+			team_scores := []float64{}
+			log.Println(data["teams"])
+			for _, team := range data["teams"].([]any) {
+				team_score := 0.0
+				for _, id := range team.([]any) {
+					for _, stat := range payload.Stats {
+						if int64(id.(float64)) == stat.PlayerId {
+							score, err := payload.Boardgame.Score(&stat)
+							if err != nil {
+								log.Fatal(err)
+							}
+							team_score += score
+						}
+					}
+				}
+				team_scores = append(team_scores, team_score)
+			}
+
+			for i := 0; i < len(team_scores)-1; i++ {
+				draws = append(draws, team_scores[i] == team_scores[i+1])
+			}
+		} else {
+			for i := 0; i < len(stats)-1; i++ {
+				scorei, err := payload.Boardgame.Score(&stats[i])
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				scorej, err := payload.Boardgame.Score(&stats[i+1])
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				draws = append(draws, scorei == scorej)
+			}
+
+			winners := []int64{payload.Stats[0].PlayerId}
+			for i, draw := range draws {
+				if draw {
+					winners = append(winners, payload.Stats[i+1].PlayerId)
+				} else {
+					break
+				}
+			}
+			data["winners"] = winners
+		}
+		data["draws"] = draws
+	}
+
+	for _, item := range stats {
+		log.Println(item)
+	}
+
+	log.Println(data)
+
+	payload.Stats = stats
+
+	rs := db.Debug().Omit("Boardgame").Omit("Location").Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Session(&gorm.Session{
+		FullSaveAssociations: true,
+	}).Create(&payload)
 	if rs.Error != nil {
 		return nil, err
 	}
@@ -55,17 +180,25 @@ func (obj Play) Update(db *gorm.DB, id int64, body []byte) (any, error) {
 	return obj.Get(db, id)
 }
 
-func (Play) Create(db *gorm.DB, body []byte) (any, error) {
+func (obj Play) Create(db *gorm.DB, body []byte) (any, error) {
 	var payload Play
 	err := json.Unmarshal(body, &payload)
 	if err != nil {
 		return nil, err
 	}
 
-	rs := db.Debug().Omit("Boardgame").Omit("Location").Clauses(clause.OnConflict{UpdateAll: true}).Session(&gorm.Session{FullSaveAssociations: true}).Create(&payload)
+	rs := db.Debug().Omit("Boardgame").Omit("Location").Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Session(&gorm.Session{
+		FullSaveAssociations: true,
+	}).Create(&payload)
 	if rs.Error != nil {
 		return nil, err
 	}
+
+	// log.Println(obj.Get(db, payload.Id))
+
+	// log.Println(payload)
 
 	return payload, nil
 }

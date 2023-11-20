@@ -3,6 +3,7 @@ package model
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/DictumMortuum/servus/pkg/models"
@@ -19,7 +20,10 @@ type Boardgame struct {
 	BggDataNotNull bool                 `gorm:"-" json:"bgg_data_not_null"`
 	Rank           models.JsonNullInt64 `gorm:"index" json:"rank"`
 	RankNotNull    bool                 `gorm:"-" json:"rank_not_null"`
+	Cooperative    bool                 `gorm:"cooperative" json:"cooperative"`
+	Solitaire      bool                 `gorm:"solitaire" json:"solitaire"`
 	Prices         []BoardgamePrice     `json:"prices"`
+	Data           models.Json          `db:"data" json:"data"`
 	UpdatedAt      time.Time
 }
 
@@ -162,4 +166,91 @@ func (obj Boardgame) Delete(db *gorm.DB, id int64) (any, error) {
 	}
 
 	return data, nil
+}
+
+type column struct {
+	Name     string  `json:"name"`
+	Type     string  `json:"type"`
+	Tiebreak string  `json:"tiebreak,omitempty"`
+	Factor   float64 `json:"factor,omitempty"`
+	Exclude  bool    `json:"exclude,omitempty"`
+}
+
+type settings struct {
+	Columns     []column `json:"columns,omitempty"`
+	Cooperative bool     `json:"cooperative,omitempty"`
+	Autowin     []string `json:"autowin,omitempty"`
+}
+
+func (obj Boardgame) Score(stat *Stat) (float64, error) {
+	if stat == nil {
+		return 0, nil
+	}
+
+	var stat_data map[string]any
+	err := json.Unmarshal(stat.Data, &stat_data)
+	if err != nil {
+		return 0, err
+	}
+
+	if val, ok := stat_data["score"].(float64); ok {
+		return val, nil
+	}
+
+	if val, ok := stat_data["winner"].(bool); ok {
+		if val {
+			return 1, nil
+		} else {
+			return 0, nil
+		}
+	}
+
+	var s settings
+	err = obj.Data.Unmarshal(&s)
+	if err != nil {
+		return 0, err
+	}
+
+	log.Println(s)
+	score := 0.0
+	base := 0.01
+
+	for _, col := range s.Columns {
+		if col.Tiebreak != "" {
+			factor := col.Factor
+			if factor == 0 {
+				factor = base
+			}
+
+			if val, ok := stat_data[col.Name].(float64); ok {
+				if col.Tiebreak == "asc" {
+					score += val * base
+				} else if col.Tiebreak == "desc" {
+					score -= val * base
+				}
+			}
+			base *= 0.1
+		}
+
+		if col.Exclude {
+			continue
+		}
+
+		switch col.Type {
+		case "int":
+			if val, ok := stat_data[col.Name].(float64); ok {
+				score += val
+			}
+		case "negint":
+			if val, ok := stat_data[col.Name].(float64); ok {
+				score -= val
+			}
+		default:
+			if val, ok := stat_data[col.Name].(float64); ok {
+				score += val
+			}
+		}
+	}
+
+	return score, nil
 }
