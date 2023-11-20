@@ -12,7 +12,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.6",
+		"version": "v0.0.7",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -27,7 +27,7 @@ func main() {
 	r.Use(middleware.Cors())
 	g := r.Group("/prices")
 	g.GET("/version", Version)
-	adapter.RaRoute(g, "prices", model.Price{})
+	adapter.RaRoute(g, "prices", model.Price{}, searchFilter)
 	adapter.RaRoute(g, "stores", model.Store{})
 
 	log.Fatal(r.Run(":10003"))
