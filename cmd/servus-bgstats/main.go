@@ -28,6 +28,10 @@ func main() {
 				Name:   "load",
 				Action: load,
 			},
+			{
+				Name:   "cooperative",
+				Action: cooperative,
+			},
 		},
 	}
 
