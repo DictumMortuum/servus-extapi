@@ -25,27 +25,10 @@ func magissa(ctx *cli.Context) error {
 	for _, episode := range episodes {
 		part := "https://www.antenna.gr" + episode
 
-		// rs, _ := nas.Exists(DB, part)
-		// if rs == nil {
-		_, err := nas.Insert(DB, "magissa", part)
+		_, err := nas.Insert(DB, "Magissa", part)
 		if err != nil {
 			return err
 		}
-
-		// payload := map[string]any{
-		// 	"url":   part,
-		// 	"path":  "/volume1/plex/greek series/Magissa/",
-		// 	"owner": "dimitris@dictummortuum.com",
-		// 	"group": "dimitris@dictummortuum.com",
-		// }
-
-		// err = nas.YoutubeDL(payload)
-		// if err != nil {
-		// 	return err
-		// }
-
-		// log.Println(payload)
-		// }
 	}
 
 	return nil
@@ -54,10 +37,7 @@ func magissa(ctx *cli.Context) error {
 func scrapeMagissaEpisodes(url string) []string {
 	urls := []string{}
 
-	collector := colly.NewCollector(
-		colly.CacheDir("/tmp"),
-	)
-
+	collector := colly.NewCollector()
 	collector.OnHTML("#showepisodes a", func(e *colly.HTMLElement) {
 		urls = append(urls, e.Attr("href"))
 	})

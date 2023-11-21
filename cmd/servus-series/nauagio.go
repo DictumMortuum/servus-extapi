@@ -21,27 +21,10 @@ func nauagio(ctx *cli.Context) error {
 	defer DB.Close()
 
 	for _, episode := range episodes {
-		// rs, _ := nas.Exists(DB, episode)
-		// if rs == nil {
-		_, err := nas.Insert(DB, "nauagio", episode)
+		_, err := nas.Insert(DB, "Nauagio", episode)
 		if err != nil {
 			return err
 		}
-
-		// payload := map[string]any{
-		// 	"url":   episode,
-		// 	"path":  "/volume1/plex/greek series/Nauagio/",
-		// 	"owner": "dimitris@dictummortuum.com",
-		// 	"group": "dimitris@dictummortuum.com",
-		// }
-
-		// err = nas.YoutubeDL(payload)
-		// if err != nil {
-		// 	return err
-		// }
-
-		// log.Println(payload)
-		// }
 	}
 
 	return nil
@@ -50,10 +33,7 @@ func nauagio(ctx *cli.Context) error {
 func scrapeNauagioEpisodes(url string) []string {
 	urls := []string{}
 
-	collector := colly.NewCollector(
-		colly.CacheDir("/tmp"),
-	)
-
+	collector := colly.NewCollector()
 	collector.OnHTML("#ShowEpisodes a.prel.relative-post.blocked", func(e *colly.HTMLElement) {
 		urls = append(urls, e.Attr("href"))
 	})
