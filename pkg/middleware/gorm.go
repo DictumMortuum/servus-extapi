@@ -38,7 +38,11 @@ func Paginate(c *gin.Context) {
 	}
 }
 
-func argToGorm(db *gorm.DB, key string, val any) *gorm.DB {
+func argToGorm(db *gorm.DB, key string, val any, whole bool) *gorm.DB {
+	if key == "whole" {
+		return db
+	}
+
 	if strings.Contains(key, "@not") {
 		key = strings.Split(key, "@")[0]
 		return db.Not(key, val)
@@ -54,11 +58,15 @@ func argToGorm(db *gorm.DB, key string, val any) *gorm.DB {
 		return db.Where(key+" >= ?", val)
 	} else if strings.Contains(key, "@autolike") {
 		key = strings.Split(key, "@")[0]
-		terms := strings.Split(sanitize.AlphaNumeric(val.(string), true), " ")
+		temp := strings.TrimSpace(sanitize.AlphaNumeric(val.(string), true))
+		terms := strings.Split(temp, " ")
 
 		for _, term := range terms {
-			term = "%" + term + "%"
-			db = db.Where(key+" COLLATE utf8mb4_unicode_ci LIKE ?", term)
+			if whole {
+				db = db.Where(key + " COLLATE utf8mb4_unicode_ci REGEXP '[[:<:]]" + term + "[[:>:]]'")
+			} else {
+				db = db.Where(key+" COLLATE utf8mb4_unicode_ci LIKE ?", "%"+term+"%")
+			}
 		}
 
 		return db
@@ -87,12 +95,19 @@ func filter(c *gin.Context) func(db *gorm.DB) *gorm.DB {
 		if err != nil {
 			return db
 		} else {
+			whole := false
+			if val, ok := payload["whole"]; ok {
+				if val.(float64) == 1 {
+					whole = true
+				}
+			}
+
 			for key, val := range payload {
 				switch val.(type) {
 				case map[string]any:
 					continue
 				default:
-					db = argToGorm(db, key, val)
+					db = argToGorm(db, key, val, whole)
 				}
 			}
 
