@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"strings"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/model"
 	"github.com/gin-gonic/gin"
@@ -56,6 +57,11 @@ func searchFilter(c *gin.Context) {
 	for key, val := range payload {
 		if key == "name@autolike" {
 			sanitized := sanitize.AlphaNumeric(val.(string), true)
+			sanitized = strings.TrimSpace(sanitized)
+
+			if len(sanitized) < 4 {
+				continue
+			}
 
 			err := insertTrace(DB, sanitized)
 			if err != nil {
