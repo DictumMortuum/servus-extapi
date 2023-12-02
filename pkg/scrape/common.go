@@ -45,6 +45,7 @@ var (
 		"efantasycrete":  ScrapeEfantasyCrete,
 		"dragonseye":     ScrapeDragonsEye,
 		"playce":         ScrapePlayce,
+		"rollntrade":     ScrapeRollntrade,
 	}
 	IDs = map[string]int64{
 		"avalongames":     25,
@@ -76,6 +77,7 @@ var (
 		"efantasycrete":   33,
 		"dragonseye":      34,
 		"playce":          35,
+		"rollntrade":      36,
 	}
 )
 
