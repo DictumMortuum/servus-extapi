@@ -108,7 +108,7 @@ func Insert(DB *sqlx.DB, payload map[string]any) (int64, error) {
 			NULL,
 			NOW(),
 			NOW()
-		) on duplicate key update updated = NOW(), store_thumb = :store_thumb, price = :price, stock = :stock, updated = 0
+		) on duplicate key update updated = NOW(), store_thumb = :store_thumb, price = :price, stock = :stock, deleted = 0
 	`
 	row, err := DB.NamedExec(q, payload)
 	if err != nil {
