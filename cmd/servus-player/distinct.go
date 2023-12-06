@@ -65,3 +65,65 @@ func GetDistinctGames(req *model.Map, res *model.Map) error {
 
 	return nil
 }
+
+func GetOldDistinctGames(req *model.Map, res *model.Map) error {
+	id, err := req.GetInt64("id")
+	if err != nil {
+		return err
+	}
+
+	rs := []DistinctBoardgame{}
+	yearFlag, err := req.GetBool("year_flag")
+	if err != nil {
+		return err
+	}
+
+	if !yearFlag {
+		res.Set("old_distinct", rs)
+		return nil
+	}
+
+	url, err := req.GetString("url")
+	if err != nil {
+		return err
+	}
+
+	DB, err := req.GetDB()
+	if err != nil {
+		return err
+	}
+
+	RDB, err := req.GetRedis()
+	if err != nil {
+		return err
+	}
+
+	err = db.CachedSelect(DB, RDB, "GetOldDistinctGames"+url, &rs, fmt.Sprintf(`
+		select
+			g.id,
+			g.name,
+			g.square200,
+			max(p.date) date
+		from
+			tboardgames g,
+			tboardgamestats s,
+			tboardgameplays p
+		where
+			g.id = s.boardgame_id and
+			s.play_id = p.id and
+			s.player_id = ?
+		group by
+			1
+		having
+			%s
+		order by
+			date desc
+	`, db.YearHavingConstraint(req)), id)
+	if err != nil {
+		return err
+	}
+
+	res.Set("old_distinct", rs)
+
+	return nil
+}
