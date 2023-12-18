@@ -3,8 +3,10 @@ package main
 import (
 	"log"
 	"os"
+	"runtime"
 	"sort"
 	"strings"
+	"sync"
 
 	rofi "github.com/DictumMortuum/gofi"
 	"github.com/DictumMortuum/servus-extapi/pkg/config"
@@ -13,6 +15,8 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/urfave/cli/v2"
 )
+
+var wg sync.WaitGroup
 
 func unique(col []map[string]any) []map[string]any {
 	temp := map[string]map[string]any{}
@@ -153,14 +157,23 @@ func main() {
 						}
 					}
 
+					wg.Add(len(scrape.Scrapers))
+
 					for _, scraper := range scrape.Scrapers {
 						if f, ok := scraper.(func() (map[string]any, []map[string]any, error)); ok {
-							err := scrapeSingle(DB, f)
-							if err != nil {
-								return err
-							}
+							go (func() {
+								runtime.LockOSThread()
+								err := scrapeSingle(DB, f)
+								if err != nil {
+									log.Println(err)
+								}
+								defer wg.Done()
+								runtime.UnlockOSThread()
+							})()
 						}
 					}
+
+					wg.Wait()
 
 					for _, id := range scrape.IDs {
 						err := UpdateCounts(DB, id)

@@ -45,6 +45,35 @@ func Exists(DB *sqlx.DB, payload map[string]any) (int64, error) {
 	return rs, nil
 }
 
+type Price struct {
+	Id      int64  `json:"id,omitempty"`
+	StoreId int64  `json:"store_id,omitempty"`
+	Name    string `json:"name,omitempty"`
+}
+
+func Get(DB *sqlx.DB, payload map[string]any) (*Price, error) {
+	id, _ := payload["store_id"]
+	name, _ := payload["name"]
+
+	var rs Price
+	err := DB.QueryRowx(`
+		select
+			id,
+			store_id,
+			name
+		from
+			tprices
+		where
+			name = ? and
+			store_id = ?
+	`, name, id).StructScan(&rs)
+	if err != nil {
+		return nil, err
+	}
+
+	return &rs, nil
+}
+
 func UpdateCounts(DB *sqlx.DB, store_id int64) error {
 	q := `
 		update
@@ -84,6 +113,9 @@ func Insert(DB *sqlx.DB, payload map[string]any) (int64, error) {
 
 		return -1, nil
 	}
+
+	// p, _ := Get(DB, payload)
+	// log.Println(p)
 
 	q := `
 		insert into tprices (
