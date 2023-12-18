@@ -174,3 +174,13 @@ func Fresh(DB *sqlx.DB, id int64) error {
 
 	return nil
 }
+
+func Cleanup(DB *sqlx.DB) error {
+	q := `delete from tprices where deleted = 1`
+	_, err := DB.Exec(q)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

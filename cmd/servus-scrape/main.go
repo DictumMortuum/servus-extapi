@@ -182,6 +182,11 @@ func main() {
 						}
 					}
 
+					err = Cleanup(DB)
+					if err != nil {
+						return err
+					}
+
 					return nil
 				},
 			},
