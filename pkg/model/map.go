@@ -57,6 +57,10 @@ func (m *Map) Set(key string, val any) {
 	m.Internal[key] = val
 }
 
+func (m *Map) SetInternal(val map[string]any) {
+	m.Internal = val
+}
+
 func (m *Map) GetString(key string) (string, error) {
 	return cast.ToStringE(m.Internal[key])
 }
