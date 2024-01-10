@@ -47,10 +47,10 @@ func unique(col []map[string]any) []map[string]any {
 	return rs
 }
 
-func scrapeSingle(db *sqlx.DB, f func() (map[string]any, []map[string]any, error)) error {
+func scrapeSingle(db *sqlx.DB, f func() (map[string]any, []map[string]any, error)) (int, error) {
 	metadata, rs, err := f()
 	if err != nil {
-		return err
+		return -1, err
 	}
 
 	temp := unique(rs)
@@ -58,7 +58,7 @@ func scrapeSingle(db *sqlx.DB, f func() (map[string]any, []map[string]any, error
 	for _, item := range temp {
 		id, err := Insert(db, item)
 		if err != nil {
-			return err
+			return -1, err
 		}
 
 		if id != -1 {
@@ -68,7 +68,7 @@ func scrapeSingle(db *sqlx.DB, f func() (map[string]any, []map[string]any, error
 
 	log.Println(metadata, len(temp), len(rs), count)
 
-	return nil
+	return count, nil
 }
 
 func listSingle(db *sqlx.DB, f func() (map[string]any, []map[string]any, error)) error {
@@ -132,7 +132,7 @@ func main() {
 						}
 
 						if f, ok := scrape.Scrapers[val].(func() (map[string]any, []map[string]any, error)); ok {
-							err := scrapeSingle(DB, f)
+							_, err := scrapeSingle(DB, f)
 							if err != nil {
 								return err
 							}
@@ -150,23 +150,37 @@ func main() {
 			{
 				Name: "scrapeall",
 				Action: func(ctx *cli.Context) error {
-					for _, id := range scrape.IDs {
-						err := Stale(DB, id)
-						if err != nil {
-							return err
-						}
-					}
-
 					wg.Add(len(scrape.Scrapers))
 
-					for _, scraper := range scrape.Scrapers {
+					for key, scraper := range scrape.Scrapers {
+						id := scrape.IDs[key]
 						if f, ok := scraper.(func() (map[string]any, []map[string]any, error)); ok {
 							go (func() {
 								runtime.LockOSThread()
-								err := scrapeSingle(DB, f)
+
+								err := Stale(DB, id)
 								if err != nil {
 									log.Println(err)
 								}
+
+								count, err := scrapeSingle(DB, f)
+								if err != nil {
+									log.Println(err)
+								}
+
+								if count > 0 {
+									err = Cleanup(DB, id)
+									if err != nil {
+										log.Println(err)
+									}
+									log.Println("Cleaned up ", id, " with count ", count)
+								}
+
+								err = UpdateCounts(DB, id)
+								if err != nil {
+									log.Println(err)
+								}
+
 								defer wg.Done()
 								runtime.UnlockOSThread()
 							})()
@@ -174,18 +188,6 @@ func main() {
 					}
 
 					wg.Wait()
-
-					for _, id := range scrape.IDs {
-						err := UpdateCounts(DB, id)
-						if err != nil {
-							return err
-						}
-					}
-
-					err = Cleanup(DB)
-					if err != nil {
-						return err
-					}
 
 					return nil
 				},
