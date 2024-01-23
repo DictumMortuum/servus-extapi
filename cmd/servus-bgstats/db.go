@@ -16,30 +16,30 @@ type BGPlay struct {
 	BGStats     []BGStat
 }
 
-func getBGPlays(DB *sqlx.DB) ([]BGPlay, error) {
-	rs := []BGPlay{}
-	q := `
-		select
-			p.id,
-			g.boardgame_id,
-			l.location_id,
-			p.play_id,
-			p.play_date
-		from
-			tbgstatsplays p,
-			tbgstatsgames g,
-			tbgstatslocations l
-		where
-			p.game_id = g.id and
-			p.location_id = l.id
-	`
-	err := DB.Select(&rs, q)
-	if err != nil {
-		return nil, err
-	}
+// func getBGPlays(DB *sqlx.DB) ([]BGPlay, error) {
+// 	rs := []BGPlay{}
+// 	q := `
+// 		select
+// 			p.id,
+// 			g.boardgame_id,
+// 			l.location_id,
+// 			p.play_id,
+// 			p.play_date
+// 		from
+// 			tbgstatsplays p,
+// 			tbgstatsgames g,
+// 			tbgstatslocations l
+// 		where
+// 			p.game_id = g.id and
+// 			p.location_id = l.id
+// 	`
+// 	err := DB.Select(&rs, q)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return rs, nil
-}
+// 	return rs, nil
+// }
 
 func getMappedBGPlays(DB *sqlx.DB) ([]BGPlay, error) {
 	rs := []BGPlay{}

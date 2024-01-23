@@ -32,6 +32,10 @@ func main() {
 				Name:   "cooperative",
 				Action: cooperative,
 			},
+			{
+				Name:   "score",
+				Action: score,
+			},
 		},
 	}
 
