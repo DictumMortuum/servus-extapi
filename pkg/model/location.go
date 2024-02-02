@@ -2,12 +2,14 @@ package model
 
 import (
 	"encoding/json"
+
 	"gorm.io/gorm"
 )
 
 type Location struct {
-	Id   int64  `gorm:"primaryKey" json:"id"`
-	Name string `json:"name"`
+	Id     int64  `gorm:"primaryKey" json:"id"`
+	Name   string `json:"name"`
+	Hidden bool   `json:"hidden"`
 }
 
 func (Location) TableName() string {

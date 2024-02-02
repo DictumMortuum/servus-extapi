@@ -11,7 +11,8 @@ BINARIES = \
 	servus-bgstats \
 	servus-prices \
 	servus-scrape \
-	servus-series
+	servus-series \
+	servus-auth
 
 GOOPTS = -buildmode=pie -trimpath -mod=readonly -modcacherw -ldflags=-s -ldflags=-w
 
