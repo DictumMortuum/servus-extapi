@@ -16,7 +16,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.2",
+		"version": "v0.0.3",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -35,7 +35,10 @@ func main() {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://localhost:3000"},
+		AllowOrigins: []string{
+			"http://localhost:3000",
+			"https://tables.dictummortuum.com",
+		},
 		AllowMethods: []string{"GET", "POST", "DELETE", "PUT", "OPTIONS"},
 		AllowHeaders: append([]string{"content-type"},
 			supertokens.GetAllCORSHeaders()...),

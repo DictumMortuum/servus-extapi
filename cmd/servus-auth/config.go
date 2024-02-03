@@ -13,7 +13,7 @@ import (
 
 var SuperTokensConfig = supertokens.TypeInput{
 	Supertokens: &supertokens.ConnectionInfo{
-		ConnectionURI: "http://localhost:3567",
+		ConnectionURI: "http://sol.dictummortuum.com:3567",
 	},
 	AppInfo: supertokens.AppInfo{
 		AppName:   "Tables",
