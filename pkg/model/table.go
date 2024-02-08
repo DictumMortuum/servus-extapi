@@ -82,8 +82,13 @@ func (obj Table) Delete(db *gorm.DB, id int64) (any, error) {
 		return nil, err
 	}
 
-	rs := db.Delete(&Table{}, id)
-	if err != nil {
+	rs := db.Where("table_id = ?", id).Delete(&TableParticipant{})
+	if rs.Error != nil {
+		return nil, rs.Error
+	}
+
+	rs = db.Delete(&Table{}, id)
+	if rs.Error != nil {
 		return nil, rs.Error
 	}
 
