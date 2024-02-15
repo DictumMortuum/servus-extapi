@@ -85,7 +85,15 @@ func (c *Client) getStatistics() error {
 		VoipStatus.WithLabelValues(stats.Host).Set(float64(isVoipEnabled))
 
 		var isInVoipCall int = 0
-		if stats.VoipCallStatus != "idle" {
+		if stats.VoipCallStatus == "incall" {
+			isInVoipCall = 1
+		} else if stats.VoipCallStatus == "disconnecting" {
+			isInVoipCall = 0
+		} else if stats.VoipCallStatus == "idle" {
+			isInVoipCall = 0
+		} else if stats.VoipCallStatus == "connecting" {
+			isInVoipCall = 1
+		} else if stats.VoipCallStatus == "calling" {
 			isInVoipCall = 1
 		}
 
