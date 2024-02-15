@@ -7,17 +7,17 @@ import (
 	"time"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/config"
+	"github.com/DictumMortuum/servus-extapi/pkg/model"
 	"github.com/DictumMortuum/servus-extapi/pkg/util"
-	"github.com/DictumMortuum/servus/pkg/models"
 	"github.com/go-rod/rod"
 )
 
-func parseVoice(page *rod.Page, stats *models.Modem) {
+func parseVoice(page *rod.Page, stats *model.Modem) {
 	status := page.MustElement(`div.table-row:nth-child(2) > div:nth-child(3)`).MustText()
 	stats.VoipStatus = status == "Up"
 }
 
-func parseDSL(page *rod.Page, stats *models.Modem) {
+func parseDSL(page *rod.Page, stats *model.Modem) {
 	status := page.MustElement(`#link_status`).MustText()
 	stats.Status = status == "Up"
 
@@ -62,7 +62,7 @@ func main() {
 	}
 
 	modem := config.Cfg.Modem["SpeedportPlus2"]
-	var s models.Modem
+	var s model.Modem
 	browser := rod.New().MustConnect().Trace(false).Timeout(30 * time.Second)
 	defer browser.MustClose()
 

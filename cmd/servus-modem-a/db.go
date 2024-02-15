@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/config"
-	"github.com/DictumMortuum/servus/pkg/models"
+	"github.com/DictumMortuum/servus-extapi/pkg/model"
 	"github.com/jmoiron/sqlx"
 )
 
-func saveStats(s *models.Modem, id string) error {
+func saveStats(s *model.Modem, id string) error {
 	payload, err := json.Marshal(s)
 	if err != nil {
 		return err

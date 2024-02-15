@@ -4,28 +4,31 @@ import (
 	"log"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/config"
+	"github.com/DictumMortuum/servus-extapi/pkg/model"
 	"github.com/DictumMortuum/servus-extapi/pkg/telnet"
 	"github.com/DictumMortuum/servus-extapi/pkg/util"
-	"github.com/DictumMortuum/servus/pkg/models"
 	tl "github.com/ziutek/telnet"
 )
 
 var (
-	re_max      = regexp.MustCompile(`Max:\s+Upstream rate = (\d+) Kbps, Downstream rate = (\d+) Kbps`)
-	re_cur      = regexp.MustCompile(`Path:\s+\d+, Upstream rate = (\d+) Kbps, Downstream rate = (\d+) Kbps`)
-	re_fec_down = regexp.MustCompile(`\nFECErrors:\s+(\d+)`)
-	re_fec_up   = regexp.MustCompile(`ATUCFECErrors:\s+(\d+)`)
-	re_crc_down = regexp.MustCompile(`\nCRCErrors:\s+(\d+)`)
-	re_crc_up   = regexp.MustCompile(`ATUCCRCErrors:\s+(\d+)`)
-	re_bytes    = regexp.MustCompile(`bytessent\s+= (\d+)\s+,bytesreceived\s+= (\d+)`)
-	re_snr      = regexp.MustCompile(`display dsl snr up=([\d\.]+) down=([\d\.]+) success`)
-	re_voip     = regexp.MustCompile(`Status\s+:Enable`)
+	re_max         = regexp.MustCompile(`Max:\s+Upstream rate = (\d+) Kbps, Downstream rate = (\d+) Kbps`)
+	re_cur         = regexp.MustCompile(`Path:\s+\d+, Upstream rate = (\d+) Kbps, Downstream rate = (\d+) Kbps`)
+	re_fec_down    = regexp.MustCompile(`\nFECErrors:\s+(\d+)`)
+	re_fec_up      = regexp.MustCompile(`ATUCFECErrors:\s+(\d+)`)
+	re_crc_down    = regexp.MustCompile(`\nCRCErrors:\s+(\d+)`)
+	re_crc_up      = regexp.MustCompile(`ATUCCRCErrors:\s+(\d+)`)
+	re_bytes       = regexp.MustCompile(`bytessent\s+= (\d+)\s+,bytesreceived\s+= (\d+)`)
+	re_snr         = regexp.MustCompile(`display dsl snr up=([\d\.]+) down=([\d\.]+) success`)
+	re_voip        = regexp.MustCompile(`Status\s+:Enable`)
+	re_call_status = regexp.MustCompile(`Call Status\s+:(\S+)`)
+	re_calls       = regexp.MustCompile(`\d+\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).*`)
 )
 
-func parseStats(host, user, password, voip string) (*models.Modem, error) {
-	var stats models.Modem
+func parseStats(host, user, password, voip string) (*model.Modem, error) {
+	var stats model.Modem
 
 	t, err := tl.Dial("tcp", host)
 	if err != nil {
@@ -168,6 +171,46 @@ func parseStats(host, user, password, voip string) (*models.Modem, error) {
 	refs = re_voip.FindAllStringSubmatch(raw, -1)
 	if len(refs) > 0 {
 		stats.VoipStatus = true
+	}
+
+	err = telnet.Sendln(t, "vspa display mg info")
+	if err != nil {
+		return nil, err
+	}
+
+	data, err = t.ReadBytes('>')
+	if err != nil {
+		return nil, err
+	}
+
+	raw = string(data)
+
+	refs = re_call_status.FindAllStringSubmatch(raw, -1)
+	if len(refs) > 0 {
+		match := refs[0]
+		stats.VoipCallStatus = strings.ToLower(match[1])
+	}
+
+	err = telnet.Sendln(t, "vspa display rtp statistics")
+	if err != nil {
+		return nil, err
+	}
+
+	data, err = t.ReadBytes('>')
+	if err != nil {
+		return nil, err
+	}
+
+	raw = string(data)
+
+	refs = re_calls.FindAllStringSubmatch(raw, -1)
+	if len(refs) > 0 {
+		match := refs[len(refs)-1]
+		tm, err := time.Parse("2006-01-02 15:04:05", match[1])
+		if err != nil {
+			return nil, err
+		}
+		stats.VoipLastCall = tm
 	}
 
 	return &stats, nil
