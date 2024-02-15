@@ -12,7 +12,8 @@ BINARIES = \
 	servus-prices \
 	servus-scrape \
 	servus-series \
-	servus-auth
+	servus-auth \
+	database-exporter \
 
 GOOPTS = -buildmode=pie -trimpath -mod=readonly -modcacherw -ldflags=-s -ldflags=-w
 
