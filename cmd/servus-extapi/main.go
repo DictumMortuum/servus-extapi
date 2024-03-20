@@ -12,7 +12,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.15",
+		"version": "v0.0.16",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -46,6 +46,7 @@ func main() {
 	adapter.RaRoute(g, "youtubedl", model.YoutubeDL{})
 	adapter.RaRoute(g, "tables", model.Table{})
 	adapter.RaRoute(g, "tableparticipants", model.TableParticipant{})
+	adapter.RaRoute(g, "books", model.Book{})
 
 	g.POST("/bgstatsupload", adapter.G(CreateBGStats))
 

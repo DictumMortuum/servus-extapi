@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+
 	"github.com/DictumMortuum/servus/pkg/models"
 	"gorm.io/gorm"
 )
@@ -79,7 +80,7 @@ func (obj BGStatsPlayer) Delete(db *gorm.DB, id int64) (any, error) {
 	}
 
 	rs := db.Delete(&BGStatsPlayer{}, id)
-	if err != nil {
+	if rs.Error != nil {
 		return nil, rs.Error
 	}
 

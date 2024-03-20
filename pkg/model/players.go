@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+
 	"gorm.io/gorm"
 )
 
@@ -77,7 +78,7 @@ func (obj Player) Delete(db *gorm.DB, id int64) (any, error) {
 	}
 
 	rs := db.Delete(&Player{}, id)
-	if err != nil {
+	if rs.Error != nil {
 		return nil, rs.Error
 	}
 

@@ -84,7 +84,7 @@ func (obj BoardgamePrice) Delete(db *gorm.DB, id int64) (any, error) {
 	}
 
 	rs := db.Delete(&BoardgamePrice{}, id)
-	if err != nil {
+	if rs.Error != nil {
 		return nil, rs.Error
 	}
 

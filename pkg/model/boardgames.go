@@ -161,7 +161,7 @@ func (obj Boardgame) Delete(db *gorm.DB, id int64) (any, error) {
 	}
 
 	rs := db.Delete(&Boardgame{}, id)
-	if err != nil {
+	if rs.Error != nil {
 		return nil, rs.Error
 	}
 
