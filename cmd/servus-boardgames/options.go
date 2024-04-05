@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/db"
 	"github.com/DictumMortuum/servus-extapi/pkg/model"
@@ -37,6 +38,8 @@ func GetPopularGamesForNum(req *model.Map, res *model.Map) error {
 			json_extract(g.bgg_data, '$.links.boardgamesubdomain') subdomains,
 			json_extract(g.bgg_data, '$.polls.boardgameweight.averageweight') weight,
 			json_extract(g.bgg_data, '$.stats.average') average,
+			json_extract(g.bgg_data, '$.polls.userplayers.best[0].min') best_min_players,
+			json_extract(g.bgg_data, '$.polls.userplayers.best[0].max') best_max_players,
 			g.min_players,
 			g.max_players,
 			max(p.date) last_played,
@@ -56,6 +59,10 @@ func GetPopularGamesForNum(req *model.Map, res *model.Map) error {
 	if err != nil {
 		return err
 	}
+
+	sort.Slice(rs, func(i int, j int) bool {
+		return rs[i].Distance(num) <= rs[j].Distance(num)
+	})
 
 	res.Set("options", rs)
 

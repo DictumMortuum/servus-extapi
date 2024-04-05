@@ -13,21 +13,35 @@ import (
 )
 
 type Boardgame struct {
-	Id         int64                  `json:"id,omitempty"`
-	Name       string                 `json:"name,omitempty"`
-	Rank       models.JsonNullInt64   `json:"rank,omitempty"`
-	Count      int                    `json:"count,omitempty"`
-	Square200  models.JsonNullString  `json:"url,omitempty"`
-	Mechanics  models.JsonArray       `json:"mechanics,omitempty"`
-	Designers  models.JsonArray       `json:"designers,omitempty"`
-	Categories models.JsonArray       `json:"categories,omitempty"`
-	Subdomains models.JsonArray       `json:"subdomains,omitempty"`
-	Families   models.JsonArray       `json:"families,omitempty"`
-	Weight     models.JsonNullFloat64 `json:"weight,omitempty"`
-	Average    models.JsonNullString  `json:"average,omitempty"`
-	MinPlayers models.JsonNullInt64   `json:"min_players,omitempty"`
-	MaxPlayers models.JsonNullInt64   `json:"max_players,omitempty"`
-	LastPlayed time.Time              `json:"last_played,omitempty"`
+	Id             int64                  `json:"id,omitempty"`
+	Name           string                 `json:"name,omitempty"`
+	Rank           models.JsonNullInt64   `json:"rank,omitempty"`
+	Count          int                    `json:"count,omitempty"`
+	Square200      models.JsonNullString  `json:"url,omitempty"`
+	Mechanics      models.JsonArray       `json:"mechanics,omitempty"`
+	Designers      models.JsonArray       `json:"designers,omitempty"`
+	Categories     models.JsonArray       `json:"categories,omitempty"`
+	Subdomains     models.JsonArray       `json:"subdomains,omitempty"`
+	Families       models.JsonArray       `json:"families,omitempty"`
+	Weight         models.JsonNullFloat64 `json:"weight,omitempty"`
+	Average        models.JsonNullString  `json:"average,omitempty"`
+	MinPlayers     models.JsonNullInt64   `json:"min_players,omitempty"`
+	MaxPlayers     models.JsonNullInt64   `json:"max_players,omitempty"`
+	BestMinPlayers models.JsonNullInt64   `json:"best_min_players,omitempty"`
+	BestMaxPlayers models.JsonNullInt64   `json:"best_max_players,omitempty"`
+	LastPlayed     time.Time              `json:"last_played,omitempty"`
+}
+
+func Abs(a int64) int64 {
+	if a > 0 {
+		return a
+	} else {
+		return -a
+	}
+}
+
+func (b Boardgame) Distance(n int64) int64 {
+	return Abs(b.BestMaxPlayers.Int64 + b.BestMinPlayers.Int64 - 2*n)
 }
 
 func GetPlayedGames(req *model.Map, res *model.Map) error {
