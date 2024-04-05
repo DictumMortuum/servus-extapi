@@ -30,6 +30,18 @@ func Url(c *gin.Context) {
 	m.Set("url", c.Request.URL.String())
 }
 
+func Num(c *gin.Context) {
+	id := c.Param("num")
+
+	m, err := model.ToMap(c, "req")
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	m.Set("num", id)
+}
+
 func Body(c *gin.Context) {
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {

@@ -25,6 +25,9 @@ type Boardgame struct {
 	Families   models.JsonArray       `json:"families,omitempty"`
 	Weight     models.JsonNullFloat64 `json:"weight,omitempty"`
 	Average    models.JsonNullString  `json:"average,omitempty"`
+	MinPlayers models.JsonNullInt64   `json:"min_players,omitempty"`
+	MaxPlayers models.JsonNullInt64   `json:"max_players,omitempty"`
+	LastPlayed time.Time              `json:"last_played,omitempty"`
 }
 
 func GetPlayedGames(req *model.Map, res *model.Map) error {
@@ -57,6 +60,9 @@ func GetPlayedGames(req *model.Map, res *model.Map) error {
 			json_extract(g.bgg_data, '$.links.boardgamesubdomain') subdomains,
 			json_extract(g.bgg_data, '$.polls.boardgameweight.averageweight') weight,
 			json_extract(g.bgg_data, '$.stats.average') average,
+			g.min_players,
+			g.max_players,
+			max(p.date) last_played,
 			count(*) count
 		from
 			tboardgames g,

@@ -49,6 +49,10 @@ func (m *Map) Close() error {
 	return nil
 }
 
+func (m *Map) Unset(key string) {
+	delete(m.Internal, key)
+}
+
 func (m *Map) Set(key string, val any) {
 	if m.Internal == nil {
 		m.Internal = make(map[string]any)
