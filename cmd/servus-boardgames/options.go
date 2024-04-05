@@ -51,7 +51,7 @@ func GetPopularGamesForNum(req *model.Map, res *model.Map) error {
 		group by
 			1
 		order by
-			last_played, weight desc, count desc
+			rank, last_played, weight desc, count desc
 	`, num, num, db.YearConstraint(req, "and")))
 	if err != nil {
 		return err
