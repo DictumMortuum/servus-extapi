@@ -28,6 +28,10 @@ func main() {
 				Name:   "ioulia",
 				Action: ioulia,
 			},
+			{
+				Name:   "erotas",
+				Action: erotas,
+			},
 		},
 	}
 
