@@ -17,14 +17,14 @@ import (
 var (
 	Origins = []string{
 		"https://tables.dictummortuum.com",
-		"https://tables.dictummortuum.com",
+		"https://prices.dictummortuum.com",
 		"http://localhost:3000",
 	}
 )
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.4",
+		"version": "v0.0.5",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
