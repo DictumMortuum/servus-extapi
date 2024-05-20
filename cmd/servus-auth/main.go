@@ -14,9 +14,17 @@ import (
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
+var (
+	Origins = []string{
+		"https://tables.dictummortuum.com",
+		"https://tables.dictummortuum.com",
+		"http://localhost:3000",
+	}
+)
+
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.3",
+		"version": "v0.0.4",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -35,10 +43,7 @@ func main() {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{
-			"http://localhost:3000",
-			"https://tables.dictummortuum.com",
-		},
+		AllowOrigins: Origins,
 		AllowMethods: []string{"GET", "POST", "DELETE", "PUT", "OPTIONS"},
 		AllowHeaders: append([]string{"content-type"},
 			supertokens.GetAllCORSHeaders()...),

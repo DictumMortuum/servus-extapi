@@ -9,7 +9,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func set(rdb *redis.Client, key string, val any) error {
+func Set(rdb *redis.Client, key string, val any) error {
 	p, err := json.Marshal(val)
 	if err != nil {
 		return err
@@ -23,7 +23,7 @@ func set(rdb *redis.Client, key string, val any) error {
 	return nil
 }
 
-func get(rdb *redis.Client, key string, dest any) error {
+func Get(rdb *redis.Client, key string, dest any) error {
 	p, err := rdb.Get(context.Background(), key).Result()
 	if err != nil {
 		return err
@@ -33,14 +33,14 @@ func get(rdb *redis.Client, key string, dest any) error {
 }
 
 func CachedSelect(DB *sqlx.DB, RDB *redis.Client, key string, dest any, query string, args ...any) error {
-	err := get(RDB, key, dest)
+	err := Get(RDB, key, dest)
 	if err == redis.Nil {
 		err = DB.Select(dest, query, args...)
 		if err != nil {
 			return err
 		}
 
-		err = set(RDB, key, dest)
+		err = Set(RDB, key, dest)
 		if err != nil {
 			return err
 		}

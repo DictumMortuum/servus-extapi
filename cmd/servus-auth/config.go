@@ -2,7 +2,9 @@ package main
 
 import (
 	"net/http"
+	"strings"
 
+	"github.com/supertokens/supertokens-golang/ingredients/emaildelivery"
 	"github.com/supertokens/supertokens-golang/recipe/dashboard"
 	"github.com/supertokens/supertokens-golang/recipe/session"
 	"github.com/supertokens/supertokens-golang/recipe/thirdparty"
@@ -16,7 +18,7 @@ var SuperTokensConfig = supertokens.TypeInput{
 		ConnectionURI: "http://sol.dictummortuum.com:3567",
 	},
 	AppInfo: supertokens.AppInfo{
-		AppName:   "Tables",
+		AppName:   "DictumMortuum",
 		APIDomain: "https://auth.dictummortuum.com",
 		// WebsiteDomain: "https://tables.dictummortuum.com",
 		GetOrigin: func(request *http.Request, userContext supertokens.UserContext) (string, error) {
@@ -27,12 +29,10 @@ var SuperTokensConfig = supertokens.TypeInput{
 					// there is a privacy setting on the frontend which doesn't send
 					// the origin
 				} else {
-					if origin == "https://tables.dictummortuum.com" {
-						// query from the test site
-						return "https://tables.dictummortuum.com", nil
-					} else if origin == "http://localhost:3000" {
-						// query from local development
-						return "http://localhost:3000", nil
+					for _, item := range Origins {
+						if origin == item {
+							return item, nil
+						}
 					}
 				}
 			}
@@ -42,7 +42,26 @@ var SuperTokensConfig = supertokens.TypeInput{
 		},
 	},
 	RecipeList: []supertokens.Recipe{
-		thirdpartyemailpassword.Init(&tpepmodels.TypeInput{}),
+		thirdpartyemailpassword.Init(&tpepmodels.TypeInput{
+			EmailDelivery: &emaildelivery.TypeInput{
+				Override: func(originalImplementation emaildelivery.EmailDeliveryInterface) emaildelivery.EmailDeliveryInterface {
+					ogSendEmail := *originalImplementation.SendEmail
+
+					(*originalImplementation.SendEmail) = func(input emaildelivery.EmailType, userContext supertokens.UserContext) error {
+						// You can change the path, domain of the reset password link,
+						// or even deep link it to your mobile app
+						// This is: `${websiteDomain}${websiteBasePath}/reset-password`
+						input.PasswordReset.PasswordResetLink = strings.Replace(
+							input.PasswordReset.PasswordResetLink,
+							"/auth/reset-password",
+							"/#/auth/reset-password", 1,
+						)
+						return ogSendEmail(input, userContext)
+					}
+					return originalImplementation
+				},
+			},
+		}),
 		session.Init(nil),
 		dashboard.Init(nil),
 		thirdparty.Init(nil),
