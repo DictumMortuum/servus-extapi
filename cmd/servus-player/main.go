@@ -12,7 +12,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.16",
+		"version": "v0.0.17",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -67,6 +67,13 @@ func main() {
 		adapter.A(GetPlayerDetail),
 		adapter.A(GetDistinctGames),
 		adapter.A(GetOldDistinctGames),
+		middleware.Result,
+	)
+
+	g.GET(
+		"/wishlist/:id",
+		middleware.Id,
+		adapter.A(GetPlayerWishlist),
 		middleware.Result,
 	)
 
