@@ -70,16 +70,10 @@ func argToGorm(db *gorm.DB, key string, val any, whole bool) *gorm.DB {
 		}
 
 		return db
-	} else if strings.Contains(key, "@rightlike") {
+	} else if strings.Contains(key, "@simplelike") {
 		key = strings.Split(key, "@")[0]
-		temp := strings.TrimSpace(sanitize.AlphaNumeric(val.(string), true))
-		terms := strings.Split(temp, " ")
-
-		for _, term := range terms {
-			db = db.Where(key+" LIKE ?", term+"%")
-		}
-
-		return db
+		term := strings.TrimSpace(sanitize.AlphaNumeric(val.(string), true))
+		return db.Where(key+" LIKE ?", term+"%")
 	} else {
 		return db.Where(key, val)
 	}
