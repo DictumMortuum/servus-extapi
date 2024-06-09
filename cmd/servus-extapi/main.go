@@ -12,7 +12,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.19",
+		"version": "v0.0.20",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -48,6 +48,7 @@ func main() {
 	adapter.RaRoute(g, "tableparticipants", model.TableParticipant{})
 	adapter.RaRoute(g, "books", model.Book{})
 	adapter.RaRoute(g, "eurovisionparticipations", model.EurovisionParticipation{})
+	adapter.RaRoute(g, "eurovisionvotes", model.EurovisionVote{})
 
 	g.POST("/bgstatsupload", adapter.G(CreateBGStats))
 
