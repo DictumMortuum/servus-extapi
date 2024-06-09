@@ -12,7 +12,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.20",
+		"version": "v0.0.21",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -51,6 +51,7 @@ func main() {
 	adapter.RaRoute(g, "eurovisionvotes", model.EurovisionVote{})
 
 	g.POST("/bgstatsupload", adapter.G(CreateBGStats))
+	g.GET("/eurovisionvotes/user/:id", middleware.Id, adapter.A(model.GetEurovisionVoteByUserId), middleware.ResultRa)
 
 	// cachedPrices := model.CachedPrice{}
 	// g.GET("/cachedprices/search/:id", OpenDB, Id, LoadOne(cachedPrices.Get), adapter.G(bgg.SearchCachedPriceOnBgg), CloseDB)

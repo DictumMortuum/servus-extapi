@@ -35,6 +35,27 @@ func (EurovisionVote) Get(db *gorm.DB, id int64) (any, error) {
 	return data, rs.Error
 }
 
+func GetEurovisionVoteByUserId(req *Map, res *Map) error {
+	DB, err := req.GetGorm()
+	if err != nil {
+		return err
+	}
+
+	id, err := req.GetString("id")
+	if err != nil {
+		return err
+	}
+
+	var data EurovisionVote
+	rs := DB.First(&data, "user_id = ? ", id)
+	if rs.Error != nil {
+		return rs.Error
+	}
+
+	res.Set("data", data)
+	return nil
+}
+
 func (obj EurovisionVote) Update(db *gorm.DB, id int64, body []byte) (any, error) {
 	model := EurovisionVote{
 		Id: id,
