@@ -10,6 +10,7 @@ import (
 type EurovisionParticipation struct {
 	Id          int64     `gorm:"primaryKey" json:"id,omitempty"`
 	UserId      string    `json:"user_id,omitempty"`
+	Email       string    `json:"email"`
 	BoardgameId int64     `json:"boardgame_id"`
 	Boardgame   Boardgame `json:"boardgame"`
 }
