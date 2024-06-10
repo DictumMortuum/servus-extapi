@@ -128,7 +128,8 @@ func Insert(DB *sqlx.DB, payload map[string]any) (int64, error) {
 			deleted,
 			boardgame_id,
 			created,
-			updated
+			updated,
+			tag
 		) values (
 			:name,
 			:store_id,
@@ -139,7 +140,8 @@ func Insert(DB *sqlx.DB, payload map[string]any) (int64, error) {
 			0,
 			NULL,
 			NOW(),
-			NOW()
+			NOW(),
+			:tag
 		) on duplicate key update updated = NOW(), store_thumb = :store_thumb, price = :price, stock = :stock, deleted = 0
 	`
 	row, err := DB.NamedExec(q, payload)

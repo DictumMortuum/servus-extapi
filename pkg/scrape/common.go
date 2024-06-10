@@ -50,6 +50,11 @@ var (
 		"kaissaioannina": ScrapeKaissaIoannina,
 		"kaissachania":   ScrapeKaissaChania,
 		"gametheory":     ScrapeGameTheory,
+		"philibert":      ScrapeCOINPhilibertnet,
+		"fanen":          ScrapeCOINFanen,
+		"gamershq":       ScrapeCOINGamersHQ,
+		"hexasim":        ScrapeCOINHexasim,
+		"udogrebe":       ScrapeCOINUdo,
 	}
 	IDs = map[string]int64{
 		"avalongames":     25,
@@ -86,6 +91,11 @@ var (
 		"kaissaioannina":  38,
 		"kaissachania":    39,
 		"gametheory":      40,
+		"philibert":       41,
+		"fanen":           42,
+		"gamershq":        43,
+		"hexasim":         44,
+		"udogrebe":        45,
 	}
 )
 

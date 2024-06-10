@@ -71,7 +71,7 @@ func scrapeSingle(db *sqlx.DB, f func() (map[string]any, []map[string]any, error
 	return count, nil
 }
 
-func listSingle(db *sqlx.DB, f func() (map[string]any, []map[string]any, error)) error {
+func listSingle(f func() (map[string]any, []map[string]any, error)) error {
 	metadata, rs, err := f()
 	if err != nil {
 		return err
@@ -218,7 +218,7 @@ func main() {
 
 					for _, val := range scrapers {
 						if f, ok := scrape.Scrapers[val].(func() (map[string]any, []map[string]any, error)); ok {
-							err := listSingle(DB, f)
+							err := listSingle(f)
 							if err != nil {
 								return err
 							}
