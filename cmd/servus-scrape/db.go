@@ -100,6 +100,10 @@ func Insert(DB *sqlx.DB, payload map[string]any) (int64, error) {
 		}
 	}
 
+	if _, ok := payload["tag"]; !ok {
+		payload["tag"] = ""
+	}
+
 	exists, err := Exists(DB, payload)
 	if err != nil {
 		return -1, err

@@ -55,6 +55,7 @@ var (
 		"gamershq":       ScrapeCOINGamersHQ,
 		"hexasim":        ScrapeCOINHexasim,
 		"udogrebe":       ScrapeCOINUdo,
+		"myfriendsgames": ScrapeMyFriendsGames,
 	}
 	IDs = map[string]int64{
 		"avalongames":     25,
@@ -96,6 +97,7 @@ var (
 		"gamershq":        43,
 		"hexasim":         44,
 		"udogrebe":        45,
+		"myfriendsgames":  46,
 	}
 )
 

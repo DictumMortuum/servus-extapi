@@ -15,7 +15,8 @@ func ScrapeCOINUdo() (map[string]any, []map[string]any, error) {
 	)
 
 	collector.OnHTML(".productData", func(e *colly.HTMLElement) {
-		raw_price := e.ChildText(".price")
+		tmp := e.ChildTexts("span.price")
+		raw_price := tmp[1]
 
 		var stock int
 		if childHasClass(e, ".stockFlag", "preorderStock") {
