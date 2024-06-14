@@ -84,3 +84,24 @@ func (obj EurovisionParticipation) Delete(db *gorm.DB, id int64) (any, error) {
 
 	return data, nil
 }
+
+func GetEurovisionParticipationsByUserId(req *Map, res *Map) error {
+	DB, err := req.GetGorm()
+	if err != nil {
+		return err
+	}
+
+	id, err := req.GetString("id")
+	if err != nil {
+		return err
+	}
+
+	var data EurovisionParticipation
+	rs := DB.Preload("Boardgame").First(&data, "user_id = ? ", id)
+	if rs.Error != nil {
+		return rs.Error
+	}
+
+	res.Set("data", data)
+	return nil
+}
