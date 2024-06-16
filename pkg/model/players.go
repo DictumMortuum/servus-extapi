@@ -7,11 +7,13 @@ import (
 )
 
 type Player struct {
-	Id      int64   `gorm:"primaryKey" json:"id"`
-	Name    string  `json:"name"`
-	Surname string  `json:"surname"`
-	Email   *string `json:"email"`
-	Hidden  bool    `json:"hidden"`
+	Id          int64   `gorm:"primaryKey" json:"id"`
+	Name        string  `json:"name"`
+	Surname     string  `json:"surname"`
+	Email       *string `json:"email"`
+	Hidden      bool    `json:"hidden"`
+	Avatar      string  `json:"avatar"`
+	BggUsername string  `json:"bgg_username"`
 	// BGStatsPlayers []BGStatsPlayer `json:"bg_stats_players"`
 }
 
@@ -83,4 +85,25 @@ func (obj Player) Delete(db *gorm.DB, id int64) (any, error) {
 	}
 
 	return data, nil
+}
+
+func GetPlayerByEmail(req *Map, res *Map) error {
+	DB, err := req.GetGorm()
+	if err != nil {
+		return err
+	}
+
+	id, err := req.GetString("id")
+	if err != nil {
+		return err
+	}
+
+	var data Player
+	rs := DB.First(&data, "email = ? ", id)
+	if rs.Error != nil {
+		return rs.Error
+	}
+
+	res.Set("data", data)
+	return nil
 }
