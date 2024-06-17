@@ -9,14 +9,14 @@ import (
 	"github.com/DictumMortuum/servus/pkg/models"
 )
 
-type Player struct {
-	Id      int64   `gorm:"primaryKey" json:"id"`
-	Name    string  `json:"name"`
-	Surname string  `json:"surname"`
-	Email   *string `json:"email"`
-	Avatar  *string `json:"avatar"`
-	Hidden  bool    `json:"hidden"`
-}
+// type Player struct {
+// 	Id      int64   `gorm:"primaryKey" json:"id"`
+// 	Name    string  `json:"name"`
+// 	Surname string  `json:"surname"`
+// 	Email   *string `json:"email"`
+// 	Avatar  *string `json:"avatar"`
+// 	Hidden  bool    `json:"hidden"`
+// }
 
 func GetPlayerDetail(req *model.Map, res *model.Map) error {
 	id, err := req.GetInt64("id")
@@ -29,7 +29,7 @@ func GetPlayerDetail(req *model.Map, res *model.Map) error {
 		return err
 	}
 
-	var rs Player
+	var rs model.Player
 	err = DB.QueryRowx(`
 		select
 			*
