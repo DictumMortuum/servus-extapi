@@ -3,17 +3,19 @@ package model
 import (
 	"encoding/json"
 
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
 type Player struct {
-	Id          int64   `gorm:"primaryKey" json:"id"`
-	Name        string  `json:"name"`
-	Surname     string  `json:"surname"`
-	Email       *string `json:"email"`
-	Hidden      bool    `json:"hidden"`
-	Avatar      string  `json:"avatar"`
-	BggUsername string  `json:"bgg_username"`
+	Id          int64          `gorm:"primaryKey" json:"id"`
+	Name        string         `json:"name"`
+	Surname     string         `json:"surname"`
+	Email       *string        `json:"email"`
+	Hidden      bool           `json:"hidden"`
+	Avatar      string         `json:"avatar"`
+	BggUsername string         `json:"bgg_username"`
+	Collection  datatypes.JSON `gorm:"serializer:json" json:"collection"`
 	// BGStatsPlayers []BGStatsPlayer `json:"bg_stats_players"`
 }
 
