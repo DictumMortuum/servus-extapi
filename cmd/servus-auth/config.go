@@ -13,6 +13,15 @@ import (
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
+var (
+	Origins = []string{
+		"https://tables.dictummortuum.com",
+		"https://prices.dictummortuum.com",
+		"https://boardgames.dictummortuum.com",
+		"http://localhost:3000",
+	}
+)
+
 var SuperTokensConfig = supertokens.TypeInput{
 	Supertokens: &supertokens.ConnectionInfo{
 		ConnectionURI: "http://sol.dictummortuum.com:3567",

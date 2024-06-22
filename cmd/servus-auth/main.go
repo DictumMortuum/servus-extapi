@@ -14,18 +14,9 @@ import (
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
-var (
-	Origins = []string{
-		"https://tables.dictummortuum.com",
-		"https://prices.dictummortuum.com",
-		"https://boardgames.dictummortuum.com",
-		"http://localhost:3000",
-	}
-)
-
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.6",
+		"version": "v0.0.7",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
