@@ -50,6 +50,8 @@ func main() {
 	adapter.RaRoute(g, "eurovisionparticipations", model.EurovisionParticipation{})
 	adapter.RaRoute(g, "eurovisionvotes", model.EurovisionVote{})
 
+	// jwt := middleware.Jwt("http://sol.dictummortuum.com:3567/.well-known/jwks.json")
+
 	g.POST("/bgstatsupload", adapter.G(CreateBGStats))
 	g.GET("/eurovisionvotes/user/:id", middleware.Id, adapter.A(model.GetEurovisionVoteByUserId), middleware.ResultRa)
 	g.GET("/eurovisionparticipations/user/:id", middleware.Id, adapter.A(model.GetEurovisionParticipationsByUserId), middleware.ResultRa)

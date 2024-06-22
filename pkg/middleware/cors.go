@@ -8,7 +8,7 @@ import (
 func Cors() func(*gin.Context) {
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"*"}
-	config.AllowHeaders = []string{"range", "content-type"}
+	config.AllowHeaders = []string{"range", "content-type", "sa"}
 	config.ExposeHeaders = []string{"X-Total-Count", "Content-Range", "Content-Description", "Content-Disposition", "Filename"}
 	return cors.New(config)
 }

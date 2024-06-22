@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"errors"
 
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
@@ -48,6 +49,10 @@ func GetEurovisionVoteByUserId(req *Map, res *Map) error {
 
 	var data EurovisionVote
 	rs := DB.First(&data, "user_id = ? ", id)
+	if errors.Is(rs.Error, gorm.ErrRecordNotFound) {
+		res.Set("data", nil)
+		return nil
+	}
 	if rs.Error != nil {
 		return rs.Error
 	}

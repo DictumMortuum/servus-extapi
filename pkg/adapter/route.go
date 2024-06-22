@@ -20,6 +20,8 @@ func RaRoute(router *gin.RouterGroup, endpoint string, obj model.Routable, funcs
 		m.Set("apimodel", obj)
 	})
 
+	// jwt := middleware.Jwt("http://sol.dictummortuum.com:3567/.well-known/jwks.json")
+
 	listgroup := group.Group("")
 	for _, fn := range funcs {
 		listgroup.Use(fn)
@@ -43,6 +45,7 @@ func RaRoute(router *gin.RouterGroup, endpoint string, obj model.Routable, funcs
 		)
 		group.PUT(
 			"/:id",
+			// jwt,
 			middleware.Id,
 			middleware.Body,
 			A(UpdateOne),
@@ -50,12 +53,14 @@ func RaRoute(router *gin.RouterGroup, endpoint string, obj model.Routable, funcs
 		)
 		group.POST(
 			"",
+			// jwt,
 			middleware.Body,
 			A(CreateOne),
 			middleware.ResultRa,
 		)
 		group.DELETE(
 			"/:id",
+			// jwt,
 			middleware.Id,
 			A(DeleteOne),
 			middleware.ResultRa,
