@@ -30,11 +30,16 @@ func GetPlayerWishlist(req *model.Map, res *model.Map) error {
 		return err
 	}
 
+	G, err := req.GetGorm()
+	if err != nil {
+		return err
+	}
+
 	key := "GetPlayerWishlist" + id
-	var wishlist *bgg.WishlistRs
+	var wishlist []bgg.WishlistItem
 	err = db.Get(RDB, key, &wishlist)
-	if err == redis.Nil || len(wishlist.Items) == 0 {
-		rs, err := bgg.Wishlist(id)
+	if err == redis.Nil || len(wishlist) == 0 {
+		rs, err := bgg.Wishlist(G, DB, id)
 		if err != nil {
 			return err
 		}
@@ -47,8 +52,8 @@ func GetPlayerWishlist(req *model.Map, res *model.Map) error {
 		wishlist = rs
 	}
 
-	if len(wishlist.Items) > 0 {
-		raw, err := json.Marshal(wishlist.Items)
+	if len(wishlist) > 0 {
+		raw, err := json.Marshal(wishlist)
 		if err != nil {
 			return err
 		}
@@ -68,7 +73,75 @@ func GetPlayerWishlist(req *model.Map, res *model.Map) error {
 		res.Set("synced", false)
 	}
 
-	res.Set("data", wishlist.Items)
+	res.Set("data", wishlist)
+
+	return nil
+}
+
+func GetFinderUserWishlist(req *model.Map, res *model.Map) error {
+	id, err := req.GetString("id")
+	if err != nil {
+		return err
+	}
+
+	if id == "" {
+		return errors.New("username is not valid")
+	}
+
+	RDB, err := req.GetRedis()
+	if err != nil {
+		return err
+	}
+
+	DB, err := req.GetDB()
+	if err != nil {
+		return err
+	}
+
+	G, err := req.GetGorm()
+	if err != nil {
+		return err
+	}
+
+	key := "GetFinderUserWishlist" + id
+	var wishlist []bgg.WishlistItem
+	err = db.Get(RDB, key, &wishlist)
+	if err == redis.Nil || len(wishlist) == 0 {
+		rs, err := bgg.Wishlist(G, DB, id)
+		if err != nil {
+			return err
+		}
+
+		err = db.Set(RDB, key, rs)
+		if err != nil {
+			return err
+		}
+
+		wishlist = rs
+	}
+
+	if len(wishlist) > 0 {
+		raw, err := json.Marshal(wishlist)
+		if err != nil {
+			return err
+		}
+
+		_, err = DB.NamedExec(`
+		update tfinderusers set collection = :collection where bgg_username = :id
+		`, map[string]any{
+			"id":         id,
+			"collection": string(raw),
+		})
+		if err != nil {
+			return err
+		}
+
+		res.Set("synced", true)
+	} else {
+		res.Set("synced", false)
+	}
+
+	res.Set("data", wishlist)
 
 	return nil
 }
