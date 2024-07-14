@@ -84,6 +84,11 @@ func GetFinderUserWishlist(req *model.Map, res *model.Map) error {
 		return err
 	}
 
+	force, err := req.GetBool("force")
+	if err != nil {
+		return err
+	}
+
 	if id == "" {
 		return errors.New("username is not valid")
 	}
@@ -120,8 +125,25 @@ func GetFinderUserWishlist(req *model.Map, res *model.Map) error {
 		wishlist = rs
 	}
 
-	if len(wishlist) > 0 {
-		raw, err := json.Marshal(wishlist)
+	if len(wishlist) > 0 || force {
+		ratings, err := bgg.GetRatingsFromBgg(id)
+		if err != nil {
+			return err
+		}
+
+		rs := []bgg.WishlistItem{}
+		for _, item := range wishlist {
+			for _, rating := range ratings {
+				if rating.Id == int(item.ObjectId) {
+					item.UserRating = rating.Rating
+					break
+				}
+			}
+
+			rs = append(rs, item)
+		}
+
+		raw, err := json.Marshal(rs)
 		if err != nil {
 			return err
 		}
@@ -137,11 +159,11 @@ func GetFinderUserWishlist(req *model.Map, res *model.Map) error {
 		}
 
 		res.Set("synced", true)
+		res.Set("data", rs)
 	} else {
 		res.Set("synced", false)
+		res.Set("data", wishlist)
 	}
-
-	res.Set("data", wishlist)
 
 	return nil
 }

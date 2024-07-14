@@ -29,10 +29,11 @@ type Status struct {
 
 type WishlistItem struct {
 	// XMLName  xml.Name `xml:"item" json:"-"`
-	ObjectId int64  `xml:"objectid,attr" json:"id"`
-	Name     string `xml:"name" json:"name"`
-	Status   Status `xml:"status"`
-	Stats    Info   `json:"stats"`
+	ObjectId   int64   `xml:"objectid,attr" json:"id"`
+	Name       string  `xml:"name" json:"name"`
+	Status     Status  `xml:"status"`
+	Stats      Info    `json:"stats"`
+	UserRating float64 `json:"user_rating"`
 }
 
 type WishlistRs struct {

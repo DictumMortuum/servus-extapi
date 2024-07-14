@@ -80,6 +80,7 @@ func main() {
 	g.GET(
 		"/finderuser/:id",
 		middleware.Id,
+		middleware.Force,
 		adapter.A(GetFinderUserWishlist),
 		middleware.Result,
 	)

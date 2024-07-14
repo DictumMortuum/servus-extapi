@@ -20,6 +20,18 @@ func Id(c *gin.Context) {
 	m.Set("id", id)
 }
 
+func Force(c *gin.Context) {
+	f := c.Query("force")
+
+	m, err := model.ToMap(c, "req")
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	m.Set("force", f == "true")
+}
+
 func Url(c *gin.Context) {
 	m, err := model.ToMap(c, "req")
 	if err != nil {
