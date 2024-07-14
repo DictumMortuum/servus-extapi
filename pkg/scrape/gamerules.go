@@ -58,6 +58,8 @@ func ScrapeGameRules() (map[string]any, []map[string]any, error) {
 
 	collector.Visit("https://www.thegamerules.com/epitrapezia-paixnidia?fa132=Board%20Game%20Expansions")
 	collector.Visit("https://www.thegamerules.com/epitrapezia-paixnidia?fa132=Board%20Games")
+	collector.Visit("https://www.thegamerules.com/preorders?fa132=Board%20Games")
+	collector.Visit("https://www.thegamerules.com/preorders?fa132=Board%20Game%20Expansions")
 	collector.Wait()
 
 	return map[string]interface{}{
