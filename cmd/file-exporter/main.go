@@ -11,9 +11,21 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.5",
+		"version": "v0.0.6",
 	}
 	c.AbortWithStatusJSON(200, rs)
+}
+
+func readinessHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
+func livenessHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}
 }
 
 func Metrics() http.HandlerFunc {
@@ -36,8 +48,9 @@ func main() {
 	}
 
 	r := gin.Default()
-	g := r.Group("/exporter/file")
-	g.GET("/version", Version)
-	g.GET("/metrics", gin.WrapF(Metrics()))
+	r.GET("/version", Version)
+	r.GET("/metrics", gin.WrapF(Metrics()))
+	r.GET("/readiness", gin.WrapF(readinessHandler()))
+	r.GET("/liveness", gin.WrapF(livenessHandler()))
 	log.Fatal(r.Run(config.Cfg.FileExporterPort))
 }
