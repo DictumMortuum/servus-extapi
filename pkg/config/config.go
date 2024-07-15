@@ -18,8 +18,9 @@ type ModemConfig struct {
 }
 
 type DecoConfig struct {
-	Host string `config:"host"`
-	Pass string `config:"pass"`
+	Host   string `config:"host"`
+	Pass   string `config:"pass"`
+	Folder string `config:"folder"`
 }
 
 type Config struct {

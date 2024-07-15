@@ -6,6 +6,8 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+
+	"github.com/DictumMortuum/servus-extapi/pkg/config"
 )
 
 func processFile(path string) error {
@@ -32,7 +34,7 @@ func processFile(path string) error {
 }
 
 func readFiles() error {
-	err := filepath.Walk("/tmp/analytics", func(path string, info fs.FileInfo, err error) error {
+	err := filepath.Walk(config.Cfg.FileExporterPort, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
