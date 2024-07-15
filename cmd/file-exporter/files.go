@@ -34,7 +34,7 @@ func processFile(path string) error {
 }
 
 func readFiles() error {
-	err := filepath.Walk(config.Cfg.FileExporterPort, func(path string, info fs.FileInfo, err error) error {
+	err := filepath.Walk(config.Cfg.Deco.Folder, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
