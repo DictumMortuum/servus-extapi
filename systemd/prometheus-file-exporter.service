@@ -1,0 +1,14 @@
+[Unit]
+Description=Prometheus exporter for files
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+DynamicUser=yes
+User=consul
+Restart=on-failure
+ExecStart=/usr/local/bin/file-exporter
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

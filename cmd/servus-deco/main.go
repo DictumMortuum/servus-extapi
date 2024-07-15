@@ -8,10 +8,10 @@ import (
 	"github.com/DictumMortuum/servus-extapi/pkg/deco"
 )
 
-func printDecos(c *deco.Client) {
+func printDecos(c *deco.Client) error {
 	result, err := c.DeviceList()
 	if err != nil {
-		log.Fatal(err.Error())
+		return err
 	}
 
 	count := 0
@@ -54,6 +54,7 @@ func printDecos(c *deco.Client) {
 	}
 
 	fmt.Printf("total,deco=%d\n", count)
+	return nil
 }
 
 func main() {
@@ -68,5 +69,8 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	printDecos(c)
+	err = printDecos(c)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 }
