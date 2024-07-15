@@ -8,6 +8,7 @@ on:
       - 'cmd/servus-modem-d/**.go'
       - 'cmd/servus-scrape/**.go'
       - 'cmd/servus-series/**.go'
+      - 'cmd/servus-deco/**.go'
   workflow_dispatch: {}
 
 jobs:

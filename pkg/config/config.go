@@ -5,6 +5,7 @@ import (
 
 	"github.com/heetch/confita"
 	"github.com/heetch/confita/backend/file"
+	"github.com/heetch/confita/backend/flags"
 )
 
 type ModemConfig struct {
@@ -16,10 +17,17 @@ type ModemConfig struct {
 	Extra map[string]string `config:"extra"`
 }
 
+type DecoConfig struct {
+	Host string `config:"host"`
+	Pass string `config:"pass"`
+}
+
 type Config struct {
-	Databases map[string]string      `config:"databases"`
-	Port      string                 `config:"port"`
-	Modem     map[string]ModemConfig `config:"modem"`
+	Databases        map[string]string      `config:"databases"`
+	Port             string                 `config:"port"`
+	FileExporterPort string                 `config:"file"`
+	Modem            map[string]ModemConfig `config:"modem"`
+	Deco             DecoConfig             `config:"deco"`
 }
 
 var (
@@ -28,8 +36,13 @@ var (
 
 func Load() error {
 	loader := confita.NewLoader(
+		flags.NewBackend(),
 		file.NewBackend("/etc/conf.d/servusrc.yml"),
 	)
+
+	Cfg = Config{
+		FileExporterPort: ":10005",
+	}
 
 	err := loader.Load(context.Background(), &Cfg)
 	if err != nil {
