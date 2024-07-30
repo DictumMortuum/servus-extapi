@@ -35,7 +35,7 @@ func printDecos(c *deco.Client) error {
 			status)
 
 		fmt.Printf(
-			"signal24,deco,ip,%s,role,%s,inet_error,%s,nickname,%s,group_status,%s=%s\n",
+			"signal24,deco,ip,%s,role,%s,inet_error,%s,nickname,%s,group_status,%s=%v\n",
 			device.DeviceIP,
 			device.Role,
 			device.InetErrorMsg,
@@ -44,7 +44,7 @@ func printDecos(c *deco.Client) error {
 			device.SignalLevel.Band24)
 
 		fmt.Printf(
-			"signal5,deco,ip,%s,role,%s,inet_error,%s,nickname,%s,group_status,%s=%s\n",
+			"signal5,deco,ip,%s,role,%s,inet_error,%s,nickname,%s,group_status,%s=%v\n",
 			device.DeviceIP,
 			device.Role,
 			device.InetErrorMsg,

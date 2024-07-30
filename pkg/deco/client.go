@@ -90,8 +90,8 @@ type DeviceListResp struct {
 			GroupStatus       string   `json:"group_status"`
 			OemID             string   `json:"oem_id"`
 			SignalLevel       struct {
-				Band24 string `json:"band2_4"`
-				Band5  string `json:"band5"`
+				Band24 any `json:"band2_4"`
+				Band5  any `json:"band5"`
 			} `json:"signal_level"`
 			DeviceModel       string `json:"device_model"`
 			OversizedFirmware bool   `json:"oversized_firmware"`

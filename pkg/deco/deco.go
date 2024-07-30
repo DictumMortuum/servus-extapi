@@ -138,6 +138,7 @@ func (c *Client) doEncryptedPost(path string, params EndpointArgs, body []byte, 
 	if err != nil {
 		return err
 	}
+
 	return json.Unmarshal([]byte(decoded), &result)
 
 }
