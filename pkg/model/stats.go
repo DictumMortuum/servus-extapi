@@ -47,7 +47,7 @@ func (obj Stat) Update(db *gorm.DB, id int64, body []byte) (any, error) {
 		return nil, err
 	}
 
-	rs := db.Model(&model).Updates(payload)
+	rs := db.Model(&model).Omit("Player").Updates(payload)
 	if rs.Error != nil {
 		return nil, err
 	}

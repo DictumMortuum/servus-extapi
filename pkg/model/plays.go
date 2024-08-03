@@ -112,7 +112,7 @@ func (obj Play) Update(db *gorm.DB, id int64, body []byte) (any, error) {
 			data["teams"] = val
 
 			team_scores := []float64{}
-			log.Println(data["teams"])
+			// log.Println(data["teams"])
 			for _, team := range data["teams"].([]any) {
 				team_score := 0.0
 				for _, id := range team.([]any) {
@@ -160,15 +160,20 @@ func (obj Play) Update(db *gorm.DB, id int64, body []byte) (any, error) {
 		data["draws"] = draws
 	}
 
-	for _, item := range stats {
-		log.Println(item)
-	}
-
-	log.Println(data)
+	// for _, item := range stats {
+	// 	log.Println(item)
+	// }
 
 	payload.Stats = stats
 
-	rs := db.Debug().Omit("Boardgame").Omit("Location").Clauses(clause.OnConflict{
+	raw_json, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+
+	payload.PlayData = datatypes.JSON(raw_json)
+
+	rs := db.Debug().Omit("Boardgame").Omit("Location").Omit("Stats.Player").Clauses(clause.OnConflict{
 		UpdateAll: true,
 	}).Session(&gorm.Session{
 		FullSaveAssociations: true,

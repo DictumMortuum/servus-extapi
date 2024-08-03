@@ -5,20 +5,22 @@ go 1.20
 require (
 	github.com/DictumMortuum/gofi v1.1.14
 	github.com/DictumMortuum/servus v0.7.23
-	github.com/gin-contrib/cache v1.2.0
-	github.com/gin-contrib/cors v1.5.0
+	github.com/MicahParks/keyfunc/v2 v2.1.0
+	github.com/gin-contrib/cache v1.3.0
+	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-rod/rod v0.114.3
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/gocolly/colly/v2 v2.1.0
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/heetch/confita v0.10.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/mrmarble/deco v1.0.0
-	github.com/mrz1836/go-sanitize v1.3.1
+	github.com/mrz1836/go-sanitize v1.3.2
 	github.com/prometheus/client_golang v1.18.0
-	github.com/redis/go-redis/v9 v9.5.4
+	github.com/redis/go-redis/v9 v9.6.1
 	github.com/spf13/cast v1.6.0
-	github.com/supertokens/supertokens-golang v0.17.3
+	github.com/supertokens/supertokens-golang v0.24.0
 	github.com/urfave/cli/v2 v2.25.7
 	github.com/ziutek/telnet v0.0.0-20180329124119-c3b780dc415b
 	golang.org/x/net v0.27.0
@@ -31,7 +33,6 @@ require (
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/BurntSushi/toml v1.4.0 // indirect
-	github.com/MicahParks/keyfunc/v2 v2.1.0 // indirect
 	github.com/PuerkitoBio/goquery v1.8.1 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/antchfx/htmlquery v1.3.0 // indirect
@@ -39,8 +40,8 @@ require (
 	github.com/antchfx/xpath v1.2.4 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bradfitz/gomemcache v0.0.0-20230905024940-24af94b03874 // indirect
-	github.com/bytedance/sonic v1.11.9 // indirect
-	github.com/bytedance/sonic/loader v0.1.1 // indirect
+	github.com/bytedance/sonic v1.12.0 // indirect
+	github.com/bytedance/sonic/loader v0.2.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect
@@ -51,18 +52,17 @@ require (
 	github.com/derekstavis/go-qs v0.0.0-20180720192143-9eef69e6c4e7 // indirect
 	github.com/deta/deta-go v1.1.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/gabriel-vasile/mimetype v1.4.4 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.5 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.22.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
-	github.com/golang-jwt/jwt/v5 v5.2.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/gomodule/redigo v1.8.9 // indirect
+	github.com/gomodule/redigo v1.9.2 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect

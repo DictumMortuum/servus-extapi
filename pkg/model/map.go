@@ -146,7 +146,8 @@ func (m *Map) GetGorm() (*gorm.DB, error) {
 			Conn:              DB,
 			DefaultStringSize: 512,
 		}), &gorm.Config{
-			PrepareStmt: true,
+			// DisableAutomaticPing: true,
+			// PrepareStmt: false,
 		})
 		if err != nil {
 			return nil, err
