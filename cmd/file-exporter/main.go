@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/config"
 	"github.com/gin-gonic/gin"
@@ -11,7 +12,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.6",
+		"version": "v0.0.7",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -43,6 +44,11 @@ func Metrics() http.HandlerFunc {
 
 func main() {
 	err := config.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = os.MkdirAll(config.Cfg.Deco.Folder, 0777)
 	if err != nil {
 		log.Fatal(err)
 	}
