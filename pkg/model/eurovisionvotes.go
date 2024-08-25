@@ -10,10 +10,11 @@ import (
 )
 
 type EurovisionVote struct {
-	Id     int64          `gorm:"primaryKey" json:"id"`
-	UserId string         `json:"user_id"`
-	Email  string         `json:"email"`
-	Votes  datatypes.JSON `gorm:"serializer:json" json:"votes"`
+	Id       int64          `gorm:"primaryKey" json:"id"`
+	UserId   string         `json:"user_id"`
+	Email    string         `json:"email"`
+	Included bool           `json:"included"`
+	Votes    datatypes.JSON `gorm:"serializer:json" json:"votes"`
 }
 
 func (EurovisionVote) TableName() string {
@@ -72,7 +73,12 @@ func (obj EurovisionVote) Update(db *gorm.DB, id int64, body []byte) (any, error
 		return nil, err
 	}
 
-	rs := db.Model(&model).Updates(payload)
+	// https://stackoverflow.com/questions/56653423/gorm-doesnt-update-boolean-field-to-false
+	rs := db.Model(&model).Updates(map[string]any{
+		"UserId":   payload.UserId,
+		"Email":    payload.Email,
+		"Included": payload.Included,
+	})
 	if rs.Error != nil {
 		return nil, err
 	}
@@ -110,3 +116,57 @@ func (obj EurovisionVote) Delete(db *gorm.DB, id int64) (any, error) {
 
 	return data, nil
 }
+
+func GetEurovisionVotes(req *Map, res *Map) error {
+	DB, err := req.GetGorm()
+	if err != nil {
+		return err
+	}
+
+	var data []EurovisionVote
+	rs := DB.Find(&data, "included = true")
+	if rs.Error != nil {
+		return rs.Error
+	}
+
+	type temp struct {
+		Boardgame Boardgame `json:"boardgame"`
+	}
+
+	type temp_res struct {
+		Flag  string `json:"flag"`
+		Name  string `json:"name"`
+		Votes int    `json:"votes"`
+	}
+
+	votes := []int{12, 10, 8, 7, 6, 5, 4, 3, 2, 1}
+	result := map[string]temp_res{}
+
+	for _, vote := range data {
+		var raw []temp
+		err = json.Unmarshal(vote.Votes, &raw)
+		if err != nil {
+			return err
+		}
+
+		for i, item := range raw {
+			if i < len(votes) && i >= 0 {
+				tmp := result[item.Boardgame.Name]
+				tmp.Votes += votes[i]
+				tmp.Name = item.Boardgame.Name
+				tmp.Flag = item.Boardgame.Square200
+				result[item.Boardgame.Name] = tmp
+			}
+		}
+	}
+
+	final := []temp_res{}
+	for _, item := range result {
+		final = append(final, item)
+	}
+
+	res.Set("data", final)
+	return nil
+}
+
+// {"flag": "224517", "name": " Brass: Birmingham", "votes": 60}
