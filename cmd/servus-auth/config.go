@@ -6,10 +6,10 @@ import (
 
 	"github.com/supertokens/supertokens-golang/ingredients/emaildelivery"
 	"github.com/supertokens/supertokens-golang/recipe/dashboard"
+	"github.com/supertokens/supertokens-golang/recipe/emailpassword"
+	"github.com/supertokens/supertokens-golang/recipe/emailpassword/epmodels"
 	"github.com/supertokens/supertokens-golang/recipe/session"
 	"github.com/supertokens/supertokens-golang/recipe/thirdparty"
-	"github.com/supertokens/supertokens-golang/recipe/thirdpartyemailpassword"
-	"github.com/supertokens/supertokens-golang/recipe/thirdpartyemailpassword/tpepmodels"
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
@@ -51,7 +51,7 @@ var SuperTokensConfig = supertokens.TypeInput{
 		},
 	},
 	RecipeList: []supertokens.Recipe{
-		thirdpartyemailpassword.Init(&tpepmodels.TypeInput{
+		emailpassword.Init(&epmodels.TypeInput{
 			EmailDelivery: &emaildelivery.TypeInput{
 				Override: func(originalImplementation emaildelivery.EmailDeliveryInterface) emaildelivery.EmailDeliveryInterface {
 					ogSendEmail := *originalImplementation.SendEmail

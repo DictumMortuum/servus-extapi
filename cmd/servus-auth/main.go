@@ -2,21 +2,23 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/config"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/supertokens/supertokens-golang/recipe/emailpassword"
 	"github.com/supertokens/supertokens-golang/recipe/session"
 	"github.com/supertokens/supertokens-golang/recipe/session/sessmodels"
-	"github.com/supertokens/supertokens-golang/recipe/thirdpartyemailpassword"
+	"github.com/supertokens/supertokens-golang/recipe/thirdparty"
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.7",
+		"version": "v0.0.8",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -52,7 +54,7 @@ func main() {
 		c.Abort()
 	})
 
-	r.GET("/version", Version)
+	r.GET("/auth/version", Version)
 	r.GET("/auth/sessioninfo", verifySession(nil), sessionInfo)
 	r.GET("/auth/userinfo", verifySession(nil), userInfo)
 	r.Run(":10004")
@@ -117,20 +119,30 @@ func userInfo(c *gin.Context) {
 	}
 
 	userID := sessionContainer.GetUserID()
-	info, err := thirdpartyemailpassword.GetUserById(userID)
+	userInfo, err := thirdparty.GetUserByID(userID)
 	if err != nil {
 		w.WriteHeader(500)
 		w.Write([]byte("could not get user by ID"))
 		return
 	}
+	if userInfo == nil {
+		emailPasswordUserInfo, err := emailpassword.GetUserByID(userID)
+		if err != nil {
+			w.WriteHeader(500)
+			w.Write([]byte("could not get user by ID"))
+			return
+		}
 
-	w.WriteHeader(200)
-	w.Header().Add("content-type", "application/json")
-	bytes, err := json.Marshal(info)
-	if err != nil {
-		w.WriteHeader(500)
-		w.Write([]byte("error in converting to json"))
+		w.WriteHeader(200)
+		w.Header().Add("content-type", "application/json")
+		bytes, err := json.Marshal(emailPasswordUserInfo)
+		if err != nil {
+			w.WriteHeader(500)
+			w.Write([]byte("error in converting to json"))
+		} else {
+			w.Write(bytes)
+		}
 	} else {
-		w.Write(bytes)
+		fmt.Println(userInfo)
 	}
 }
