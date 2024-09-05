@@ -54,7 +54,7 @@ var (
 		"fanen":          ScrapeCOINFanen,
 		"gamershq":       ScrapeCOINGamersHQ,
 		"hexasim":        ScrapeCOINHexasim,
-		"udogrebe":       ScrapeCOINUdo,
+		// "udogrebe":       ScrapeCOINUdo,
 		"myfriendsgames": ScrapeMyFriendsGames,
 		"milan":          ScrapeCOINMilan,
 	}
@@ -97,9 +97,9 @@ var (
 		"fanen":           42,
 		"gamershq":        43,
 		"hexasim":         44,
-		"udogrebe":        45,
-		"myfriendsgames":  46,
-		"milan":           47,
+		// "udogrebe":        45,
+		"myfriendsgames": 46,
+		"milan":          47,
 	}
 )
 
