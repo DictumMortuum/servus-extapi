@@ -8,6 +8,34 @@ import (
 	"github.com/DictumMortuum/servus-extapi/pkg/deco"
 )
 
+func printDevices(c *deco.Client) error {
+	result, err := c.ClientList()
+	if err != nil {
+		return err
+	}
+
+	for _, device := range result.Result.ClientList {
+		var status int
+		if device.Online {
+			status = 1
+		} else {
+			status = 0
+		}
+
+		fmt.Printf(
+			"client,deco,nickname,%s,ip,%s,mac,%s,interface,%s=%d\n",
+			device.Name,
+			device.IP,
+			device.MAC,
+			device.Interface,
+			status)
+	}
+
+	fmt.Printf("client_total,deco=%d\n", len(result.Result.ClientList))
+
+	return nil
+}
+
 func printDecos(c *deco.Client) error {
 	result, err := c.DeviceList()
 	if err != nil {
@@ -73,4 +101,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+
+	err = printDevices(c)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
 }
