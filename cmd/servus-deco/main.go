@@ -23,10 +23,11 @@ func printDevices(c *deco.Client) error {
 		}
 
 		fmt.Printf(
-			"client,deco,nickname,%s,ip,%s,mac,%s,interface,%s=%d\n",
+			"client,deco,nickname,%s,ip,%s,mac,%s,type,%s,interface,%s=%d\n",
 			device.Name,
 			device.IP,
 			device.MAC,
+			device.ClientType,
 			device.Interface,
 			status)
 	}
