@@ -12,7 +12,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.28",
+		"version": "v0.0.29",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -50,6 +50,7 @@ func main() {
 	adapter.RaRoute(g, "eurovisionparticipations", model.EurovisionParticipation{})
 	adapter.RaRoute(g, "eurovisionvotes", model.EurovisionVote{})
 	adapter.RaRoute(g, "finderusers", model.FinderUser{})
+	adapter.RaRoute(g, "wishlist", model.Wishlist{})
 
 	// jwt := middleware.Jwt("http://sol.dictummortuum.com:3567/.well-known/jwks.json")
 
