@@ -18,6 +18,7 @@ var (
 		"https://tables.dictummortuum.com",
 		"https://prices.dictummortuum.com",
 		"https://boardgames.dictummortuum.com",
+		"https://tools.dictummortuum.com",
 		"http://localhost:3000",
 	}
 )
