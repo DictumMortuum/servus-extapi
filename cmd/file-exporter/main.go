@@ -12,7 +12,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.7",
+		"version": "v0.0.8",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -31,11 +31,22 @@ func livenessHandler() http.HandlerFunc {
 
 func Metrics() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
+		for key := range global_labels {
+			global_labels[key] = false
+		}
+
 		err := readFiles()
 		if err != nil {
 			writer.WriteHeader(http.StatusBadRequest)
 			_, _ = writer.Write([]byte(err.Error()))
 			return
+		}
+
+		for key, val := range global_labels {
+			log.Println(key, val)
+			if !val {
+				global_metrics[key].Reset()
+			}
 		}
 
 		promhttp.Handler().ServeHTTP(writer, request)

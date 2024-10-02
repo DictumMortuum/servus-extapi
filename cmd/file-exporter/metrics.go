@@ -1,11 +1,15 @@
 package main
 
 import (
-	"errors"
 	"strings"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/util"
 	"github.com/prometheus/client_golang/prometheus"
+)
+
+var (
+	global_labels  = map[string]bool{}
+	global_metrics = map[string]*prometheus.MetricVec{}
 )
 
 func toMetric(raw string) error {
@@ -32,13 +36,10 @@ func toMetric(raw string) error {
 	)
 
 	val := util.Atof(raw_val)
-	are := &prometheus.AlreadyRegisteredError{}
-	err := prometheus.Register(metric)
-	if errors.As(err, are) {
-		metric = are.ExistingCollector.(*prometheus.GaugeVec)
-	} else if err != nil {
-		return err
-	}
+	prometheus.Unregister(metric)
+	prometheus.MustRegister(metric)
+	global_labels[key_name+"_"+key_namespace] = true
+	global_metrics[key_name+"_"+key_namespace] = metric.MetricVec
 	metric.WithLabelValues(vals...).Set(val)
 
 	return nil
