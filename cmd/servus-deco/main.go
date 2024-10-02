@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/config"
 	"github.com/DictumMortuum/servus-extapi/pkg/deco"
@@ -24,7 +25,7 @@ func printDevices(c *deco.Client) error {
 
 		fmt.Printf(
 			"client,deco,nickname,%s,ip,%s,mac,%s,type,%s,interface,%s=%d\n",
-			device.Name,
+			strings.ReplaceAll(device.Name, ",", " "),
 			device.IP,
 			device.MAC,
 			device.ClientType,
