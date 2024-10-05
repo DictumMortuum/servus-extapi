@@ -43,7 +43,6 @@ func readFiles() error {
 			return nil
 		}
 
-		fmt.Printf("visited file or dir: %q\n", path)
 		err = processFile(path)
 		if err != nil {
 			return err

@@ -1,14 +1,20 @@
 package main
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/util"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
+type CachedLabels struct {
+	Labels []string
+	Valid  bool
+}
+
 var (
-	global_labels  = map[string]bool{}
+	global_labels  = map[string]CachedLabels{}
 	global_metrics = map[string]*prometheus.MetricVec{}
 )
 
@@ -36,10 +42,19 @@ func toMetric(raw string) error {
 	)
 
 	val := util.Atof(raw_val)
-	prometheus.Unregister(metric)
-	prometheus.MustRegister(metric)
-	global_labels[key_name+"_"+key_namespace] = true
-	global_metrics[key_name+"_"+key_namespace] = metric.MetricVec
+	are := &prometheus.AlreadyRegisteredError{}
+	err := prometheus.Register(metric)
+	if errors.As(err, are) {
+		metric = are.ExistingCollector.(*prometheus.GaugeVec)
+	} else if err != nil {
+		return err
+	}
+	// prometheus.MustRegister(metric)
+	global_labels[s[0]] = CachedLabels{
+		Valid:  true,
+		Labels: vals,
+	}
+	global_metrics[s[0]] = metric.MetricVec
 	metric.WithLabelValues(vals...).Set(val)
 
 	return nil

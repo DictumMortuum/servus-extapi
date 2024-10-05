@@ -12,7 +12,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.8",
+		"version": "v0.0.9",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -32,7 +32,9 @@ func livenessHandler() http.HandlerFunc {
 func Metrics() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		for key := range global_labels {
-			global_labels[key] = false
+			tmp := global_labels[key]
+			tmp.Valid = false
+			global_labels[key] = tmp
 		}
 
 		err := readFiles()
@@ -43,9 +45,12 @@ func Metrics() http.HandlerFunc {
 		}
 
 		for key, val := range global_labels {
-			log.Println(key, val)
-			if !val {
-				global_metrics[key].Reset()
+			if !val.Valid {
+				ok := global_metrics[key].DeleteLabelValues(val.Labels...)
+				if ok {
+					delete(global_metrics, key)
+					delete(global_labels, key)
+				}
 			}
 		}
 
