@@ -52,7 +52,14 @@ func (obj Wishlist) Update(db *gorm.DB, id int64, body []byte) (any, error) {
 		return nil, err
 	}
 
-	rs := db.Model(&model).Updates(payload)
+	// https://stackoverflow.com/questions/56653423/gorm-doesnt-update-boolean-field-to-false
+	rs := db.Model(&model).Updates(map[string]any{
+		"UserId":   payload.UserId,
+		"Email":    payload.Email,
+		"Reserved": payload.Reserved,
+		"Name":     payload.Name,
+		"Url":      payload.Url,
+	})
 	if rs.Error != nil {
 		return nil, err
 	}
