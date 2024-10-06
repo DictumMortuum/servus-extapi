@@ -23,9 +23,23 @@ func printDevices(c *deco.Client) error {
 			status = 0
 		}
 
+		mappings := map[string]string{
+			"BC-6A-D1-28-77-A8": "Dimitris",
+			"56-0F-2C-A4-EC-30": "Ebelina",
+			"BC-6A-D1-2A-00-5D": "Theoni",
+		}
+
+		nickname := strings.ReplaceAll(device.Name, ",", " ")
+		for key, val := range mappings {
+			if key == device.MAC {
+				nickname = val
+				break
+			}
+		}
+
 		fmt.Printf(
 			"client,deco,nickname,%s,ip,%s,mac,%s,type,%s,interface,%s=%d\n",
-			strings.ReplaceAll(device.Name, ",", " "),
+			nickname,
 			device.IP,
 			device.MAC,
 			device.ClientType,
