@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"errors"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -98,6 +99,10 @@ func GetEurovisionParticipationsByUserId(req *Map, res *Map) error {
 
 	var data EurovisionParticipation
 	rs := DB.Preload("Boardgame").First(&data, "user_id = ? ", id)
+	if errors.Is(rs.Error, gorm.ErrRecordNotFound) {
+		res.Set("data", EurovisionParticipation{})
+		return nil
+	}
 	if rs.Error != nil {
 		return rs.Error
 	}

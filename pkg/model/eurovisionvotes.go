@@ -51,7 +51,9 @@ func GetEurovisionVoteByUserId(req *Map, res *Map) error {
 	var data EurovisionVote
 	rs := DB.First(&data, "user_id = ? ", id)
 	if errors.Is(rs.Error, gorm.ErrRecordNotFound) {
-		res.Set("data", nil)
+		res.Set("data", EurovisionVote{
+			Votes: datatypes.JSON([]byte(`[]`)),
+		})
 		return nil
 	}
 	if rs.Error != nil {
