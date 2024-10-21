@@ -15,7 +15,8 @@ BINARIES = \
 	servus-auth \
 	database-exporter \
 	file-exporter \
-	servus-deco
+	servus-deco \
+	servus-network
 
 GOOPTS = -buildmode=pie -trimpath -mod=readonly -modcacherw -ldflags=-s -ldflags=-w
 
