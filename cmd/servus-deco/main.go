@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/config"
 	"github.com/DictumMortuum/servus-extapi/pkg/deco"
@@ -36,14 +37,18 @@ func printDevices(c *deco.Client) error {
 			}
 		}
 
+		now := time.Now()
+		sec := now.Unix()
+
 		fmt.Printf(
-			"client,deco,nickname,%s,ip,%s,mac,%s,type,%s,interface,%s=%d\n",
+			"client,deco,nickname,%s,ip,%s,mac,%s,type,%s,interface,%s,status,%d=%d\n",
 			nickname,
 			device.IP,
 			device.MAC,
 			device.ClientType,
 			device.Interface,
-			status)
+			status,
+			sec)
 	}
 
 	fmt.Printf("client_total,deco=%d\n", len(result.Result.ClientList))
