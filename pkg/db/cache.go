@@ -23,6 +23,20 @@ func Set(rdb *redis.Client, key string, val any) error {
 	return nil
 }
 
+func SetT(rdb *redis.Client, key string, val any, expiration time.Duration) error {
+	p, err := json.Marshal(val)
+	if err != nil {
+		return err
+	}
+
+	err = rdb.Set(context.Background(), key, p, expiration).Err()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func Get(rdb *redis.Client, key string, dest any) error {
 	p, err := rdb.Get(context.Background(), key).Result()
 	if err != nil {
