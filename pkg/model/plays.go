@@ -22,6 +22,15 @@ type Play struct {
 	Location    Location       `json:"location"`
 }
 
+type PlayData struct {
+	Draws       []bool    `json:"draws"`
+	Players     []int64   `json:"players"`
+	Winners     []int64   `json:"winners"`
+	Solo        bool      `json:"solo"`
+	Cooperative bool      `json:"cooperative"`
+	Teams       [][]int64 `json:"teams"`
+}
+
 func (Play) TableName() string {
 	return "tboardgameplays"
 }
@@ -54,6 +63,14 @@ func (obj Play) Update(db *gorm.DB, id int64, body []byte) (any, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	var play_data2 PlayData
+	err = json.Unmarshal(payload.PlayData, &play_data2)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println(play_data2)
 
 	stats := payload.Stats
 	sort.Slice(stats, func(i, j int) bool {
@@ -112,7 +129,7 @@ func (obj Play) Update(db *gorm.DB, id int64, body []byte) (any, error) {
 			data["teams"] = val
 
 			team_scores := []float64{}
-			// log.Println(data["teams"])
+			log.Println(data["teams"])
 			for _, team := range data["teams"].([]any) {
 				team_score := 0.0
 				for _, id := range team.([]any) {

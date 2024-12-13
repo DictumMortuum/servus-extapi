@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"time"
 
@@ -117,6 +118,48 @@ func getBoardgameInfo(DB *sqlx.DB, RDB *redis.Client, id int64) (*BoardgameInfo,
 	}
 
 	return &rs, nil
+}
+
+func GetCollectionInfo(req *model.Map, res *model.Map) error {
+	body, err := req.GetByte("body")
+	if err != nil {
+		return err
+	}
+
+	type Body struct {
+		Ids []int64 `json:"ids"`
+	}
+
+	var b Body
+	err = json.Unmarshal(body, &b)
+	if err != nil {
+		return err
+	}
+
+	DB, err := req.GetDB()
+	if err != nil {
+		return err
+	}
+
+	RDB, err := req.GetRedis()
+	if err != nil {
+		return err
+	}
+
+	retval := []*BoardgameInfo{}
+	for _, id := range b.Ids {
+		info, err := getBoardgameInfo(DB, RDB, id)
+		log.Println(id, info)
+		if err != nil {
+			continue
+		}
+
+		retval = append(retval, info)
+	}
+
+	res.Set("data", retval)
+
+	return nil
 }
 
 func GetPlayerCollection(req *model.Map, res *model.Map) error {
