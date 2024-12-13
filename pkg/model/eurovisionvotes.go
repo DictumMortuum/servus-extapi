@@ -152,13 +152,15 @@ func GetEurovisionVotes(req *Map, res *Map) error {
 		}
 
 		for i, item := range raw {
+			tmp := result[item.Boardgame.Name]
+			tmp.Name = item.Boardgame.Name
+			tmp.Flag = item.Boardgame.Square200
+
 			if i < len(votes) && i >= 0 {
-				tmp := result[item.Boardgame.Name]
 				tmp.Votes += votes[i]
-				tmp.Name = item.Boardgame.Name
-				tmp.Flag = item.Boardgame.Square200
-				result[item.Boardgame.Name] = tmp
 			}
+
+			result[item.Boardgame.Name] = tmp
 		}
 	}
 
