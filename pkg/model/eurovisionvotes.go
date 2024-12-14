@@ -136,9 +136,10 @@ func GetEurovisionVotes(req *Map, res *Map) error {
 	}
 
 	type temp_res struct {
-		Flag  string `json:"flag"`
-		Name  string `json:"name"`
-		Votes int    `json:"votes"`
+		Flag        string `json:"flag"`
+		Name        string `json:"name"`
+		Votes       int    `json:"votes"`
+		BoardgameId int64  `json:"boardgame_id"`
 	}
 
 	votes := []int{12, 10, 8, 7, 6, 5, 4, 3, 2, 1}
@@ -155,6 +156,7 @@ func GetEurovisionVotes(req *Map, res *Map) error {
 			tmp := result[item.Boardgame.Name]
 			tmp.Name = item.Boardgame.Name
 			tmp.Flag = item.Boardgame.Square200
+			tmp.BoardgameId = item.Boardgame.Id
 
 			if i < len(votes) && i >= 0 {
 				tmp.Votes += votes[i]
