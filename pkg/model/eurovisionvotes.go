@@ -125,8 +125,35 @@ func GetEurovisionVotes(req *Map, res *Map) error {
 		return err
 	}
 
+	var participations []EurovisionParticipation
+	rs := DB.Preload("Boardgame").Find(&participations)
+	if rs.Error != nil {
+		return rs.Error
+	}
+
+	type temp_res struct {
+		Flag        string `json:"flag"`
+		Email       string `json:"email"`
+		Name        string `json:"name"`
+		Votes       int    `json:"votes"`
+		BoardgameId int64  `json:"boardgame_id"`
+	}
+
+	result := map[string]temp_res{}
+
+	for _, item := range participations {
+		// log.Println(item.Boardgame.)
+		result[item.Boardgame.Name] = temp_res{
+			Flag:        item.Boardgame.Square200,
+			Email:       item.Email,
+			Name:        item.Boardgame.Name,
+			Votes:       0,
+			BoardgameId: item.BoardgameId,
+		}
+	}
+
 	var data []EurovisionVote
-	rs := DB.Find(&data, "included = true")
+	rs = DB.Find(&data, "included = true")
 	if rs.Error != nil {
 		return rs.Error
 	}
@@ -135,15 +162,7 @@ func GetEurovisionVotes(req *Map, res *Map) error {
 		Boardgame Boardgame `json:"boardgame"`
 	}
 
-	type temp_res struct {
-		Flag        string `json:"flag"`
-		Name        string `json:"name"`
-		Votes       int    `json:"votes"`
-		BoardgameId int64  `json:"boardgame_id"`
-	}
-
 	votes := []int{12, 10, 8, 7, 6, 5, 4, 3, 2, 1}
-	result := map[string]temp_res{}
 
 	for _, vote := range data {
 		var raw []temp
