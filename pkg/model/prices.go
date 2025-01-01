@@ -9,17 +9,18 @@ import (
 )
 
 type Price struct {
-	Id          int64                `gorm:"primaryKey" json:"id"`
-	Created     time.Time            `json:"created"`
-	Updated     time.Time            `json:"updated"`
-	Name        string               `gorm:"index" json:"name"`
-	StoreId     int64                `gorm:"foreignkey" json:"store_id"`
-	StoreThumb  string               `json:"store_thumb"`
-	Price       float64              `json:"price"`
-	Stock       int                  `json:"stock"`
-	Url         string               `json:"url"`
-	Deleted     bool                 `json:"deleted"`
-	BoardgameId models.JsonNullInt64 `gorm:"foreignkey" json:"boardgame_id"`
+	Id            int64                `gorm:"primaryKey" json:"id"`
+	Created       time.Time            `json:"created"`
+	Updated       time.Time            `json:"updated"`
+	Name          string               `gorm:"index" json:"name"`
+	StoreId       int64                `gorm:"foreignkey" json:"store_id"`
+	StoreThumb    string               `json:"store_thumb"`
+	Price         float64              `json:"price"`
+	OriginalPrice float64              `json:"original_price"`
+	Stock         int                  `json:"stock"`
+	Url           string               `json:"url"`
+	Deleted       bool                 `json:"deleted"`
+	BoardgameId   models.JsonNullInt64 `gorm:"foreignkey" json:"boardgame_id"`
 }
 
 func (Price) TableName() string {

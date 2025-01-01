@@ -42,7 +42,7 @@ func ScrapeMysteryBay() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText("h3"),
+			"name":        e.ChildText("p[data-hook=product-item-name]"),
 			"store_id":    store_id,
 			"store_thumb": url,
 			"stock":       stock,

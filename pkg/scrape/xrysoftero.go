@@ -16,7 +16,7 @@ func ScrapeXrysoFtero() (map[string]any, []map[string]any, error) {
 		colly.CacheDir(CacheDir),
 	)
 
-	collector.OnHTML(".thumbnail-container", func(e *colly.HTMLElement) {
+	collector.OnHTML("article.product_item", func(e *colly.HTMLElement) {
 		url := e.ChildAttr(".cover-image", "src")
 		if url == "" {
 			return

@@ -1,84 +1,65 @@
 package scrape
 
 import (
-	"encoding/xml"
-	"io/ioutil"
-	"net/http"
+	"log"
+
+	"github.com/gocolly/colly/v2"
 )
-
-type madnessRoot struct {
-	XMLName  xml.Name         `xml:"products"`
-	Products []madnessProduct `xml:"product"`
-}
-
-type madnessProduct struct {
-	XMLName  xml.Name `xml:"product"`
-	SKU      string   `xml:"id"`
-	Name     string   `xml:"title"`
-	ThumbUrl string   `xml:"image_link"`
-	Price    string   `xml:"price"`
-	Stock    string   `xml:"availability"`
-	Link     string   `xml:"link"`
-}
-
-func madnessAvailbilityToStock(s string) int {
-	switch s {
-	case "in stock":
-		return 0
-	case "on backorder":
-		return 1
-	case "out of stock":
-		return 2
-	default:
-		return 2
-	}
-}
 
 func ScrapeBoardsOfMadness() (map[string]any, []map[string]any, error) {
 	store_id := int64(16)
 	rs := []map[string]any{}
-	detected := 0
 
-	link := "https://boardsofmadness.com/wp-content/uploads/woo-product-feed-pro/xml/sVVFMsJLyEEtvbil4fbIOdm8b4ha7ewz.xml"
-	req, err := http.NewRequest("GET", link, nil)
-	if err != nil {
-		return nil, nil, err
-	}
+	collector := colly.NewCollector(
+		colly.AllowedDomains("boardsofmadness.com"),
+		user_agent,
+		colly.CacheDir(CacheDir),
+	)
 
-	conn := &http.Client{}
-	resp, err := conn.Do(req)
-	if err != nil {
-		return nil, nil, err
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	root := madnessRoot{}
-	err = xml.Unmarshal(body, &root)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	for _, item := range root.Products {
-		item := map[string]any{
-			"name":        item.Name,
-			"store_id":    store_id,
-			"store_thumb": item.ThumbUrl,
-			"stock":       madnessAvailbilityToStock(item.Stock),
-			"price":       getPrice(item.Price),
-			"url":         item.Link,
+	collector.OnHTML("li.product", func(e *colly.HTMLElement) {
+		raw_price := e.ChildText(".price > .amount > bdi")
+		if raw_price == "" {
+			raw_price = e.ChildText(".price > ins > .amount > bdi")
 		}
+
+		var stock int
+
+		if hasClass(e, "instock") {
+			stock = 0
+		} else if hasClass(e, "onbackorder") {
+			stock = 1
+		} else if hasClass(e, "outofstock") {
+			stock = 2
+		}
+
+		item := map[string]any{
+			"name":        e.ChildText(".woocommerce-loop-product__title"),
+			"store_id":    store_id,
+			"store_thumb": e.ChildAttr(".attachment-woocommerce_thumbnail", "src"),
+			"stock":       stock,
+			"price":       getPrice(raw_price),
+			"url":         e.Request.AbsoluteURL(e.ChildAttr(".woocommerce-LoopProduct-link", "href")),
+		}
+
 		rs = append(rs, item)
-		detected++
-	}
+	})
+
+	collector.OnHTML("a.next", func(e *colly.HTMLElement) {
+		link := e.Request.AbsoluteURL(e.Attr("href"))
+
+		if Debug {
+			log.Println("Visiting: " + link)
+		}
+
+		collector.Visit(link)
+	})
+
+	collector.Visit("https://boardsofmadness.com/product-category/epitrapezia-paixnidia/")
+	collector.Wait()
 
 	return map[string]interface{}{
 		"name":    "Boards of Madness",
 		"id":      store_id,
-		"scraped": detected,
+		"scraped": len(rs),
 	}, rs, nil
 }
