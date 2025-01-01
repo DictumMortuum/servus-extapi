@@ -30,12 +30,13 @@ func ScrapeKaissaIoannina() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".product-title"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".attachment-woocommerce_thumbnail", "src"),
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.ChildAttr("a.product-image-link", "href"),
+			"name":           e.ChildText(".product-title"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".attachment-woocommerce_thumbnail", "src"),
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.ChildAttr("a.product-image-link", "href"),
 		}
 
 		rs = append(rs, item)

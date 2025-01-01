@@ -31,13 +31,14 @@ func ScrapeCOINMilan() (map[string]any, []map[string]any, error) {
 		name := e.ChildText(".detail h1")
 
 		item := map[string]any{
-			"name":        name,
-			"store_id":    store_id,
-			"store_thumb": "https://www.milan-spiele.de/images/gmt-games-logo.jpg",
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.Request.URL.String(),
-			"tag":         "COIN",
+			"name":           name,
+			"store_id":       store_id,
+			"store_thumb":    "https://www.milan-spiele.de/images/gmt-games-logo.jpg",
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.Request.URL.String(),
+			"tag":            "COIN",
 		}
 
 		log.Println(item)

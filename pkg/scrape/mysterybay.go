@@ -42,12 +42,13 @@ func ScrapeMysteryBay() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText("p[data-hook=product-item-name]"),
-			"store_id":    store_id,
-			"store_thumb": url,
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.ChildAttr("a[data-hook=product-item-container]", "href"),
+			"name":           e.ChildText("p[data-hook=product-item-name]"),
+			"store_id":       store_id,
+			"store_thumb":    url,
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.ChildAttr("a[data-hook=product-item-container]", "href"),
 		}
 
 		rs = append(rs, item)

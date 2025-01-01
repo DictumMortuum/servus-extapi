@@ -17,10 +17,14 @@ func ScrapeEpitrapezio() (map[string]any, []map[string]any, error) {
 	)
 
 	collector.OnHTML("li.product.type-product", func(e *colly.HTMLElement) {
-		raw_price := e.ChildText(".price ins .amount")
-
+		raw_price := e.ChildText(".price > .amount > bdi")
 		if raw_price == "" {
-			raw_price = e.ChildText(".price .amount")
+			raw_price = e.ChildText(".price > ins > .amount > bdi")
+		}
+
+		old_price := e.ChildText(".price > del > .amount > bdi")
+		if old_price == "" {
+			old_price = raw_price
 		}
 
 		var stock int
@@ -32,12 +36,13 @@ func ScrapeEpitrapezio() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".woocommerce-loop-product__title"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".epz-product-thumbnail img", "data-src"),
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.ChildAttr(".woocommerce-LoopProduct-link", "href"),
+			"name":           e.ChildText(".woocommerce-loop-product__title"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".epz-product-thumbnail img", "data-src"),
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(old_price),
+			"url":            e.ChildAttr(".woocommerce-LoopProduct-link", "href"),
 		}
 
 		rs = append(rs, item)

@@ -31,13 +31,14 @@ func ScrapeCOINGamersHQ() (map[string]any, []map[string]any, error) {
 		img = tmp[0]
 
 		item := map[string]any{
-			"name":        e.ChildAttr(".product--info a", "title"),
-			"store_id":    store_id,
-			"store_thumb": img,
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.ChildAttr(".product--info a", "href"),
-			"tag":         "COIN",
+			"name":           e.ChildAttr(".product--info a", "title"),
+			"store_id":       store_id,
+			"store_thumb":    img,
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.ChildAttr(".product--info a", "href"),
+			"tag":            "COIN",
 		}
 
 		rs = append(rs, item)

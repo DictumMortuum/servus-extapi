@@ -108,8 +108,12 @@ func main() {
 						Name:  "store",
 						Value: "",
 					},
+					&cli.BoolFlag{
+						Name: "delete",
+					},
 				},
 				Action: func(ctx *cli.Context) error {
+					del := ctx.Bool("delete")
 					var scrapers []string
 					scraper := ctx.String("store")
 					if scraper != "" {
@@ -129,6 +133,13 @@ func main() {
 						err := Stale(DB, scrape.IDs[val])
 						if err != nil {
 							return err
+						}
+
+						if del {
+							err := Delete(DB, scrape.IDs[val])
+							if err != nil {
+								return err
+							}
 						}
 
 						if f, ok := scrape.Scrapers[val].(func() (map[string]any, []map[string]any, error)); ok {

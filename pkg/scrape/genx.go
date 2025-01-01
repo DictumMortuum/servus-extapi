@@ -34,12 +34,13 @@ func ScrapeGenx() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".txtTitle"),
-			"store_id":    store_id,
-			"store_thumb": e.Request.AbsoluteURL(e.ChildAttr(".hover01 a img", "src")),
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.Request.AbsoluteURL(e.ChildAttr(".hover01 a", "href")),
+			"name":           e.ChildText(".txtTitle"),
+			"store_id":       store_id,
+			"store_thumb":    e.Request.AbsoluteURL(e.ChildAttr(".hover01 a img", "src")),
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.Request.AbsoluteURL(e.ChildAttr(".hover01 a", "href")),
 		}
 
 		rs = append(rs, item)

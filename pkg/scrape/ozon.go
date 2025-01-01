@@ -18,18 +18,23 @@ func ScrapeOzon() (map[string]any, []map[string]any, error) {
 
 	collector.OnHTML(".products-list div.col-xs-3", func(e *colly.HTMLElement) {
 		raw_price := e.ChildText(".special-price")
-
 		if raw_price == "" {
 			raw_price = e.ChildText(".price")
 		}
 
+		old_price := e.ChildText(".old-price")
+		if old_price == "" {
+			old_price = raw_price
+		}
+
 		item := map[string]any{
-			"name":        e.ChildText(".title"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".image-wrapper img", "src"),
-			"stock":       0,
-			"price":       getPrice(raw_price),
-			"url":         e.ChildAttr(".product-box", "href"),
+			"name":           e.ChildText(".title"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".image-wrapper img", "src"),
+			"stock":          0,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(old_price), // TODO
+			"url":            e.ChildAttr(".product-box", "href"),
 		}
 
 		rs = append(rs, item)

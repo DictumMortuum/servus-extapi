@@ -18,9 +18,13 @@ func ScrapeGameRules() (map[string]any, []map[string]any, error) {
 
 	collector.OnHTML(".product-layout", func(e *colly.HTMLElement) {
 		raw_price := e.ChildText(".price-new")
-
 		if raw_price == "" {
 			raw_price = e.ChildText(".price-normal")
+		}
+
+		old_price := e.ChildText(".price-old")
+		if old_price == "" {
+			old_price = raw_price
 		}
 
 		var stock int
@@ -35,12 +39,13 @@ func ScrapeGameRules() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".name"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".product-img div img", "data-src"),
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.ChildAttr(".name a", "href"),
+			"name":           e.ChildText(".name"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".product-img div img", "data-src"),
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.ChildAttr(".name a", "href"),
 		}
 
 		rs = append(rs, item)

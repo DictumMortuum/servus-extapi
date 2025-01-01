@@ -37,12 +37,13 @@ func ScrapeInnkeeper() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".wd-entities-title"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".size-woocommerce_thumbnail", "data-lazy-src"),
-			"stock":       stock,
-			"price":       getPrice(e.ChildText(".woocommerce-Price-amount")),
-			"url":         e.Request.AbsoluteURL(url),
+			"name":           e.ChildText(".wd-entities-title"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".size-woocommerce_thumbnail", "data-lazy-src"),
+			"stock":          stock,
+			"price":          getPrice(e.ChildText(".woocommerce-Price-amount")),
+			"original_price": getPrice(e.ChildText(".woocommerce-Price-amount")), // TODO
+			"url":            e.Request.AbsoluteURL(url),
 		}
 
 		rs = append(rs, item)

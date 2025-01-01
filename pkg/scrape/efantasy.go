@@ -18,6 +18,10 @@ func ScrapeEfantasy() (map[string]any, []map[string]any, error) {
 
 	collector.OnHTML("div.product.product-box", func(e *colly.HTMLElement) {
 		raw_price := e.ChildText(".product-price a strong")
+		old_price := e.ChildText(".product-price a s")
+		if old_price == "" {
+			old_price = raw_price
+		}
 
 		var stock int
 
@@ -30,12 +34,13 @@ func ScrapeEfantasy() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".product-title"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".product-image a img", "src"),
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.Request.AbsoluteURL(e.ChildAttr(".product-title a", "href")),
+			"name":           e.ChildText(".product-title"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".product-image a img", "src"),
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(old_price),
+			"url":            e.Request.AbsoluteURL(e.ChildAttr(".product-title a", "href")),
 		}
 
 		rs = append(rs, item)

@@ -29,13 +29,14 @@ func ScrapeCOINHexasim() (map[string]any, []map[string]any, error) {
 		name := e.ChildText(".titre_jeu")
 
 		item := map[string]any{
-			"name":        name,
-			"store_id":    store_id,
-			"store_thumb": "https://www.hexasim.com/2-16-COIN/" + e.ChildAttr(".lien_img img", "src"),
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         "https://www.hexasim.com/" + e.ChildAttr(".lien_img", "href"),
-			"tag":         "COIN",
+			"name":           name,
+			"store_id":       store_id,
+			"store_thumb":    "https://www.hexasim.com/2-16-COIN/" + e.ChildAttr(".lien_img img", "src"),
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            "https://www.hexasim.com/" + e.ChildAttr(".lien_img", "href"),
+			"tag":            "COIN",
 		}
 
 		if name != "" {

@@ -28,13 +28,14 @@ func ScrapeCOINUdo() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".title"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".pictureBox img", "src"),
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.ChildAttr(".title", "href"),
-			"tag":         "COIN",
+			"name":           e.ChildText(".title"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".pictureBox img", "src"),
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.ChildAttr(".title", "href"),
+			"tag":            "COIN",
 		}
 
 		rs = append(rs, item)

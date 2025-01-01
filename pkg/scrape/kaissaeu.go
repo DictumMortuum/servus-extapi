@@ -27,12 +27,13 @@ func ScrapeKaissaEu() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".caption"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".photo a img", "src"),
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.Request.AbsoluteURL(e.ChildAttr(".photo a", "href")),
+			"name":           e.ChildText(".caption"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".photo a img", "src"),
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.Request.AbsoluteURL(e.ChildAttr(".photo a", "href")),
 		}
 
 		rs = append(rs, item)

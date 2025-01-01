@@ -19,9 +19,14 @@ func ScrapeAvalon() (map[string]any, []map[string]any, error) {
 
 	collector.OnHTML(".product-layout", func(e *colly.HTMLElement) {
 		raw_price := e.ChildText(".price-normal")
+		old_price := e.ChildText(".price-old")
 
 		if raw_price == "" {
 			raw_price = e.ChildText(".price-new")
+		}
+
+		if old_price == "" {
+			old_price = raw_price
 		}
 
 		var stock int
@@ -33,12 +38,13 @@ func ScrapeAvalon() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".name"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".product-img div img", "src"),
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.Request.AbsoluteURL(e.ChildAttr(".name a", "href")),
+			"name":           e.ChildText(".name"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".product-img div img", "src"),
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(old_price),
+			"url":            e.Request.AbsoluteURL(e.ChildAttr(".name a", "href")),
 		}
 
 		rs = append(rs, item)

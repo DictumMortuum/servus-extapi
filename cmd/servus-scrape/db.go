@@ -94,6 +94,12 @@ func UpdateCounts(DB *sqlx.DB, store_id int64) error {
 }
 
 func Insert(DB *sqlx.DB, payload map[string]any) (int64, error) {
+	if val, ok := payload["price"]; ok {
+		if val.(float64) == 0 {
+			return -1, nil
+		}
+	}
+
 	if val, ok := payload["store_thumb"]; ok {
 		if val.(string) == "" {
 			payload["store_thumb"] = "https://placehold.co/200x200"
@@ -127,6 +133,7 @@ func Insert(DB *sqlx.DB, payload map[string]any) (int64, error) {
 			store_id,
 			store_thumb,
 			price,
+			original_price,
 			stock,
 			url,
 			deleted,
@@ -139,6 +146,7 @@ func Insert(DB *sqlx.DB, payload map[string]any) (int64, error) {
 			:store_id,
 			:store_thumb,
 			:price,
+			:original_price,
 			:stock,
 			:url,
 			0,
@@ -146,7 +154,13 @@ func Insert(DB *sqlx.DB, payload map[string]any) (int64, error) {
 			NOW(),
 			NOW(),
 			:tag
-		) on duplicate key update updated = NOW(), store_thumb = :store_thumb, price = :price, stock = :stock, deleted = 0
+		) on duplicate key update
+		 updated = NOW(),
+		 store_thumb = :store_thumb,
+		 price = :price,
+		 original_price = :original_price,
+		 stock = :stock,
+		 deleted = 0
 	`
 	row, err := DB.NamedExec(q, payload)
 	if err != nil {
@@ -182,7 +196,17 @@ func Fresh(DB *sqlx.DB, id int64) error {
 }
 
 func Cleanup(DB *sqlx.DB, id int64) error {
-	q := `delete from tprices where deleted = 1 and id = ?`
+	q := `delete from tprices where deleted = 1 and store_id = ?`
+	_, err := DB.Exec(q, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func Delete(DB *sqlx.DB, id int64) error {
+	q := `delete from tprices where store_id = ?`
 	_, err := DB.Exec(q, id)
 	if err != nil {
 		return err

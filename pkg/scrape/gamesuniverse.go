@@ -21,18 +21,24 @@ func ScrapeGamesUniverse() (map[string]any, []map[string]any, error) {
 	collector.OnHTML("article.product-miniature", func(e *colly.HTMLElement) {
 		raw_price := e.ChildText(".product-price")
 
+		old_price := e.ChildText(".regular-price")
+		if old_price == "" {
+			old_price = raw_price
+		}
+
 		url := e.ChildAttr(".product-thumbnail", "href")
 		if strings.Contains(url, "paidika") || strings.Contains(url, "ekpaideftika") || strings.Contains(url, "trapoules") {
 			return
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".product-title"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".thumbnail img", "data-src"),
-			"stock":       0,
-			"price":       getPrice(raw_price),
-			"url":         url,
+			"name":           e.ChildText(".product-title"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".thumbnail img", "data-src"),
+			"stock":          0,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(old_price),
+			"url":            url,
 		}
 
 		rs = append(rs, item)

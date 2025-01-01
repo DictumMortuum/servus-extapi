@@ -21,12 +21,13 @@ func ScrapeGameTheory() (map[string]any, []map[string]any, error) {
 		raw_price := e.ChildText(".price")
 
 		item := map[string]any{
-			"name":        e.ChildText(".full-unstyled-link"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".motion-reduce", "src"),
-			"stock":       0,
-			"price":       getPrice(raw_price),
-			"url":         e.Request.AbsoluteURL(e.ChildAttr(".full-unstyled-link", "href")),
+			"name":           e.ChildText(".full-unstyled-link"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".motion-reduce", "src"),
+			"stock":          0,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.Request.AbsoluteURL(e.ChildAttr(".full-unstyled-link", "href")),
 		}
 
 		rs = append(rs, item)

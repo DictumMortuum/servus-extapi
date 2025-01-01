@@ -20,6 +20,7 @@ type Price struct {
 	Stock         int                  `json:"stock"`
 	Url           string               `json:"url"`
 	Deleted       bool                 `json:"deleted"`
+	Percentage    int                  `json:"percentage"`
 	BoardgameId   models.JsonNullInt64 `gorm:"foreignkey" json:"boardgame_id"`
 }
 

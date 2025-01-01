@@ -26,13 +26,14 @@ func ScrapeCOINFanen() (map[string]any, []map[string]any, error) {
 
 		name := e.ChildText(".cx b a")
 		item := map[string]any{
-			"name":        name,
-			"store_id":    store_id,
-			"store_thumb": "https://www.fanen.com" + e.ChildAttr(".cx a img", "src"),
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         "https://www.fanen.com" + e.ChildAttr(".cx a", "href"),
-			"tag":         "COIN",
+			"name":           name,
+			"store_id":       store_id,
+			"store_thumb":    "https://www.fanen.com" + e.ChildAttr(".cx a img", "src"),
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            "https://www.fanen.com" + e.ChildAttr(".cx a", "href"),
+			"tag":            "COIN",
 		}
 
 		if name != "" {

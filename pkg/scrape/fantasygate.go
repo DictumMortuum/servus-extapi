@@ -28,12 +28,13 @@ func ScrapeFantasyGate() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".name"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".jshop_img", "src"),
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.Request.AbsoluteURL(e.ChildAttr(".image_block a", "href")),
+			"name":           e.ChildText(".name"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".jshop_img", "src"),
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.Request.AbsoluteURL(e.ChildAttr(".image_block a", "href")),
 		}
 
 		rs = append(rs, item)

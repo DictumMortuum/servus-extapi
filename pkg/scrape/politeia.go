@@ -23,12 +23,13 @@ func ScrapePoliteia() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".browse-product-title"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".browseProductImage", "src"),
-			"stock":       0,
-			"price":       getPrice(raw_price),
-			"url":         e.ChildAttr(".browse-product-title", "href"),
+			"name":           e.ChildText(".browse-product-title"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".browseProductImage", "src"),
+			"stock":          0,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.ChildAttr(".browse-product-title", "href"),
 		}
 
 		rs = append(rs, item)

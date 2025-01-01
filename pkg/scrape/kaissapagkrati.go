@@ -34,12 +34,13 @@ func ScrapeKaissaPagkrati() (map[string]any, []map[string]any, error) {
 		// }
 
 		item := map[string]any{
-			"name":        e.ChildText(".product-grid-title"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".product-grid-image img", "data-src"),
-			"stock":       -1,
-			"price":       getPrice(raw_price),
-			"url":         e.Attr("href"),
+			"name":           e.ChildText(".product-grid-title"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".product-grid-image img", "data-src"),
+			"stock":          -1,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.Attr("href"),
 		}
 
 		rs = append(rs, item)

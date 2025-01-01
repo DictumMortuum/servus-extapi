@@ -33,12 +33,13 @@ func ScrapeMeeplePlanet() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".name"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".attachment-woocommerce_thumbnail", "src"),
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.ChildAttr(".name a", "href"),
+			"name":           e.ChildText(".name"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".attachment-woocommerce_thumbnail", "src"),
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.ChildAttr(".name a", "href"),
 		}
 
 		rs = append(rs, item)

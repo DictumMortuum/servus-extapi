@@ -2,7 +2,7 @@ package scrape
 
 import (
 	"encoding/xml"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -45,7 +45,7 @@ func ScrapeHobbyTheory() (map[string]any, []map[string]any, error) {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -76,12 +76,13 @@ func ScrapeHobbyTheory() (map[string]any, []map[string]any, error) {
 				}
 
 				item := map[string]any{
-					"name":        item.Name,
-					"store_id":    store_id,
-					"store_thumb": item.ThumbUrl,
-					"stock":       stock,
-					"price":       getPrice(item.Price),
-					"url":         item.Link,
+					"name":           item.Name,
+					"store_id":       store_id,
+					"store_thumb":    item.ThumbUrl,
+					"stock":          stock,
+					"price":          getPrice(item.Price),
+					"original_price": getPrice(item.Price), // TODO
+					"url":            item.Link,
 				}
 
 				rs = append(rs, item)

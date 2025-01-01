@@ -22,12 +22,13 @@ func ScrapeFantasyShop() (map[string]any, []map[string]any, error) {
 		raw_price := e.ChildText(".ty-price-num")
 
 		item := map[string]any{
-			"name":        e.ChildText(".product-title"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".ty-pict.cm-image", "src"),
-			"stock":       0,
-			"price":       getPrice(raw_price),
-			"url":         e.ChildAttr(".ty-grid-list__image a", "href"),
+			"name":           e.ChildText(".product-title"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".ty-pict.cm-image", "src"),
+			"stock":          0,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.ChildAttr(".ty-grid-list__image a", "href"),
 		}
 
 		rs = append(rs, item)

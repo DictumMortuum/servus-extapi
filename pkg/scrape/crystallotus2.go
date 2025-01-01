@@ -23,14 +23,24 @@ func ScrapeCrystalLotus2() (map[string]any, []map[string]any, error) {
 			link = "https:" + link
 		}
 
-		raw_price := e.ChildText(".price__sale")
+		raw_price := e.ChildText(".price-item--sale price-money bdi")
+		if raw_price == "" {
+			raw_price = e.ChildText(".price-item--regular price-money bdi")
+		}
+
+		old_price := e.ChildText(".price-item--regular price-money bdi")
+		if old_price == "" {
+			old_price = raw_price
+		}
+
 		item := map[string]any{
-			"name":        e.ChildText(".card-information__text"),
-			"store_id":    store_id,
-			"store_thumb": link,
-			"stock":       0,
-			"price":       getPrice(raw_price),
-			"url":         "https://crystallotus.eu" + e.ChildAttr("a.card-information__text", "href"),
+			"name":           e.ChildText(".card-information__text"),
+			"store_id":       store_id,
+			"store_thumb":    link,
+			"stock":          0,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(old_price),
+			"url":            "https://crystallotus.eu" + e.ChildAttr("a.card-information__text", "href"),
 		}
 
 		rs = append(rs, item)

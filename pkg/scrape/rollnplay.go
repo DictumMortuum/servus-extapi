@@ -35,12 +35,13 @@ func ScrapeRollnplay() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".heading-title"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".has-back-image img", "data-src"),
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.ChildAttr(".heading-title a", "href"),
+			"name":           e.ChildText(".heading-title"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".has-back-image img", "data-src"),
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.ChildAttr(".heading-title a", "href"),
 		}
 
 		rs = append(rs, item)

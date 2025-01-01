@@ -19,12 +19,13 @@ func ScrapeGameExplorers() (map[string]any, []map[string]any, error) {
 	collector.OnHTML(".single-product-item", func(e *colly.HTMLElement) {
 		raw_price := e.ChildText(".regular-price")
 		item := map[string]any{
-			"name":        e.ChildText("h2:nth-child(1)"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr("a:nth-child(1) > img:nth-child(1)", "src"),
-			"stock":       0,
-			"price":       getPrice(raw_price),
-			"url":         e.ChildAttr("a:nth-child(1)", "href"),
+			"name":           e.ChildText("h2:nth-child(1)"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr("a:nth-child(1) > img:nth-child(1)", "src"),
+			"stock":          0,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.ChildAttr("a:nth-child(1)", "href"),
 		}
 
 		rs = append(rs, item)

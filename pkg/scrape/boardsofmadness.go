@@ -22,6 +22,11 @@ func ScrapeBoardsOfMadness() (map[string]any, []map[string]any, error) {
 			raw_price = e.ChildText(".price > ins > .amount > bdi")
 		}
 
+		old_price := e.ChildText(".price > del > .amount > bdi")
+		if old_price == "" {
+			old_price = raw_price
+		}
+
 		var stock int
 
 		if hasClass(e, "instock") {
@@ -33,12 +38,13 @@ func ScrapeBoardsOfMadness() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".woocommerce-loop-product__title"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".attachment-woocommerce_thumbnail", "src"),
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.Request.AbsoluteURL(e.ChildAttr(".woocommerce-LoopProduct-link", "href")),
+			"name":           e.ChildText(".woocommerce-loop-product__title"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".attachment-woocommerce_thumbnail", "src"),
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(old_price),
+			"url":            e.Request.AbsoluteURL(e.ChildAttr(".woocommerce-LoopProduct-link", "href")),
 		}
 
 		rs = append(rs, item)

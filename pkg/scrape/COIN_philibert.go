@@ -25,13 +25,14 @@ func ScrapeCOINPhilibertnet() (map[string]any, []map[string]any, error) {
 		}
 
 		item := map[string]any{
-			"name":        e.ChildText(".s_title_block"),
-			"store_id":    store_id,
-			"store_thumb": e.ChildAttr(".product_img_link img", "src"),
-			"stock":       stock,
-			"price":       getPrice(raw_price),
-			"url":         e.ChildAttr(".s_title_block a", "href"),
-			"tag":         "COIN",
+			"name":           e.ChildText(".s_title_block"),
+			"store_id":       store_id,
+			"store_thumb":    e.ChildAttr(".product_img_link img", "src"),
+			"stock":          stock,
+			"price":          getPrice(raw_price),
+			"original_price": getPrice(raw_price), // TODO
+			"url":            e.ChildAttr(".s_title_block a", "href"),
+			"tag":            "COIN",
 		}
 
 		rs = append(rs, item)
