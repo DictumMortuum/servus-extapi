@@ -118,6 +118,11 @@ func PlaylistPlay(req *Map, res *Map) error {
 	}
 	defer conn.Close()
 
+	err = conn.Clear()
+	if err != nil {
+		return err
+	}
+
 	err = conn.Add("playlists/" + playlist_id)
 	if err != nil {
 		return err
