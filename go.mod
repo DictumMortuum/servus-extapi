@@ -9,6 +9,7 @@ require (
 	github.com/DictumMortuum/servus v0.7.23
 	github.com/MicahParks/keyfunc/v2 v2.1.0
 	github.com/boggydigital/yt_urls v0.1.47
+	github.com/fhs/gompd v1.0.1
 	github.com/gin-contrib/cache v1.3.0
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0

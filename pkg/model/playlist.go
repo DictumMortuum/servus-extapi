@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/boggydigital/yt_urls"
+	"github.com/fhs/gompd/mpd"
 	"gorm.io/gorm"
 )
 
@@ -103,6 +104,46 @@ func (obj Playlist) Delete(db *gorm.DB, id int64) (any, error) {
 	}
 
 	return data, nil
+}
+
+func PlaylistPlay(req *Map, res *Map) error {
+	playlist_id, err := req.GetString("id")
+	if err != nil {
+		return err
+	}
+
+	conn, err := mpd.Dial("tcp", "localhost:6600")
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	err = conn.Add("playlists/" + playlist_id)
+	if err != nil {
+		return err
+	}
+
+	err = conn.Play(-1)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func PlaylistStop(req *Map, res *Map) error {
+	conn, err := mpd.Dial("tcp", "localhost:6600")
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	err = conn.Clear()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func M3u(req *Map, res *Map) error {
