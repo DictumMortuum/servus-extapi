@@ -12,7 +12,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.41",
+		"version": "v0.0.42",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -53,6 +53,7 @@ func main() {
 	adapter.RaRoute(g, "wishlist", model.Wishlist{})
 	adapter.RaRoute(g, "devices", model.Device{})
 	adapter.RaRoute(g, "configurations", model.Configuration{})
+	adapter.RaRoute(g, "playlists", model.Playlist{})
 
 	// jwt := middleware.Jwt("http://sol.dictummortuum.com:3567/.well-known/jwks.json")
 
@@ -61,6 +62,7 @@ func main() {
 	g.GET("/eurovisionvotes/all", adapter.A(model.GetEurovisionVotes), middleware.ResultRa)
 	g.GET("/eurovisionparticipations/user/:id", middleware.Id, adapter.A(model.GetEurovisionParticipationsByUserId), middleware.ResultRa)
 	g.GET("/players/email/:id", middleware.Id, adapter.A(model.GetPlayerByEmail), middleware.ResultRa)
+	g.GET("/playlists/play/:id", middleware.Id, adapter.A(model.M3u), middleware.ResultRa)
 
 	// cachedPrices := model.CachedPrice{}
 	// g.GET("/cachedprices/search/:id", OpenDB, Id, LoadOne(cachedPrices.Get), adapter.G(bgg.SearchCachedPriceOnBgg), CloseDB)
