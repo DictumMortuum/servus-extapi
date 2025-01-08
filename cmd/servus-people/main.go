@@ -26,12 +26,17 @@ type Val struct {
 }
 
 func process(DB *sqlx.DB, result model.Value) error {
+	vectorVal := result.(model.Vector)
+
+	if len(vectorVal) == 0 {
+		return nil
+	}
+
 	err := Reset(DB)
 	if err != nil {
 		return err
 	}
 
-	vectorVal := result.(model.Vector)
 	for _, item := range vectorVal {
 		raw, err := item.MarshalJSON()
 		if err != nil {
