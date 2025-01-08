@@ -2,14 +2,25 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
 
 	"gorm.io/gorm"
 )
 
 type Device struct {
-	Id    int64  `json:"id"`
-	Mac   string `json:"mac"`
-	Alias string `json:"alias"`
+	Id     int64  `json:"id"`
+	Mac    string `json:"mac"`
+	Alias  string `json:"alias"`
+	Online bool   `json:"online"`
+}
+
+func (d Device) Write(w io.Writer) {
+	status := 0
+	if d.Online {
+		status = 1
+	}
+	fmt.Fprintf(w, "status,device,mac,%s,alias,%s,online,%d\n", d.Mac, d.Alias, status)
 }
 
 func (Device) TableName() string {

@@ -9,6 +9,7 @@ on:
       - 'cmd/servus-scrape/**.go'
       - 'cmd/servus-series/**.go'
       - 'cmd/servus-deco/**.go'
+      - 'cmd/servus-people/**.go'
   workflow_dispatch: {}
 
 jobs:

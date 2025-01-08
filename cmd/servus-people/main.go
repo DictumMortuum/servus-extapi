@@ -1,107 +1,60 @@
 package main
 
 import (
-	"fmt"
+	"context"
+	"encoding/json"
 	"log"
-	"strings"
+	"os"
 	"time"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/config"
-	"github.com/DictumMortuum/servus-extapi/pkg/deco"
+	"github.com/DictumMortuum/servus-extapi/pkg/db"
+	"github.com/jmoiron/sqlx"
+	"github.com/prometheus/client_golang/api"
+	v1 "github.com/prometheus/client_golang/api/prometheus/v1"
+	"github.com/prometheus/common/model"
 )
 
-func printDevices(c *deco.Client) error {
-	result, err := c.ClientList()
-	if err != nil {
-		return err
-	}
-
-	mappings, err := getMappings()
-	if err != nil {
-		return err
-	}
-
-	for _, device := range result.Result.ClientList {
-		var status int
-		if device.Online {
-			status = 1
-		} else {
-			status = 0
-		}
-
-		nickname := strings.ReplaceAll(device.Name, ",", " ")
-		for _, mapping := range mappings {
-			if mapping.Mac == device.MAC {
-				nickname = mapping.Alias
-				break
-			}
-		}
-
-		now := time.Now()
-		sec := now.Unix()
-
-		fmt.Printf(
-			"client,deco,nickname,%s,ip,%s,mac,%s,type,%s,interface,%s,status,%d=%d\n",
-			nickname,
-			device.IP,
-			device.MAC,
-			device.ClientType,
-			device.Interface,
-			status,
-			sec)
-	}
-
-	fmt.Printf("client_total,deco=%d\n", len(result.Result.ClientList))
-
-	return nil
+type Val struct {
+	Metric struct {
+		Instance  string `json:"instance"`
+		Interface string `json:"interface"`
+		IP        string `json:"ip"`
+		Nickname  string `json:"nickname"`
+		MAC       string `json:"mac"`
+	} `json:"metric"`
 }
 
-func printDecos(c *deco.Client) error {
-	result, err := c.DeviceList()
+func process(DB *sqlx.DB, result model.Value) error {
+	err := Reset(DB)
 	if err != nil {
 		return err
 	}
 
-	count := 0
-
-	for _, device := range result.Result.DeviceList {
-		var status int
-		if device.InetStatus == "online" {
-			status = 1
-			count++
-		} else {
-			status = 0
+	vectorVal := result.(model.Vector)
+	for _, item := range vectorVal {
+		raw, err := item.MarshalJSON()
+		if err != nil {
+			return err
 		}
 
-		fmt.Printf(
-			"device,deco,ip,%s,role,%s,inet_error,%s,nickname,%s,group_status,%s=%d\n",
-			device.DeviceIP,
-			device.Role,
-			device.InetErrorMsg,
-			device.Nickname,
-			device.GroupStatus,
-			status)
+		var v Val
+		err = json.Unmarshal(raw, &v)
+		if err != nil {
+			return err
+		}
 
-		fmt.Printf(
-			"signal24,deco,ip,%s,role,%s,inet_error,%s,nickname,%s,group_status,%s=%v\n",
-			device.DeviceIP,
-			device.Role,
-			device.InetErrorMsg,
-			device.Nickname,
-			device.GroupStatus,
-			device.SignalLevel.Band24)
+		_, err = Insert(DB, v)
+		if err != nil {
+			return err
+		}
 
-		fmt.Printf(
-			"signal5,deco,ip,%s,role,%s,inet_error,%s,nickname,%s,group_status,%s=%v\n",
-			device.DeviceIP,
-			device.Role,
-			device.InetErrorMsg,
-			device.Nickname,
-			device.GroupStatus,
-			device.SignalLevel.Band5)
+		err = Status(DB, v.Metric.MAC, 1)
+		if err != nil {
+			return err
+		}
 	}
 
-	fmt.Printf("total,deco=%d\n", count)
 	return nil
 }
 
@@ -111,20 +64,44 @@ func main() {
 		log.Fatal(err)
 	}
 
-	c := deco.New(config.Cfg.Deco.Host)
-	err = c.Authenticate(config.Cfg.Deco.Pass)
+	client, err := api.NewClient(api.Config{
+		Address: "https://prometheus.dictummortuum.com",
+	})
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatalf("Error creating client: %v\n", err)
 	}
 
-	err = printDecos(c)
+	v1api := v1.NewAPI(client)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	result, _, err := v1api.Query(ctx, "deco_client{type='phone'}", time.Now(), v1.WithTimeout(5*time.Second))
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatalf("Error querying Prometheus: %v\n", err)
 	}
 
-	err = printDevices(c)
+	DB, err := db.DatabaseX()
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal(err)
+	}
+	defer DB.Close()
+
+	switch result.Type() {
+	case model.ValVector:
+		{
+			err = process(DB, result)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
 	}
 
+	devices, err := Select(DB)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, device := range devices {
+		device.Write(os.Stdout)
+	}
 }

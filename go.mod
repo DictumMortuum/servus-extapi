@@ -20,7 +20,8 @@ require (
 	github.com/heetch/confita v0.10.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/mrz1836/go-sanitize v1.3.2
-	github.com/prometheus/client_golang v1.20.4
+	github.com/prometheus/client_golang v1.20.5
+	github.com/prometheus/common v0.61.0
 	github.com/redis/go-redis/v9 v9.7.0
 	github.com/spf13/cast v1.7.1
 	github.com/supertokens/supertokens-golang v0.24.1
@@ -86,7 +87,6 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
-	github.com/prometheus/common v0.60.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/robfig/go-cache v0.0.0-20130306151617-9fc39e0dbf62 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
