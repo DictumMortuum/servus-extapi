@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -228,10 +229,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	s.Host = modem.Host
-	err = saveStats(s, modem.Modem)
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	s.Write(os.Stdout)
 }

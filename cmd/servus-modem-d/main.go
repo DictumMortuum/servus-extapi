@@ -85,11 +85,7 @@ func main() {
 	parseVoice(dsl, &s)
 
 	s.Host = modem.Host
-	err = saveStats(&s, modem.Modem)
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	s.Write(os.Stdout)
 	err = os.RemoveAll("/tmp/rod")
 	if err != nil {
 		log.Fatal(err)
