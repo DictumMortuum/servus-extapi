@@ -20,7 +20,7 @@ func (d Device) Write(w io.Writer) {
 	if d.Online {
 		status = 1
 	}
-	fmt.Fprintf(w, "status,device,mac,%s,alias,%s,online,%d\n", d.Mac, d.Alias, status)
+	fmt.Fprintf(w, "status,device,mac,%s,alias,%s=%d\n", d.Mac, d.Alias, status)
 }
 
 func (Device) TableName() string {
