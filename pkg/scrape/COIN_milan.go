@@ -1,8 +1,6 @@
 package scrape
 
 import (
-	"log"
-
 	"github.com/gocolly/colly/v2"
 )
 
@@ -40,8 +38,6 @@ func ScrapeCOINMilan() (map[string]any, []map[string]any, error) {
 			"url":            e.Request.URL.String(),
 			"tag":            "COIN",
 		}
-
-		log.Println(item)
 
 		rs = append(rs, item)
 	})
