@@ -2,6 +2,7 @@ package scrape
 
 import (
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -176,4 +177,33 @@ func getPages(raw string) int {
 func getURL(raw string) []string {
 	xurl := xurls.Strict()
 	return xurl.FindAllString(raw, -1)
+}
+
+func unique(col []map[string]any) []map[string]any {
+	temp := map[string]map[string]any{}
+
+	for _, item := range col {
+		if val, ok := item["name"]; ok {
+			if name, ok := val.(string); ok {
+				name = strings.TrimSpace(name)
+
+				if name == "" {
+					continue
+				}
+
+				temp[name] = item
+			}
+		}
+	}
+
+	rs := []map[string]any{}
+	for _, val := range temp {
+		rs = append(rs, val)
+	}
+
+	sort.Slice(rs, func(i int, j int) bool {
+		return rs[i]["name"].(string) > rs[j]["name"].(string)
+	})
+
+	return rs
 }

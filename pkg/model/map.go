@@ -5,6 +5,7 @@ import (
 
 	"github.com/DictumMortuum/servus-extapi/pkg/config"
 	"github.com/DictumMortuum/servus-extapi/pkg/util"
+	"github.com/adjust/rmq/v5"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -175,5 +176,24 @@ func (m *Map) GetRedis() (*redis.Client, error) {
 
 		m.Internal["redis"] = rdb
 		return rdb, nil
+	}
+}
+
+func (m *Map) GetRmq() (rmq.Connection, error) {
+	if val, ok := m.Internal["rmq"]; ok {
+		conn, ok := val.(rmq.Connection)
+		if !ok {
+			return nil, fmt.Errorf("error with retrieving rmq pointer")
+		} else {
+			return conn, nil
+		}
+	} else {
+		connection, err := rmq.OpenConnection("handler", "tcp", "localhost:6379", 2, nil)
+		if err != nil {
+			return nil, fmt.Errorf("error opening rmq connection")
+		}
+
+		m.Internal["rmq"] = connection
+		return connection, nil
 	}
 }

@@ -7,12 +7,14 @@ import (
 	"github.com/DictumMortuum/servus-extapi/pkg/config"
 	"github.com/DictumMortuum/servus-extapi/pkg/middleware"
 	"github.com/DictumMortuum/servus-extapi/pkg/queries"
+	"github.com/DictumMortuum/servus-extapi/pkg/queue"
+	"github.com/adjust/rmq/v5"
 	"github.com/gin-gonic/gin"
 )
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.10",
+		"version": "v0.0.11",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -23,10 +25,19 @@ func main() {
 		log.Fatal(err)
 	}
 
+	connection, err := rmq.OpenConnection("handler", "tcp", "localhost:6379", 2, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	go queue.Cleaner(connection)
+	go Consumer(connection)
+
 	r := gin.Default()
 	r.Use(middleware.Cors())
 	g := r.Group("/boardgames")
 	g.GET("/version", Version)
+	g.GET("/queue", queue.GetStats(connection, "", ""))
 
 	g.GET(
 		"/all",
@@ -61,6 +72,22 @@ func main() {
 		"/options/:num",
 		middleware.Num,
 		adapter.A(GetPopularGamesForNum),
+		middleware.Result,
+	)
+
+	g.POST(
+		"/scrape/url/:id",
+		middleware.Id,
+		middleware.Body,
+		adapter.A(ScrapeUrl),
+		middleware.Result,
+	)
+
+	g.POST(
+		"/scrape/:id",
+		middleware.Id,
+		middleware.Body,
+		adapter.A(ScrapeStore),
 		middleware.Result,
 	)
 
