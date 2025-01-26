@@ -9,7 +9,6 @@ import (
 
 type ScrapeUrl struct {
 	Id             int64         `gorm:"primaryKey" json:"id"`
-	StoreId        int64         `gorm:"foreignkey" json:"store_id"`
 	ScrapeId       int64         `gorm:"foreignkey" json:"scrape_id"`
 	Url            string        `json:"url"`
 	LastScraped    sql.NullInt32 `json:"last_scraped"`
