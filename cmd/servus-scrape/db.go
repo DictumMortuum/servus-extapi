@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 
+	"github.com/DictumMortuum/servus-extapi/pkg/model"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -213,4 +214,46 @@ func Delete(DB *sqlx.DB, id int64) error {
 	}
 
 	return nil
+}
+
+func GetScrapes(DB *sqlx.DB) ([]model.Scrape, error) {
+	rs := []model.Scrape{}
+
+	sql := `
+		select
+			sc.*,
+			st.name as store_name
+		from
+			tscrape sc,
+			tboardgamestores st
+		where
+			sc.store_id = st.id
+	`
+
+	err := DB.Select(&rs, sql)
+	if err != nil {
+		return nil, err
+	}
+
+	return rs, nil
+}
+
+func GetURLs(DB *sqlx.DB, id int64) ([]model.ScrapeUrl, error) {
+	rs := []model.ScrapeUrl{}
+
+	sql := `
+		select
+			*
+		from
+			tscrapeurl
+		where
+			scrape_id = ?
+	`
+
+	err := DB.Select(&rs, sql, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return rs, nil
 }

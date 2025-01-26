@@ -102,6 +102,43 @@ func main() {
 	app := &cli.App{
 		Commands: []*cli.Command{
 			{
+				Name:  "dblist",
+				Flags: []cli.Flag{},
+				Action: func(ctx *cli.Context) error {
+					rs, err := GetScrapes(DB)
+					if err != nil {
+						return err
+					}
+
+					for _, item := range rs {
+						urls, err := GetURLs(DB, item.Id)
+						if err != nil {
+							return err
+						}
+
+						for _, u := range urls {
+							req := scrape.GenericScrapeRequest{
+								ScrapeUrl: u,
+								Cache:     true,
+							}
+
+							rs, _, err := scrape.GenericScrape(item, DB, req)
+							if err != nil {
+								return err
+							}
+
+							// for _, p := range rs2 {
+							// 	log.Println(p)
+							// }
+
+							log.Println(rs)
+						}
+					}
+
+					return nil
+				},
+			},
+			{
 				Name: "scrape",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
