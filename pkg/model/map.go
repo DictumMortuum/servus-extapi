@@ -169,7 +169,7 @@ func (m *Map) GetRedis() (*redis.Client, error) {
 		}
 	} else {
 		rdb := redis.NewClient(&redis.Options{
-			Addr:     "localhost:6379",
+			Addr:     config.Cfg.Databases["redis"],
 			Password: "", // no password set
 			DB:       0,  // use default DB
 		})

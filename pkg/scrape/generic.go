@@ -27,6 +27,10 @@ func countStock(col []map[string]any, status int) int {
 func extractText(e *colly.HTMLElement, s string) string {
 	tmp := strings.Split(s, ",")
 
+	if len(s) == 0 {
+		return ""
+	}
+
 	if len(tmp) == 1 {
 		if s[0] == '.' || s[0] == '#' {
 			return e.ChildText(s)
@@ -59,6 +63,10 @@ func extractCmp(e *colly.HTMLElement, s string) bool {
 		{
 			return hasClass(e, tmp[0])
 		}
+	case "attr":
+		{
+			return e.Attr(tmp[0]) == tmp[1]
+		}
 	default:
 		{
 			if len(tmp) == 2 {
@@ -73,11 +81,18 @@ func extractCmp(e *colly.HTMLElement, s string) bool {
 }
 
 func extractURL(e *colly.HTMLElement, s string, isAbsolute bool) string {
+	var tmp string
 	if isAbsolute {
-		return e.Request.AbsoluteURL(extractText(e, s))
+		tmp = e.Request.AbsoluteURL(extractText(e, s))
 	} else {
-		return extractText(e, s)
+		tmp = extractText(e, s)
 	}
+
+	if strings.HasPrefix(tmp, "//") {
+		tmp = "https:" + tmp
+	}
+
+	return tmp
 }
 
 type GenericScrapeRequest struct {
@@ -154,6 +169,12 @@ func GenericScrape(scraper model.Scrape, DB *sqlx.DB, req GenericScrapeRequest) 
 		}
 
 		pages = append(pages, link)
+
+		err := UpdatePages(DB, req.ScrapeUrl.Id, len(pages))
+		if err != nil {
+			log.Println(err)
+		}
+
 		collector.Visit(link)
 	})
 

@@ -108,3 +108,13 @@ func Delete(DB *sqlx.DB, id int64) error {
 
 	return nil
 }
+
+func UpdatePages(DB *sqlx.DB, id int64, count int) error {
+	q := `update tscrapeurl set last_pages = ? where id = ?`
+	_, err := DB.Exec(q, count, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
