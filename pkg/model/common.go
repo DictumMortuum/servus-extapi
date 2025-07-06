@@ -1,6 +1,7 @@
 package model
 
 import (
+	"github.com/jmoiron/sqlx"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -17,4 +18,14 @@ func OmitMultiple(resources []string) func(db *gorm.DB) *gorm.DB {
 			FullSaveAssociations: true,
 		})
 	}
+}
+
+func GetSqlx(db *gorm.DB) (*sqlx.DB, error) {
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, err
+	}
+
+	sqlxDB := sqlx.NewDb(sqlDB, "mysql")
+	return sqlxDB, nil
 }

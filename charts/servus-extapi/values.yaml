@@ -1,0 +1,102 @@
+replicaCount: 1
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+
+env:
+  GIN_MODE: release
+
+secrets:
+  apiflash:
+    host: ref+sops://secrets.yaml#/apiflash/host
+    key: ref+sops://secrets.yaml#/apiflash/key
+  minio:
+    host: ref+sops://secrets.yaml#/minio/host
+    key: ref+sops://secrets.yaml#/minio/key
+    secret: ref+sops://secrets.yaml#/minio/secret_key
+
+service:
+  type: ClusterIP
+  port: 10000
+
+ingress:
+  enabled: true
+  className: nginx-internal
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  tls:
+    - secretName: wildcard-tls
+      hosts:
+        - "*.dictummortuum.com"
+  hosts:
+    - host: api.dictummortuum.com
+      paths:
+        - path: /rest
+          pathType: ImplementationSpecific
+    - host: extapi.dictummortuum.com
+      paths:
+        - path: /rest/tables
+          pathType: ImplementationSpecific
+        - path: /rest/tableparticipants
+          pathType: ImplementationSpecific
+        - path: /rest/boardgames
+          pathType: ImplementationSpecific
+        - path: /rest/eurovisionparticipations
+          pathType: ImplementationSpecific
+        - path: /rest/eurovisionvotes
+          pathType: ImplementationSpecific
+        - path: /rest/players
+          pathType: ImplementationSpecific
+        - path: /rest/finderusers
+          pathType: ImplementationSpecific
+        - path: /rest/wishlist
+          pathType: ImplementationSpecific
+        - path: /rest/scrapes
+          pathType: ImplementationSpecific
+        - path: /rest/scrapeurls
+          pathType: ImplementationSpecific
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /rest/version
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+readinessProbe:
+  httpGet:
+    path: /rest/version
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+volumeMounts:
+  - mountPath: /etc/conf.d/
+    name: servus-conf
+
+volumes:
+  - name: servus-conf
+    secret:
+      secretName: servusrc
+      items:
+        - key: servus-conf
+          path: servusrc.yml
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

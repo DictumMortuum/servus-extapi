@@ -15,7 +15,8 @@ type Table struct {
 	CreatorId    string             `json:"creator_id,omitempty"`
 	Creator      string             `json:"creator,omitempty"`
 	Location     string             `json:"location,omitempty"`
-	Seats        int                `json:"seats,omitempty"`
+	Seats        int                `json:"seats"`
+	Teaching     bool               `json:"teaching"`
 	Date         time.Time          `json:"date,omitempty"`
 	Participants []TableParticipant `json:"participants"`
 }

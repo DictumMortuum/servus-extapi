@@ -1,1 +1,3 @@
 dist
+secrets.yaml
+.sops.yaml

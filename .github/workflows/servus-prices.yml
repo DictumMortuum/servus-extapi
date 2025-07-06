@@ -1,7 +1,7 @@
 on:
-  push:
-    paths:
-      'cmd/servus-prices/**.go'
+  # push:
+  #   paths:
+  #     'cmd/servus-prices/**.go'
   workflow_dispatch: {}
 
 jobs:

@@ -1,0 +1,111 @@
+repositories:
+  - name: jameswynn
+    url: https://jameswynn.github.io/helm-charts
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+  - name: nicholaswilde
+    url: https://nicholaswilde.github.io/helm-charts
+  - name: stirling-pdf
+    url: https://stirling-tools.github.io/Stirling-PDF-chart
+  - name: pascaliske
+    url: https://charts.pascaliske.dev
+  - name: gabe565
+    url: https://charts.gabe565.com
+---
+releases:
+  - name: default-secrets
+    chart: ./charts/default-secrets
+    values:
+      - ./charts/default-secrets/values.yaml
+
+  - name: default-ingress
+    chart: ./charts/default-ingress
+    values:
+      - ./charts/default-ingress/values.yaml
+
+  - name: redis
+    chart: ./charts/redis
+    values:
+      - ./charts/redis/values.yaml
+
+  - name: servus-player
+    chart: ./charts/servus-player
+    values:
+      - ./charts/servus-player/values.yaml
+      - ./charts/servus-player/image.yaml
+
+  - name: servus-extapi
+    chart: ./charts/servus-extapi
+    values:
+      - ./charts/servus-extapi/values.yaml
+      - ./charts/servus-extapi/image.yaml
+
+  - name: servus-hg8010h
+    chart: ./charts/servus-hg8010h
+    values:
+      - ./charts/servus-hg8010h/values.yaml
+      - ./charts/servus-hg8010h/image.yaml
+
+  - name: servus-prices
+    chart: ./charts/servus-prices
+    values:
+      - ./charts/servus-prices/values.yaml
+      - ./charts/servus-prices/image.yaml
+
+  - name: servus-boardgames
+    chart: ./charts/servus-boardgames
+    values:
+      - ./charts/servus-boardgames/values.yaml
+      - ./charts/servus-boardgames/image.yaml
+
+  - name: radarr
+    chart: ./charts/radarr
+    values:
+      - ./charts/radarr/values.yaml
+
+  - name: sonarr
+    chart: ./charts/sonarr
+    values:
+      - ./charts/sonarr/values.yaml
+
+  - name: prowlarr
+    chart: ./charts/prowlarr
+    values:
+      - ./charts/prowlarr/values.yaml
+
+  - name: bazarr
+    chart: ./charts/bazarr
+    values:
+      - ./charts/bazarr/values.yaml
+
+  - name: delugevpn
+    chart: ./charts/delugevpn
+    values:
+      - ./charts/delugevpn/values.yaml
+
+  - name: homepage
+    chart: jameswynn/homepage
+    values:
+      - ./charts/homepage/values.yaml
+
+  - name: stirling-pdf
+    chart: stirling-pdf/stirling-pdf-chart
+    values:
+      - ./charts/stirling-pdf/values.yaml
+
+  - name: minio
+    chart: bitnami/minio
+    version: 17.0.3
+    values:
+      - ./charts/minio/values.yaml
+
+  - name: linkding
+    chart: pascaliske/linkding
+    values:
+      - ./charts/linkding/values.yaml
+
+  # - name: paperless-ngx
+  #   chart: oci://ghcr.io/gabe565/charts/paperless-ngx
+  #   version: 0.24.1
+  #   values:
+  #     - ./charts/paperless-ngx/values.yaml

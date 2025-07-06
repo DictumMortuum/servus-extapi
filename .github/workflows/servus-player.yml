@@ -1,7 +1,7 @@
 on:
-  push:
-    paths:
-      'cmd/servus-player/**.go'
+  # push:
+  #   paths:
+  #     'cmd/servus-player/**.go'
   workflow_dispatch: {}
 
 jobs:

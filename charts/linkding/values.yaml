@@ -1,0 +1,8 @@
+persistence:
+  size: 1Gi
+
+env:
+  - name: LD_SUPERUSER_NAME
+    value: admin
+  - name: LD_SUPERUSER_PASSWORD
+    value: admin

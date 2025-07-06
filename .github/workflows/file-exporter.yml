@@ -1,7 +1,7 @@
 on:
-  push:
-    paths:
-      'cmd/file-exporter/**.go'
+  # push:
+  #   paths:
+  #     'cmd/file-exporter/**.go'
   workflow_dispatch: {}
 
 jobs:

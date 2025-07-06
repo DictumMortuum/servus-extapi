@@ -1,0 +1,14 @@
+grafana:
+  enabled: false
+
+server:
+  ingress:
+    enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+    tls:
+      - secretName: prometheus-tls
+        hosts:
+          - prometheus.kubernetes.dictummortuum.com
+    hosts:
+      - prometheus.kubernetes.dictummortuum.com

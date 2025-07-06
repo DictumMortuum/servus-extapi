@@ -20,6 +20,11 @@ func GetBoardgameInfo(req *model.Map, res *model.Map) error {
 		return err
 	}
 
+	gorm, err := req.GetGorm()
+	if err != nil {
+		return err
+	}
+
 	url := fmt.Sprintf("https://boardgamegeek.com/boardgame/%d", id)
 	resp, err := http.Get(url)
 	if err != nil {
@@ -66,6 +71,18 @@ func GetBoardgameInfo(req *model.Map, res *model.Map) error {
 
 			for _, item := range ignore {
 				delete(inner, item)
+			}
+
+			boardgame := model.Boardgame{}
+
+			encoded, err := json.Marshal(inner)
+			if err != nil {
+				return err
+			}
+
+			_, err = boardgame.Create(gorm, encoded)
+			if err != nil {
+				return err
 			}
 
 			res.SetInternal(inner)

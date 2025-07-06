@@ -1,0 +1,5 @@
+secrets:
+  cloudflare: ref+sops://secrets.yaml#/dns/cloudflare-api-token
+  piholeExt: ref+sops://secrets.yaml#/dns/pihole-ext
+  pihole: ref+sops://secrets.yaml#/dns/pihole
+  pihole1: ref+sops://secrets.yaml#/dns/pihole1

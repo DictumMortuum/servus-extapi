@@ -1,0 +1,12 @@
+persistence:
+  size: 1Gi
+
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-body-size: 50m
+  hosts:
+    - name: pdf.dictummortuum.com
+      tlsSecret: wildcard-tls
+      tls: true

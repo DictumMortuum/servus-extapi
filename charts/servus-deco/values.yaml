@@ -1,0 +1,36 @@
+jobs:
+  hello-env-var:
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 2000
+    image:
+      repository: busybox
+      tag: latest
+      imagePullPolicy: Always
+    env:
+    - name: ECHO_VAR
+      value: "busybox"
+    envFrom:
+    - secretRef:
+        name: secret_data
+    - configMapRef:
+        name: config_data
+    schedule: "* * * * *"
+    command: ["/bin/sh"]
+    args:
+      - "-c"
+      - "echo $(date) - hello from $ECHO_VAR"
+      - "echo $(date) - loaded secret $secret_data"
+      - "echo $(date) - loaded config $config_data"
+    resources:
+      limits:
+        cpu: 50m
+        memory: 256Mi
+      requests:
+        cpu: 50m
+        memory: 256Mi
+    failedJobsHistoryLimit: 1
+    successfulJobsHistoryLimit: 3
+    concurrencyPolicy: Forbid
+    restartPolicy: Never

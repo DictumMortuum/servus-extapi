@@ -1,0 +1,18 @@
+ingress:
+  enabled: true
+  hostname: s3-api.dictummortuum.com
+  tls: true
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+
+console:
+  ingress:
+    enabled: true
+    hostname: s3.dictummortuum.com
+    tls: true
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+
+auth:
+  rootUser: admin
+  rootPassword: ref+sops://secrets.yaml#/minio/password

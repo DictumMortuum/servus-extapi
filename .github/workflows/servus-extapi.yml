@@ -1,7 +1,7 @@
 on:
-  push:
-    paths:
-      'cmd/servus-extapi/**.go'
+  # push:
+  #   paths:
+  #     'cmd/servus-extapi/**.go'
   workflow_dispatch: {}
 
 jobs:

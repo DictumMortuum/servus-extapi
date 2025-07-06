@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sol
+  namespace: default
+spec:
+  type: ExternalName
+  externalName: sol.dictummortuum.com
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "servus-extapi.fullname" . }}-ext
+  labels:
+    {{- include "servus-extapi.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: nginx-internal
+  rules:
+  - host: extapi.dictummortuum.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: sol
+            port:
+              number: 10000
+        path: /rest/cachedprices
+        pathType: ImplementationSpecific
+  - host: nextcloud.dictummortuum.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: sol
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - "*.dictummortuum.com"
+    secretName: wildcard-tls

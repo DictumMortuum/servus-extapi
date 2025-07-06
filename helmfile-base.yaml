@@ -1,0 +1,34 @@
+repositories:
+  - name: longhorn
+    url: https://charts.longhorn.io
+  - name: metallb
+    url: https://metallb.github.io/metallb
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
+  # - name: descheduler
+  #   url: https://kubernetes-sigs.github.io/descheduler/
+---
+releases:
+  - name: longhorn
+    chart: longhorn/longhorn
+    namespace: longhorn-system
+    version: 1.8.0
+    values:
+      - ./charts/longhorn/values.yaml
+
+  - name: metallb
+    chart: metallb/metallb
+    namespace: metallb-system
+    version: 0.14.9
+
+  - name: prometheus-stack
+    chart: prometheus-community/prometheus
+    namespace: prometheus-system
+    version: 27.5.1
+    values:
+      - ./charts/prometheus/values.yaml
+
+  # - name: descheduler
+  #   chart: descheduler/descheduler
+  #   namespace: descheduler-system
+  #   version: 0.32.2

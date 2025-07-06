@@ -1,7 +1,7 @@
 on:
-  push:
-    paths:
-      'cmd/database-exporter/**.go'
+  # push:
+  #   paths:
+  #     'cmd/database-exporter/**.go'
   workflow_dispatch: {}
 
 jobs:

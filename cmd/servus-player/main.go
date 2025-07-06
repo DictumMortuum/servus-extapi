@@ -12,7 +12,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.24",
+		"version": "v0.0.26",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -22,8 +22,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	log.Println(config.Cfg.Databases["redis"])
 
 	r := gin.Default()
 	r.Use(middleware.Cors())

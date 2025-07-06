@@ -12,7 +12,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.47",
+		"version": "v0.0.53",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -66,6 +66,8 @@ func main() {
 	g.GET("/players/email/:id", middleware.Id, adapter.A(model.GetPlayerByEmail), middleware.ResultRa)
 	g.GET("/playlists/play/:id", middleware.Id, adapter.A(model.PlaylistPlay), middleware.ResultRa)
 	g.GET("/playlists/stop", adapter.A(model.PlaylistStop), middleware.ResultRa)
+	g.GET("/wishlist/:id/screenshot", middleware.Id, model.GetWishlistScreenshot)
+	g.PUT("/wishlist/:id/screenshot", middleware.Id, model.UpdateWishlistScreenshot)
 
 	// cachedPrices := model.CachedPrice{}
 	// g.GET("/cachedprices/search/:id", OpenDB, Id, LoadOne(cachedPrices.Get), adapter.G(bgg.SearchCachedPriceOnBgg), CloseDB)

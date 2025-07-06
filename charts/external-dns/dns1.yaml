@@ -1,0 +1,19 @@
+provider: pihole
+policy: upsert-only
+registry: noop
+
+pihole:
+  server: https://dns.dictummortuum.com
+extraEnvVars:
+  - name: EXTERNAL_DNS_PIHOLE_API_VERSION
+    value: "6"
+  - name: EXTERNAL_DNS_PIHOLE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: pihole-ext-password
+        key: password
+
+ingressClassFilters:
+  - nginx-internal
+
+#logLevel: debug

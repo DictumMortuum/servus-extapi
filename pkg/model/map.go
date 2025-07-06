@@ -188,7 +188,7 @@ func (m *Map) GetRmq() (rmq.Connection, error) {
 			return conn, nil
 		}
 	} else {
-		connection, err := rmq.OpenConnection("handler", "tcp", "localhost:6379", 2, nil)
+		connection, err := rmq.OpenConnection("handler", "tcp", "redis.default.svc.cluster.local:6379", 2, nil)
 		if err != nil {
 			return nil, fmt.Errorf("error opening rmq connection")
 		}

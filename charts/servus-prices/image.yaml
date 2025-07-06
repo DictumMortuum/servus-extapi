@@ -1,0 +1,6 @@
+image:
+  pullPolicy: IfNotPresent
+  tag: docker.dictummortuum.com/github.com/dictummortuum/servus-extapi/cmd/servus-prices@sha256:546045bf3c13cb4024b9c173772260c3923ffde91497602eb54ce16824b360dd
+imagePullSecrets: []
+
+---

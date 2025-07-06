@@ -1,0 +1,6 @@
+image:
+  pullPolicy: IfNotPresent
+  tag: docker.dictummortuum.com/github.com/dictummortuum/servus-extapi/cmd/servus-player@sha256:2043d337d00a39329ac649416dd0e6e97678221ecaf098c58b705b2bc6210384
+imagePullSecrets: []
+
+---

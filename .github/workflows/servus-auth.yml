@@ -1,7 +1,7 @@
 on:
-  push:
-    paths:
-      'cmd/servus-auth/**.go'
+  # push:
+  #   paths:
+  #     'cmd/servus-auth/**.go'
   workflow_dispatch: {}
 
 jobs:

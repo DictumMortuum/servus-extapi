@@ -1,0 +1,83 @@
+replicaCount: 1
+
+image:
+  repository: lscr.io/linuxserver/bazarr
+  pullPolicy: Always
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+env:
+  PUID: "1986"
+  PGID: "1986"
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 6767
+
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  tls:
+    - secretName: bazarr-tls
+      hosts:
+        - bazarr.dictummortuum.com
+  hosts:
+    - host: bazarr.dictummortuum.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
+resources:
+  limits:
+    cpu: 500m
+  requests:
+    cpu: 100m
+
+livenessProbe: {}
+readinessProbe: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+volumeMounts:
+  - name: config
+    mountPath: /config
+  - name: plex
+    mountPath: /movies
+    subPath: radarr
+  - name: plex
+    mountPath: /tv
+    subPath: series
+
+volumes:
+  - name: config
+    persistentVolumeClaim:
+      claimName: bazarr-pvc
+  - name: plex
+    nfs:
+      server: 192.168.1.100
+      path: /volume1/plex
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

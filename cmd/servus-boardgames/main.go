@@ -14,7 +14,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.11",
+		"version": "v0.0.16",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -72,6 +72,13 @@ func main() {
 		"/options/:num",
 		middleware.Num,
 		adapter.A(GetPopularGamesForNum),
+		middleware.Result,
+	)
+
+	g.POST(
+		"/top",
+		middleware.Body,
+		adapter.A(GetPopularGames),
 		middleware.Result,
 	)
 

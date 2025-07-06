@@ -2,11 +2,11 @@ package model
 
 import (
 	"encoding/json"
-	"fmt"
-	"io"
+	"errors"
 	"net/http"
-	"os"
 
+	"github.com/DictumMortuum/servus-extapi/pkg/screenshot"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -81,19 +81,23 @@ func (Wishlist) Create(db *gorm.DB, body []byte) (any, error) {
 		return nil, err
 	}
 
-	raw, err := http.Get(payload.Screenshot)
-	if err != nil {
-		return nil, err
-	}
+	// raw, err := http.Get(payload.Screenshot)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	file, err := os.Create(fmt.Sprintf("/data/cache/wish-%d.jpg", payload.Id))
-	if err != nil {
-		return nil, err
-	}
+	// file, err := os.Create(fmt.Sprintf("/data/cache/wish-%d.jpg", payload.Id))
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// defer file.Close()
 
-	defer file.Close()
+	// _, err = io.Copy(file, raw.Body)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	_, err = io.Copy(file, raw.Body)
+	err = screenshot.Do(payload.Url, payload.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -113,4 +117,85 @@ func (obj Wishlist) Delete(db *gorm.DB, id int64) (any, error) {
 	}
 
 	return data, nil
+}
+
+func GetWishlistScreenshot(c *gin.Context) {
+	req, err := ToMap(c, "req")
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	id, err := req.GetInt64("id")
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	data, err := screenshot.Get(id)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	info, err := data.Stat()
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.DataFromReader(http.StatusOK, info.Size, "application/octet-stream", data, map[string]string{})
+}
+
+func UpdateWishlistScreenshot(c *gin.Context) {
+	req, err := ToMap(c, "req")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]any{
+			"error": err,
+		})
+		return
+	}
+
+	id, err := req.GetInt64("id")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]any{
+			"error": err,
+		})
+		return
+	}
+
+	DB, err := req.GetGorm()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]any{
+			"error": err,
+		})
+		return
+	}
+
+	var data Wishlist
+	rs := DB.First(&data, "id = ? ", id)
+	if errors.Is(rs.Error, gorm.ErrRecordNotFound) {
+		c.JSON(http.StatusOK, map[string]any{
+			"status": "not found",
+		})
+		return
+	}
+	if rs.Error != nil {
+		c.JSON(http.StatusInternalServerError, map[string]any{
+			"error": rs.Error,
+		})
+		return
+	}
+
+	err = screenshot.Do(data.Url, data.Id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]any{
+			"error": rs.Error,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]any{
+		"status": "updated",
+	})
 }

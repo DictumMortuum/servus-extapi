@@ -1,0 +1,6 @@
+image:
+  pullPolicy: IfNotPresent
+  tag: docker.dictummortuum.com/github.com/dictummortuum/servus-extapi/cmd/servus-boardgames@sha256:81aa3560732ec5fc0fa54ac7346871e5984eaa4f3c2a375c43e67771eed869f3
+imagePullSecrets: []
+
+---

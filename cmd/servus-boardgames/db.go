@@ -32,6 +32,22 @@ type Boardgame struct {
 	LastPlayed     time.Time              `json:"last_played,omitempty"`
 }
 
+func (b Boardgame) AverageToFloat() (float64, error) {
+	tmp := strings.Trim(b.Average.String, "'")
+	tmp = strings.Trim(tmp, "\"")
+
+	if tmp == "" {
+		return 0, nil
+	}
+
+	s, err := strconv.ParseFloat(tmp, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	return s, nil
+}
+
 func Abs(a int64) int64 {
 	if a > 0 {
 		return a

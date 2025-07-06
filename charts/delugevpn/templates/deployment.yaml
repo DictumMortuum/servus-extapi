@@ -1,0 +1,133 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "delugevpn.fullname" . }}
+  labels:
+    {{- include "delugevpn.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "delugevpn.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "delugevpn.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "delugevpn.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+            - containerPort: 8112
+            - containerPort: 8118
+            - containerPort: 58846
+            - containerPort: 58946
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            - name: "PUID"
+              value: "{{ .Values.env.PUID }}"
+            - name: "PGID"
+              value: "{{ .Values.env.PGID }}"
+            - name: "VPN_CLIENT"
+              value: "{{ .Values.env.VPN_CLIENT }}"
+            - name: "VPN_PROV"
+              value: "{{ .Values.env.VPN_PROV }}"
+            - name: "VPN_ENABLED"
+              value: "{{ .Values.env.VPN_ENABLED }}"
+            - name: "VPN_USER"
+              valueFrom:
+                secretKeyRef:
+                  name: pia
+                  key: username
+            - name: "VPN_PASS"
+              valueFrom:
+                secretKeyRef:
+                  name: pia
+                  key: password
+            - name: "LAN_NETWORK"
+              value: "{{ .Values.env.LAN_NETWORK }}"
+            - name: "ENABLE_STARTUP_SCRIPTS"
+              value: "yes"
+            - name: "ENABLE_PRIVOXY"
+              value: "yes"
+            - name: "STRICT_PORT_FORWARD"
+              value: "yes"
+            - name: "ENABLE_SOCKS"
+              value: "yes"
+            - name: "SOCKS_USER"
+              value: "admin"
+            - name: "SOCKS_PASS"
+              value: "socks"
+            - name: "NAME_SERVERS"
+              value: "84.200.69.80,37.235.1.174,1.1.1.1,37.235.1.177,84.200.70.40,1.0.0.1"
+            - name: "DEBUG"
+              value: "true"
+            - name: "USERSPACE_WIREGUARD"
+              value: "no"
+            - name: "DELUGE_DAEMON_LOG_LEVEL"
+              value: "info"
+            - name: "DELUGE_WEB_LOG_LEVEL"
+              value: "info"
+            - name: "DELUGE_ENABLE_WEBUI_PASSWORD"
+              value: "yes"
+            - name: "VPN_INPUT_PORTS"
+              value: "{{ .Values.env.VPN_INPUT_PORTS }}"
+            - name: "VPN_OUTPUT_PORTS"
+              value: "{{ .Values.env.VPN_OUTPUT_PORTS }}"
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
