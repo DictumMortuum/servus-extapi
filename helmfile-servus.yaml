@@ -23,10 +23,10 @@ releases:
     values:
       - ./charts/default-ingress/values.yaml
 
-  - name: redis
-    chart: ./charts/redis
-    values:
-      - ./charts/redis/values.yaml
+  # - name: redis
+  #   chart: ./charts/redis
+  #   values:
+  #     - ./charts/redis/values.yaml
 
   - name: servus-player
     chart: ./charts/servus-player
@@ -40,12 +40,6 @@ releases:
       - ./charts/servus-extapi/values.yaml
       - ./charts/servus-extapi/image.yaml
 
-  - name: servus-hg8010h
-    chart: ./charts/servus-hg8010h
-    values:
-      - ./charts/servus-hg8010h/values.yaml
-      - ./charts/servus-hg8010h/image.yaml
-
   - name: servus-prices
     chart: ./charts/servus-prices
     values:
@@ -57,31 +51,6 @@ releases:
     values:
       - ./charts/servus-boardgames/values.yaml
       - ./charts/servus-boardgames/image.yaml
-
-  - name: radarr
-    chart: ./charts/radarr
-    values:
-      - ./charts/radarr/values.yaml
-
-  - name: sonarr
-    chart: ./charts/sonarr
-    values:
-      - ./charts/sonarr/values.yaml
-
-  - name: prowlarr
-    chart: ./charts/prowlarr
-    values:
-      - ./charts/prowlarr/values.yaml
-
-  - name: bazarr
-    chart: ./charts/bazarr
-    values:
-      - ./charts/bazarr/values.yaml
-
-  - name: delugevpn
-    chart: ./charts/delugevpn
-    values:
-      - ./charts/delugevpn/values.yaml
 
   - name: homepage
     chart: jameswynn/homepage

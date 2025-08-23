@@ -3,13 +3,20 @@ package model
 import (
 	"encoding/json"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type Location struct {
 	Id     int64  `gorm:"primaryKey" json:"id"`
+	Uuid   string `json:"uuid"`
 	Name   string `json:"name"`
 	Hidden bool   `json:"hidden"`
+}
+
+func (user *Location) BeforeCreate(tx *gorm.DB) (err error) {
+	user.Uuid = uuid.NewString()
+	return
 }
 
 func (Location) TableName() string {

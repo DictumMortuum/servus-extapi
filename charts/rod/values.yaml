@@ -1,0 +1,12 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/go-rod/rod
+  tag: arm
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 7317
+
+resources: {}

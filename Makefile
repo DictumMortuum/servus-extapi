@@ -19,7 +19,8 @@ BINARIES = \
 	servus-network \
 	servus-people \
 	servus-bgg \
-	servus-hg8010h
+	servus-hg8010h \
+	servus-speedportplus2
 
 GOOPTS = -buildmode=pie -trimpath -mod=readonly -modcacherw -ldflags=-s -ldflags=-w
 OUTPUT_DIR = dist

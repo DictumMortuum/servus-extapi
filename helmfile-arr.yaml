@@ -1,0 +1,30 @@
+releases:
+  - name: radarr
+    chart: ./charts/radarr
+    values:
+      - ./charts/radarr/values.yaml
+
+  - name: sonarr
+    chart: ./charts/sonarr
+    values:
+      - ./charts/sonarr/values.yaml
+
+  - name: prowlarr
+    chart: ./charts/prowlarr
+    values:
+      - ./charts/prowlarr/values.yaml
+
+  - name: bazarr
+    chart: ./charts/bazarr
+    values:
+      - ./charts/bazarr/values.yaml
+
+  - name: delugevpn
+    chart: ./charts/delugevpn
+    values:
+      - ./charts/delugevpn/values.yaml
+
+  - name: autoindex
+    chart: ./charts/nginx-autoindex
+    values:
+      - ./charts/nginx-autoindex/values.yaml

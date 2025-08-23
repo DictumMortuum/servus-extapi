@@ -1,0 +1,9 @@
+replicaCount: 1
+
+image:
+  repository: cloudflare/cloudflared
+  tag: latest
+  pullPolicy: IfNotPresent
+
+secrets:
+  token: ref+sops://secrets.yaml#/cloudflared/token

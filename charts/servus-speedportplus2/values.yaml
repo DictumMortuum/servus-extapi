@@ -1,0 +1,72 @@
+replicaCount: 1
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+
+env:
+  GIN_MODE: release
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: nginx-internal
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  tls:
+    - secretName: wildcard-tls
+      hosts:
+        - "*.dictummortuum.com"
+  hosts:
+    - host: exporters.dictummortuum.com
+      paths:
+        - path: /speedportplus2(/|$)(.*)
+          pathType: ImplementationSpecific
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /liveness
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+readinessProbe:
+  httpGet:
+    path: /readiness
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+volumeMounts:
+  - mountPath: /etc/conf.d/
+    name: servus-conf
+
+volumes:
+  - name: servus-conf
+    secret:
+      secretName: servusrc
+      items:
+        - key: servus-conf
+          path: servusrc.yml

@@ -1,0 +1,67 @@
+replicaCount: 1
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+env:
+  PUID: "1986"
+  PGID: "1986"
+
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+
+serviceAccount:
+  create: false
+
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  tls:
+    - secretName: wildcard-tls
+      hosts:
+        - files.dictummortuum.com
+  hosts:
+    - host: files.dictummortuum.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
+autoscaling:
+  enabled: false
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources: {}
+
+volumes:
+  - name: vpn-deployment-volume
+    persistentVolumeClaim:
+      claimName: delugevpn-pvc
+  - name: config
+    configMap:
+      name: autoindex-config
+
+volumeMounts:
+  - mountPath: /data
+    name: vpn-deployment-volume
+    subPath: data
+  - name: config
+    mountPath: /etc/nginx/nginx.conf
+    subPath: nginx.conf
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

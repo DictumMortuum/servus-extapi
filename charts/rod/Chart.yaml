@@ -1,0 +1,6 @@
+apiVersion: v2
+name: rod
+description: A Helm chart for deploying rod browser automation container
+type: application
+version: 0.1.0
+appVersion: "latest"

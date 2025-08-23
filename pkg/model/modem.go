@@ -68,3 +68,47 @@ func (m Modem) Write(w io.Writer) {
 	fmt.Fprintf(w, "crc_up,modem,hostname,%s=%d\n", m.Host, m.CRCUp)
 	fmt.Fprintf(w, "crc_down,modem,hostname,%s=%d\n", m.Host, m.CRCDown)
 }
+
+func (m Modem) Strings() []string {
+	var isEnabled int = 0
+	if m.Status {
+		isEnabled = 1
+	}
+
+	var isVoipEnabled int = 0
+	if m.VoipStatus {
+		isVoipEnabled = 1
+	}
+
+	var isInVoipCall int = 0
+	if m.VoipCallStatus == "incall" {
+		isInVoipCall = 1
+	} else if m.VoipCallStatus == "disconnecting" {
+		isInVoipCall = 0
+	} else if m.VoipCallStatus == "idle" {
+		isInVoipCall = 0
+	} else if m.VoipCallStatus == "connecting" {
+		isInVoipCall = 1
+	} else if m.VoipCallStatus == "calling" {
+		isInVoipCall = 1
+	}
+
+	return []string{
+		fmt.Sprintf("uptime,modem,hostname,%s=%d", m.Host, m.Uptime),
+		fmt.Sprintf("status,modem,hostname,%s=%d", m.Host, isEnabled),
+		fmt.Sprintf("voip_status,modem,hostname,%s=%d", m.Host, isVoipEnabled),
+		fmt.Sprintf("voip_call_status,modem,hostname,%s=%d", m.Host, isInVoipCall),
+		fmt.Sprintf("snr_up,modem,hostname,%s=%f", m.Host, m.SNRUp),
+		fmt.Sprintf("snr_down,modem,hostname,%s=%f", m.Host, m.SNRDown),
+		fmt.Sprintf("max_up,modem,hostname,%s=%d", m.Host, m.MaxUp),
+		fmt.Sprintf("max_down,modem,hostname,%s=%d", m.Host, m.MaxDown),
+		fmt.Sprintf("fec_up,modem,hostname,%s=%d", m.Host, m.FECUp),
+		fmt.Sprintf("fec_down,modem,hostname,%s=%d", m.Host, m.FECDown),
+		fmt.Sprintf("data_up,modem,hostname,%s=%d", m.Host, m.DataUp),
+		fmt.Sprintf("data_down,modem,hostname,%s=%d", m.Host, m.DataDown),
+		fmt.Sprintf("current_up,modem,hostname,%s=%d", m.Host, m.CurrentUp),
+		fmt.Sprintf("current_down,modem,hostname,%s=%d", m.Host, m.CurrentDown),
+		fmt.Sprintf("crc_up,modem,hostname,%s=%d", m.Host, m.CRCUp),
+		fmt.Sprintf("crc_down,modem,hostname,%s=%d", m.Host, m.CRCDown),
+	}
+}

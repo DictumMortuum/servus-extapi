@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rod
+spec:
+  selector:
+    app: rod
+  ports:
+    - protocol: TCP
+      port: {{ .Values.service.port }}
+      targetPort: 7317
+  type: {{ .Values.service.type }}

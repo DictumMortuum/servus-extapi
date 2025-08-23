@@ -14,7 +14,7 @@ import (
 
 func Version(c *gin.Context) {
 	rs := map[string]any{
-		"version": "v0.0.16",
+		"version": "v0.0.18",
 	}
 	c.AbortWithStatusJSON(200, rs)
 }
@@ -25,7 +25,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	connection, err := rmq.OpenConnection("handler", "tcp", "localhost:6379", 2, nil)
+	connection, err := rmq.OpenConnection("handler", "tcp", config.Cfg.Databases["redis"], 2, nil)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -3,12 +3,14 @@ package model
 import (
 	"encoding/json"
 
+	"github.com/google/uuid"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
 type Player struct {
 	Id          int64          `gorm:"primaryKey" json:"id"`
+	Uuid        string         `json:"uuid"`
 	Name        string         `json:"name"`
 	Surname     string         `json:"surname"`
 	Email       *string        `json:"email"`
@@ -17,6 +19,11 @@ type Player struct {
 	BggUsername string         `json:"bgg_username"`
 	Collection  datatypes.JSON `gorm:"serializer:json" json:"collection"`
 	// BGStatsPlayers []BGStatsPlayer `json:"bg_stats_players"`
+}
+
+func (user *Player) BeforeCreate(tx *gorm.DB) (err error) {
+	user.Uuid = uuid.NewString()
+	return
 }
 
 func (Player) TableName() string {

@@ -1,0 +1,22 @@
+releases:
+  - name: rod
+    chart: ./charts/rod
+    values:
+      - ./charts/rod/values.yaml
+
+  - name: servus-hg8010h
+    chart: ./charts/servus-hg8010h
+    values:
+      - ./charts/servus-hg8010h/values.yaml
+      - ./charts/servus-hg8010h/image.yaml
+
+  - name: servus-speedportplus2
+    chart: ./charts/servus-speedportplus2
+    values:
+      - ./charts/servus-speedportplus2/values.yaml
+      - ./charts/servus-speedportplus2/image.yaml
+
+  - name: cloudflared
+    chart: ./charts/cloudflared
+    values:
+      - ./charts/cloudflared/values.yaml

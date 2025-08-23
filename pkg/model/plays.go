@@ -6,6 +6,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -13,6 +14,7 @@ import (
 
 type Play struct {
 	Id          int64          `gorm:"primaryKey" json:"id"`
+	Uuid        string         `json:"uuid"`
 	BoardgameId int64          `json:"boardgame_id"`
 	Boardgame   Boardgame      `json:"boardgame"`
 	Date        time.Time      `json:"date"`
@@ -29,6 +31,11 @@ type PlayData struct {
 	Solo        bool      `json:"solo"`
 	Cooperative bool      `json:"cooperative"`
 	Teams       [][]int64 `json:"teams"`
+}
+
+func (user *Play) BeforeCreate(tx *gorm.DB) (err error) {
+	user.Uuid = uuid.NewString()
+	return
 }
 
 func (Play) TableName() string {

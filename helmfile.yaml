@@ -2,3 +2,5 @@ helmfiles:
   - helmfile-base.yaml
   - helmfile-dns-system.yaml
   - helmfile-servus.yaml
+  - helmfile-arr.yaml
+  - helmfile-exporters.yaml

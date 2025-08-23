@@ -1,0 +1,6 @@
+image:
+  pullPolicy: IfNotPresent
+  tag: docker.dictummortuum.com/github.com/dictummortuum/servus-extapi/cmd/servus-speedportplus2@sha256:8903089eed36835e371a1280ae94b9f19c382378bd11da4b7118e9ff0f23075a
+imagePullSecrets: []
+
+---
