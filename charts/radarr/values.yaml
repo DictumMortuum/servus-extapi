@@ -71,7 +71,7 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
   tls:
-    - secretName: wildcard-tls
+    - secretName: radarr-tls
       hosts:
         - "radarr.dictummortuum.com"
   hosts:
@@ -86,7 +86,7 @@ ingressext:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
   tls:
-    - secretName: wildcard-tls
+    - secretName: radarr-ext-tls
       hosts:
         - "radarr.dictummortuum.com"
   hosts:

@@ -71,7 +71,7 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
   tls:
-    - secretName: wildcard-tls
+    - secretName: sonarr-tls
       hosts:
         - "sonarr.dictummortuum.com"
   hosts:
@@ -86,7 +86,7 @@ ingressext:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
   tls:
-    - secretName: wildcard-tls
+    - secretName: sonarr-ext-tls
       hosts:
         - "sonarr.dictummortuum.com"
   hosts:

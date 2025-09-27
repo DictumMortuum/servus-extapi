@@ -49,7 +49,7 @@ ingress:
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
   tls:
-    - secretName: wildcard-tls
+    - secretName: deluge-tls
       hosts:
         - "deluge.dictummortuum.com"
   hosts:

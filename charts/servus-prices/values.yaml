@@ -24,7 +24,7 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
   tls:
-    - secretName: wildcard-tls
+    - secretName: servus-prices-tls
       hosts:
         - "api.dictummortuum.com"
         - "extapi.dictummortuum.com"

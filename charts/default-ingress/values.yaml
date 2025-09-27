@@ -4,7 +4,7 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
   tls:
-    - secretName: wildcard-tls
+    - secretName: default-ingress-tls
       hosts:
         - "linkding.dictummortuum.com"
   hosts:

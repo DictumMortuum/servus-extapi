@@ -44,4 +44,4 @@ spec:
   - hosts:
     - "extapi.dictummortuum.com"
     - "nextcloud.dictummortuum.com"
-    secretName: wildcard-tls
+    secretName: servus-extapi-tls

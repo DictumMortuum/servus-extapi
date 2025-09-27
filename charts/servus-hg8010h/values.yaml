@@ -30,7 +30,7 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/rewrite-target: /$2
   tls:
-    - secretName: wildcard-tls
+    - secretName: servus-hg8010h-tls
       hosts:
         - "exporters.dictummortuum.com"
   hosts:

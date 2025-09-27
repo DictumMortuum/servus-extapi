@@ -24,9 +24,10 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
   tls:
-    - secretName: wildcard-tls
+    - secretName: servus-player-tls
       hosts:
         - "api.dictummortuum.com"
+        - "extapi.dictummortuum.com"
   hosts:
     - host: api.dictummortuum.com
       paths:

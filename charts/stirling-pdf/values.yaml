@@ -8,5 +8,5 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-body-size: 50m
   hosts:
     - name: pdf.dictummortuum.com
-      tlsSecret: wildcard-tls
+      tlsSecret: pdf-tls
       tls: true

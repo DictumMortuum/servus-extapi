@@ -69,7 +69,7 @@ ingress:
     gethomepage.dev/name: prowlarr
     gethomepage.dev/pod-selector: ""
   tls:
-    - secretName: wildcard-tls
+    - secretName: prowlarr-tls
       hosts:
         - "prowlarr.dictummortuum.com"
   hosts:
@@ -90,7 +90,7 @@ ingressext:
     gethomepage.dev/name: prowlarr
     gethomepage.dev/pod-selector: ""
   tls:
-    - secretName: wildcard-tls
+    - secretName: prowlarr-ext-tls
       hosts:
         - "prowlarr.dictummortuum.com"
   hosts:
