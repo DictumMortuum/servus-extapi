@@ -70,6 +70,12 @@ ingress:
   className: nginx-internal
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: Movies
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: radarr
+    gethomepage.dev/name: Radarr
+    gethomepage.dev/pod-selector: "app.kubernetes.io/name=radarr"
   tls:
     - secretName: radarr-tls
       hosts:

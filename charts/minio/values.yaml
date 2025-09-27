@@ -12,6 +12,12 @@ console:
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-prod
+      gethomepage.dev/enabled: "true"
+      gethomepage.dev/description: S3 Storage
+      gethomepage.dev/group: Tech
+      gethomepage.dev/icon: minio
+      gethomepage.dev/name: Minio
+      gethomepage.dev/pod-selector: "app.kubernetes.io/name=minio"
 
 auth:
   rootUser: admin

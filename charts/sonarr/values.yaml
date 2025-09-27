@@ -70,6 +70,12 @@ ingress:
   className: nginx-internal
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: Series
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: sonarr
+    gethomepage.dev/name: Sonarr
+    gethomepage.dev/pod-selector: "app.kubernetes.io/name=sonarr"
   tls:
     - secretName: sonarr-tls
       hosts:

@@ -6,6 +6,12 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/proxy-body-size: 50m
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: PDF stuff
+    gethomepage.dev/group: Applications
+    gethomepage.dev/icon: stirling-pdf
+    gethomepage.dev/name: Stirling
+    gethomepage.dev/pod-selector: "app.kubernetes.io/name=stirling-pdf-chart"
   hosts:
     - name: pdf.dictummortuum.com
       tlsSecret: pdf-tls

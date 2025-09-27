@@ -1,0 +1,53 @@
+{{- if .Values.navidrome.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: synology
+  namespace: default
+spec:
+  type: ExternalName
+  externalName: 192.168.1.100
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.navidrome.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.navidrome.name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  {{- with .Values.navidrome.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.navidrome.className }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  {{- if .Values.navidrome.tls }}
+  tls:
+    {{- range .Values.navidrome.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.navidrome.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            {{- with .pathType }}
+            pathType: {{ . }}
+            {{- end }}
+            backend:
+              service:
+                name: {{ .backendService }}
+                port:
+                  number: {{ .backendPort }}
+          {{- end }}
+    {{- end }}
+{{- end }}

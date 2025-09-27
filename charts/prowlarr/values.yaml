@@ -63,11 +63,11 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/description: Prowlarr
+    gethomepage.dev/description: Indexer
     gethomepage.dev/group: Media
-    gethomepage.dev/icon: prowlarr.png
-    gethomepage.dev/name: prowlarr
-    gethomepage.dev/pod-selector: ""
+    gethomepage.dev/icon: prowlarr
+    gethomepage.dev/name: Prowlarr
+    gethomepage.dev/pod-selector: "app.kubernetes.io/name=prowlarr"
   tls:
     - secretName: prowlarr-tls
       hosts:
@@ -83,12 +83,6 @@ ingressext:
   className: nginx-external
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    gethomepage.dev/enabled: "true"
-    gethomepage.dev/description: Prowlarr
-    gethomepage.dev/group: Media
-    gethomepage.dev/icon: prowlarr.png
-    gethomepage.dev/name: prowlarr
-    gethomepage.dev/pod-selector: ""
   tls:
     - secretName: prowlarr-ext-tls
       hosts:

@@ -1,21 +1,22 @@
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.linkding.enabled -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "default-ingress.fullname" . }}
+  name: {{ .Values.linkding.name }}
   labels:
-    {{- include "default-ingress.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+    app.kubernetes.io/name: {{ .Values.linkding.name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  {{- with .Values.linkding.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- with .Values.ingress.className }}
+  {{- with .Values.linkding.className }}
   ingressClassName: {{ . }}
   {{- end }}
-  {{- if .Values.ingress.tls }}
+  {{- if .Values.linkding.tls }}
   tls:
-    {{- range .Values.ingress.tls }}
+    {{- range .Values.linkding.tls }}
     - hosts:
         {{- range .hosts }}
         - {{ . | quote }}
@@ -24,7 +25,7 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
+    {{- range .Values.linkding.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:

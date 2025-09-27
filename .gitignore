@@ -1,3 +1,4 @@
 dist
 secrets.yaml
 .sops.yaml
+curl.tpl

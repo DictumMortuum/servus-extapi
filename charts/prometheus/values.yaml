@@ -6,6 +6,12 @@ server:
     enabled: true
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-prod
+      gethomepage.dev/enabled: "true"
+      gethomepage.dev/description: Monitoring
+      gethomepage.dev/group: Tech
+      gethomepage.dev/icon: prometheus
+      gethomepage.dev/name: Prometheus
+      gethomepage.dev/pod-selector: "app.kubernetes.io/name=prometheus"
     tls:
       - secretName: prometheus-tls
         hosts:

@@ -1,10 +1,17 @@
-ingress:
+linkding:
   enabled: true
+  name: linkding
   className: nginx-internal
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: Link management
+    gethomepage.dev/group: Applications
+    gethomepage.dev/icon: linkding
+    gethomepage.dev/name: Linkding
+    gethomepage.dev/pod-selector: "app.kubernetes.io/name=linkding"
   tls:
-    - secretName: default-ingress-tls
+    - secretName: linkding-tls
       hosts:
         - "linkding.dictummortuum.com"
   hosts:
@@ -14,3 +21,27 @@ ingress:
           pathType: ImplementationSpecific
           backendService: linkding
           backendPort: 9090
+
+navidrome:
+  enabled: true
+  name: navidrome
+  className: nginx-internal
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: Music
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: navidrome
+    gethomepage.dev/name: Navidrome
+    gethomepage.dev/pod-selector: ""
+  tls:
+    - secretName: music-tls
+      hosts:
+        - "music.dictummortuum.com"
+  hosts:
+    - host: music.dictummortuum.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+          backendService: synology
+          backendPort: 4533

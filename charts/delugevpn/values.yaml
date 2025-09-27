@@ -48,6 +48,12 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: Torrents
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: deluge
+    gethomepage.dev/name: Deluge
+    gethomepage.dev/pod-selector: "app.kubernetes.io/name=delugevpn"
   tls:
     - secretName: deluge-tls
       hosts:

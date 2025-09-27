@@ -18,30 +18,6 @@ config:
           icon: plex.svg
           href: https://plex.dictummortuum.com/web/index.html#!/media/a46300ed136b86cef11b73b12817e6bd4fc04a71/com.plexapp.plugins.library?source=2
           description: Streaming
-      - Sonarr:
-          icon: sonarr.svg
-          href: https://sonarr.dictummortuum.com
-          description: Series
-      - Radarr:
-          icon: radarr.svg
-          href: https://radarr.dictummortuum.com
-          description: Movies
-      - Prowlarr:
-          icon: prowlarr.svg
-          href: https://prowlarr.dictummortuum.com
-          description: Indexer
-      - Navidrome:
-          icon: navidrome.svg
-          href: https://music.dictummortuum.com
-          description: Music
-      - Bazarr:
-          icon: bazarr.svg
-          href: https://bazarr.dictummortuum.com
-          description: Subtitles
-      - Deluge:
-          icon: deluge.svg
-          href: https://deluge.dictummortuum.com
-          description: Torrents
 
     - Applications:
       - Nextcloud:
@@ -64,18 +40,6 @@ config:
           icon: brother.svg
           href: http://typographus.dictummortuum.com/general/status.html
           description: Printer
-      - Stirling:
-          icon: stirling-pdf
-          href: https://pdf.dictummortuum.com
-          description: PDF stuff
-      - Slash:
-          icon: slash
-          href: https://slash.dictummortuum.com
-          description: Link management
-      - Linkding:
-          icon: linkding
-          href: https://linkding.dictummortuum.com
-          description: Link management
 
     - Tech:
       - Pihole1:
