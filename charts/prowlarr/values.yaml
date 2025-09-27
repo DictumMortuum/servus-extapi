@@ -59,6 +59,7 @@ service:
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
   enabled: true
+  className: nginx-internal
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     gethomepage.dev/enabled: "true"
@@ -68,9 +69,30 @@ ingress:
     gethomepage.dev/name: prowlarr
     gethomepage.dev/pod-selector: ""
   tls:
-    - secretName: prowlarr-tls
+    - secretName: wildcard-tls
       hosts:
-        - prowlarr.dictummortuum.com
+        - "prowlarr.dictummortuum.com"
+  hosts:
+    - host: prowlarr.dictummortuum.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
+ingressext:
+  enabled: true
+  className: nginx-external
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: Prowlarr
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: prowlarr.png
+    gethomepage.dev/name: prowlarr
+    gethomepage.dev/pod-selector: ""
+  tls:
+    - secretName: wildcard-tls
+      hosts:
+        - "prowlarr.dictummortuum.com"
   hosts:
     - host: prowlarr.dictummortuum.com
       paths:

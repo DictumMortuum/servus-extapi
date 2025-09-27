@@ -2,16 +2,19 @@ package model
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type Location struct {
-	Id     int64  `gorm:"primaryKey" json:"id"`
-	Uuid   string `json:"uuid"`
-	Name   string `json:"name"`
-	Hidden bool   `json:"hidden"`
+	Id        int64     `gorm:"primaryKey" json:"id"`
+	Uuid      string    `json:"uuid"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Name      string    `json:"name"`
+	Hidden    bool      `json:"hidden"`
 }
 
 func (user *Location) BeforeCreate(tx *gorm.DB) (err error) {

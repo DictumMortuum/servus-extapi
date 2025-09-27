@@ -6,7 +6,7 @@ ingress:
   tls:
     - secretName: wildcard-tls
       hosts:
-        - "*.dictummortuum.com"
+        - "linkding.dictummortuum.com"
   hosts:
     - host: linkding.dictummortuum.com
       paths:

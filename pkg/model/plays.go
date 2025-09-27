@@ -15,6 +15,8 @@ import (
 type Play struct {
 	Id          int64          `gorm:"primaryKey" json:"id"`
 	Uuid        string         `json:"uuid"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
 	BoardgameId int64          `json:"boardgame_id"`
 	Boardgame   Boardgame      `json:"boardgame"`
 	Date        time.Time      `json:"date"`

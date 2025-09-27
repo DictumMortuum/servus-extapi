@@ -67,12 +67,28 @@ service:
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
   enabled: true
+  className: nginx-internal
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
   tls:
     - secretName: wildcard-tls
       hosts:
-        - "*.dictummortuum.com"
+        - "radarr.dictummortuum.com"
+  hosts:
+    - host: radarr.dictummortuum.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
+ingressext:
+  enabled: true
+  className: nginx-external
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  tls:
+    - secretName: wildcard-tls
+      hosts:
+        - "radarr.dictummortuum.com"
   hosts:
     - host: radarr.dictummortuum.com
       paths:

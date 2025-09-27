@@ -42,5 +42,6 @@ spec:
         pathType: ImplementationSpecific
   tls:
   - hosts:
-    - "*.dictummortuum.com"
+    - "extapi.dictummortuum.com"
+    - "nextcloud.dictummortuum.com"
     secretName: wildcard-tls

@@ -26,21 +26,35 @@ releases:
     namespace: nginx-system
     version: 4.12.0
     values:
-      - ./charts/nginx-internal/values.yaml
+      - ./charts/ingress-nginx-internal/values.yaml
 
-  - name: external-dns1
+  - name: ingress-nginx-external
+    chart: ingress-nginx/ingress-nginx
+    namespace: nginx-system
+    version: 4.12.0
+    values:
+      - ./charts/ingress-nginx-external/values.yaml
+
+  - name: external-dns-pihole1
     chart: bitnami/external-dns
     namespace: dns
-    version: 8.8.3
+    version: 9.0.3
     values:
       - ./charts/external-dns/dns1.yaml
 
-  - name: external-dns2
+  - name: external-dns-cloudflare
     chart: bitnami/external-dns
     namespace: dns
-    version: 8.7.7
+    version: 9.0.3
     values:
-      - ./charts/external-dns/dns2.yaml
+      - ./charts/external-dns/cloudflare.yaml
+
+  # - name: external-dns2
+  #   chart: bitnami/external-dns
+  #   namespace: dns
+  #   version: 8.7.7
+  #   values:
+  #     - ./charts/external-dns/dns2.yaml
 
   # Ignoring until pihole v6 fixes the API
   # - name: external-dns3

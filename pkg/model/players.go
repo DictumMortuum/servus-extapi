@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/datatypes"
@@ -11,6 +12,8 @@ import (
 type Player struct {
 	Id          int64          `gorm:"primaryKey" json:"id"`
 	Uuid        string         `json:"uuid"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
 	Name        string         `json:"name"`
 	Surname     string         `json:"surname"`
 	Email       *string        `json:"email"`

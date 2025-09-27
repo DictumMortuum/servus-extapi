@@ -176,9 +176,9 @@ ingress:
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-prod
     tls:
-      - secretName: homepage-tls
+      - secretName: wildcard-tls
         hosts:
-          - dash.dictummortuum.com
+          - "dash.dictummortuum.com"
     hosts:
       - host: dash.dictummortuum.com
         paths:

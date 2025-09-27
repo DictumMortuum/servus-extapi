@@ -16,3 +16,29 @@ metadata:
 spec:
   ipAddressPools:
     - pool
+---
+# zerotier-pool.yaml
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: zerotier-pool
+  namespace: metallb-system
+spec:
+  addresses:
+    - 10.144.0.240-10.144.0.250   # pick a small free block
+  autoAssign: true               # we'll opt-in per Service (safer)
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: zerotier-l2
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - zerotier-pool
+  interfaces:
+    - "zt*"                       # announce only on the ZeroTier iface
+  # (Optional) limit to nodes that run ZeroTier:
+  # nodeSelectors:
+  # - matchLabels:
+  #     zerotier: "true"

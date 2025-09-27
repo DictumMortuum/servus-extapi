@@ -35,9 +35,9 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
   tls:
-    - secretName: bazarr-tls
+    - secretName: wildcard-tls
       hosts:
-        - bazarr.dictummortuum.com
+        - "bazarr.dictummortuum.com"
   hosts:
     - host: bazarr.dictummortuum.com
       paths:

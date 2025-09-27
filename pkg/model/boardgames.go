@@ -12,6 +12,9 @@ import (
 
 type Boardgame struct {
 	Id             int64                `gorm:"primaryKey" json:"id"`
+	Uuid           string               `json:"uuid"`
+	CreatedAt      time.Time            `json:"created_at"`
+	UpdatedAt      time.Time            `json:"updated_at"`
 	Name           string               `gorm:"index" json:"name"`
 	Year           int64                `json:"year"`
 	MinPlayers     int                  `json:"minplayers"`
@@ -24,7 +27,6 @@ type Boardgame struct {
 	Solitaire      bool                 `gorm:"solitaire" json:"solitaire"`
 	Prices         []BoardgamePrice     `json:"prices"`
 	Data           models.Json          `db:"data" json:"data"`
-	UpdatedAt      time.Time
 }
 
 func (Boardgame) TableName() string {

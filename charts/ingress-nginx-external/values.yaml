@@ -1,0 +1,26 @@
+controller:
+  ingressClassResource:
+    # -- Name of the IngressClass
+    name: nginx-external
+    # -- Create the IngressClass or not
+    enabled: true
+    # -- If true, Ingresses without `ingressClassName` get assigned to this IngressClass on creation.
+    # Ingress creation gets rejected if there are multiple default IngressClasses.
+    # Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/#default-ingress-class
+    default: false
+    # -- Annotations to be added to the IngressClass resource.
+    annotations: {}
+    # -- Controller of the IngressClass. An Ingress Controller looks for IngressClasses it should reconcile by this value.
+    # This value is also being set as the `--controller-class` argument of this Ingress Controller.
+    # Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class
+    controllerValue: k8s.io/ingress-nginx-external
+    parameters: {}
+  ingressClass: k8s.io/nginx-external
+  electionID: ingress-nginx-external
+
+  service:
+    type: LoadBalancer
+    externalTrafficPolicy: Local   # preserve client IPs
+    annotations:
+      metallb.universe.tf/address-pool: zerotier-pool
+    loadBalancerIP: 10.144.0.242   # also set the field for clarity

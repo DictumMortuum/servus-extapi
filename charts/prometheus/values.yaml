@@ -7,8 +7,8 @@ server:
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-prod
     tls:
-      - secretName: prometheus-tls
+      - secretName: wildcard-tls
         hosts:
-          - prometheus.kubernetes.dictummortuum.com
+          - "prometheus.kubernetes.dictummortuum.com"
     hosts:
       - prometheus.kubernetes.dictummortuum.com

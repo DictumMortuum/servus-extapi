@@ -35,7 +35,8 @@ ingress:
   tls:
     - secretName: wildcard-tls
       hosts:
-        - "*.dictummortuum.com"
+        - "api.dictummortuum.com"
+        - "extapi.dictummortuum.com"
   hosts:
     - host: api.dictummortuum.com
       paths:

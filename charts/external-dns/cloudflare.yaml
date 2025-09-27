@@ -1,0 +1,13 @@
+provider: cloudflare
+policy: upsert-only
+registry: txt
+txtOwnerId: homelab
+
+cloudflare:
+  secretName: dns-secret
+  proxied: false
+
+ingressClassFilters:
+  - nginx-external
+
+# logLevel: debug
