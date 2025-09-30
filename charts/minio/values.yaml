@@ -22,3 +22,8 @@ console:
 auth:
   rootUser: admin
   rootPassword: ref+sops://secrets.yaml#/minio/password
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true

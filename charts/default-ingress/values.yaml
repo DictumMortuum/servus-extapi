@@ -34,6 +34,8 @@ navidrome:
     gethomepage.dev/icon: navidrome
     gethomepage.dev/name: Navidrome
     gethomepage.dev/pod-selector: ""
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header Remote-User admin;
   tls:
     - secretName: music-tls
       hosts:

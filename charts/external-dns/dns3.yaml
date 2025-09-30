@@ -1,19 +1,24 @@
 provider: pihole
 policy: upsert-only
-txtOwnerId: "homelab"
+registry: noop
 
 pihole:
   server: https://dns3.dictummortuum.com
 extraEnvVars:
+  - name: EXTERNAL_DNS_PIHOLE_API_VERSION
+    value: "6"
   - name: EXTERNAL_DNS_PIHOLE_PASSWORD
     valueFrom:
       secretKeyRef:
         name: dns-secret
         key: pihole-ext
 
-serviceAccount:
-  create: false
-  name: "external-dns"
-
 ingressClassFilters:
   - nginx-internal
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+
+# logLevel: debug

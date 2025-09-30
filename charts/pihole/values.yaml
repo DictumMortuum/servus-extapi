@@ -17,6 +17,12 @@ ingress:
   enabled: true
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: DNS
+    gethomepage.dev/group: Tech
+    gethomepage.dev/icon: pi-hole
+    gethomepage.dev/name: Pihole3
+    gethomepage.dev/pod-selector: "app.kubernetes.io/name=pihole"
   tls:
   - hosts:
       - dns3.dictummortuum.com
@@ -32,5 +38,7 @@ doh:
   }
 
 monitoring:
+  podMonitor:
+    enabled: true
   sidecar:
     enabled: true

@@ -32,10 +32,6 @@ config:
           icon: google-admin.svg
           href: https://admin.dictummortuum.com
           description: Admin panel
-      - Admin2:
-          icon: google-admin.svg
-          href: https://admin2.dictummortuum.com
-          description: Admin panel
       - Brother:
           icon: brother.svg
           href: http://typographus.dictummortuum.com/general/status.html
@@ -45,10 +41,6 @@ config:
       - Pihole1:
           icon: pi-hole.svg
           href: https://dns.dictummortuum.com
-          description: DNS
-      - Pihole2:
-          icon: pi-hole.svg
-          href: https://dns2.dictummortuum.com
           description: DNS
       - Ubiquiti:
           icon: ubiquiti.svg

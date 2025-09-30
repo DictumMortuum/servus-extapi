@@ -10,4 +10,9 @@ cloudflare:
 ingressClassFilters:
   - nginx-external
 
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+
 # logLevel: debug

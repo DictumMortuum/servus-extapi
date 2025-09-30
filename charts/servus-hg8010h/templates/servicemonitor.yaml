@@ -1,0 +1,15 @@
+{{- if .Values.metrics.serviceMonitor.enabled }}
+apiVersion: {{ default "monitoring.coreos.com/v1" .Values.metrics.serviceMonitor.apiVersion }}
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  endpoints:
+  - interval: 30s
+    path: /metrics
+    targetPort: {{ .Values.service.port }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: servus-hg8010h
+{{- end }}

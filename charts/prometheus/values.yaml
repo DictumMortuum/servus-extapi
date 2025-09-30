@@ -1,7 +1,16 @@
 grafana:
   enabled: false
 
-server:
+crds:
+  enabled: true
+
+nodeExporter:
+  enabled: false
+
+prometheus:
+  prometheusSpec:
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
   ingress:
     enabled: true
     annotations:

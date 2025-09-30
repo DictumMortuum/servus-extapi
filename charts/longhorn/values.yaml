@@ -1,2 +1,21 @@
 defaultSettings:
   defaultReplicaCount: 1
+
+metrics:
+  serviceMonitor:
+    enabled: true
+
+ingress:
+  enabled: true
+  host: longhorn.dictummortuum.com
+  ingressClassName: nginx-internal
+  tls: true
+  tlsSecret: longhorn-tls
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: Disks
+    gethomepage.dev/group: Tech
+    gethomepage.dev/icon: longhorn
+    gethomepage.dev/name: Longhorn
+    gethomepage.dev/pod-selector: "app.kubernetes.io/name=longhorn"

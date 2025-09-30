@@ -19,12 +19,12 @@ releases:
   - name: metallb
     chart: metallb/metallb
     namespace: metallb-system
-    version: 0.14.9
+    values:
+      - ./charts/metallb/values.yaml
 
   - name: prometheus-stack
-    chart: prometheus-community/prometheus
+    chart: prometheus-community/kube-prometheus-stack
     namespace: prometheus-system
-    version: 27.5.1
     values:
       - ./charts/prometheus/values.yaml
 

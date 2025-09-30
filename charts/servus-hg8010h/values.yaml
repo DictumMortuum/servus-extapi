@@ -75,3 +75,7 @@ volumes:
       items:
         - key: servus-conf
           path: servusrc.yml
+
+metrics:
+  serviceMonitor:
+    enabled: true

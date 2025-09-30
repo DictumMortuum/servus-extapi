@@ -23,11 +23,6 @@ releases:
     values:
       - ./charts/default-ingress/values.yaml
 
-  # - name: redis
-  #   chart: ./charts/redis
-  #   values:
-  #     - ./charts/redis/values.yaml
-
   - name: servus-player
     chart: ./charts/servus-player
     values:
@@ -73,8 +68,7 @@ releases:
     values:
       - ./charts/linkding/values.yaml
 
-  # - name: paperless-ngx
-  #   chart: oci://ghcr.io/gabe565/charts/paperless-ngx
-  #   version: 0.24.1
-  #   values:
-  #     - ./charts/paperless-ngx/values.yaml
+  - name: servus-admin
+    chart: ./charts/servus-admin
+    values:
+      - ./charts/servus-admin/values.yaml

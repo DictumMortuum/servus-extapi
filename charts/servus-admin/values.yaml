@@ -1,0 +1,36 @@
+replicaCount: 1
+
+image:
+  repository: docker.dictummortuum.com/servus-admin
+  pullPolicy: IfNotPresent
+  tag: 0.1.23
+
+serviceAccount:
+  create: false
+
+autoscaling:
+  enabled: false
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: Admin panel
+    gethomepage.dev/group: Applications
+    gethomepage.dev/icon: google-admin
+    gethomepage.dev/name: Admin3
+    gethomepage.dev/pod-selector: "app.kubernetes.io/name=servus-admin"
+  tls:
+    - secretName: servus-admin-tls
+      hosts:
+        - "admin2.dictummortuum.com"
+  hosts:
+    - host: admin2.dictummortuum.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
