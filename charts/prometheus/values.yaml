@@ -5,7 +5,7 @@ crds:
   enabled: true
 
 nodeExporter:
-  enabled: false
+  enabled: true
 
 prometheus:
   prometheusSpec:
