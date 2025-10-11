@@ -1,0 +1,45 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/kubero-dev/ladder
+  tag: latest
+  pullPolicy: IfNotPresent
+
+env:
+  USER_AGENT: "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: nginx-internal
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: Web proxy
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: mdi-ladder
+    gethomepage.dev/name: Ladder
+    gethomepage.dev/pod-selector: "app.kubernetes.io/name=ladder"
+  tls:
+    - secretName: ladder-tls
+      hosts:
+        - ladder.dictummortuum.com
+  hosts:
+    - host: ladder.dictummortuum.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
+autoscaling:
+  enabled: false
+
+serviceAccount:
+  create: false
+
+httpRoute:
+  enabled: false

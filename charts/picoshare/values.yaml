@@ -1,0 +1,58 @@
+replicaCount: 1
+
+image:
+  repository: mtlynch/picoshare
+  tag: latest
+  pullPolicy: IfNotPresent
+
+secrets:
+  PS_SHARED_SECRET: ref+sops://secrets.yaml#/picoshare/password
+
+service:
+  type: ClusterIP
+  port: 4001
+
+ingress:
+  enabled: true
+  className: nginx-internal
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: Share files
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: mtlynch-picoshare
+    gethomepage.dev/name: Picoshare
+    gethomepage.dev/pod-selector: "app.kubernetes.io/name=picoshare"
+  tls:
+    - secretName: picoshare-tls
+      hosts:
+        - share.dictummortuum.com
+  hosts:
+    - host: share.dictummortuum.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
+volumes:
+  - name: data
+    nfs:
+      server: 192.168.1.100
+      path: /volume1/shared/picoshare
+
+volumeMounts:
+  - name: data
+    mountPath: /data
+
+autoscaling:
+  enabled: false
+
+serviceAccount:
+  create: false
+
+httpRoute:
+  enabled: false

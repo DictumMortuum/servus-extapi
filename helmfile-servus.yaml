@@ -72,3 +72,13 @@ releases:
     chart: ./charts/servus-admin
     values:
       - ./charts/servus-admin/values.yaml
+
+  - name: ladder
+    chart: ./charts/ladder
+    values:
+      - ./charts/ladder/values.yaml
+
+  - name: picoshare
+    chart: ./charts/picoshare
+    values:
+      - ./charts/picoshare/values.yaml
