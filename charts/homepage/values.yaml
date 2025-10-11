@@ -118,7 +118,7 @@ config:
 
 env:
   - name: HOMEPAGE_ALLOWED_HOSTS
-    value: "dash.dictummortuum.com"
+    value: "home.dictummortuum.com"
 
 serviceAccount:
   create: true
@@ -134,9 +134,9 @@ ingress:
     tls:
       - secretName: homepage-tls
         hosts:
-          - "dash.dictummortuum.com"
+          - "home.dictummortuum.com"
     hosts:
-      - host: dash.dictummortuum.com
+      - host: home.dictummortuum.com
         paths:
           - path: /
             pathType: ImplementationSpecific
