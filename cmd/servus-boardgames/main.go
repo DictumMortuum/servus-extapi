@@ -98,5 +98,12 @@ func main() {
 		middleware.Result,
 	)
 
+	g.GET(
+		"/geeklist/:id",
+		middleware.Id,
+		adapter.A(GetGeeklist),
+		middleware.Result,
+	)
+
 	r.Run(":10002")
 }

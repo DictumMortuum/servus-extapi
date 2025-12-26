@@ -11,7 +11,6 @@ import (
 
 type EurovisionVote struct {
 	Id       int64          `gorm:"primaryKey" json:"id"`
-	UserId   string         `json:"user_id"`
 	Email    string         `json:"email"`
 	Included bool           `json:"included"`
 	Votes    datatypes.JSON `gorm:"serializer:json" json:"votes"`
@@ -49,7 +48,7 @@ func GetEurovisionVoteByUserId(req *Map, res *Map) error {
 	}
 
 	var data EurovisionVote
-	rs := DB.First(&data, "user_id = ? ", id)
+	rs := DB.First(&data, "email = ? ", id)
 	if errors.Is(rs.Error, gorm.ErrRecordNotFound) {
 		res.Set("data", EurovisionVote{
 			Votes: datatypes.JSON([]byte(`[]`)),
@@ -77,7 +76,6 @@ func (obj EurovisionVote) Update(db *gorm.DB, id int64, body []byte) (any, error
 
 	// https://stackoverflow.com/questions/56653423/gorm-doesnt-update-boolean-field-to-false
 	rs := db.Model(&model).Updates(map[string]any{
-		"UserId":   payload.UserId,
 		"Email":    payload.Email,
 		"Included": payload.Included,
 	})
@@ -132,23 +130,66 @@ func GetEurovisionVotes(req *Map, res *Map) error {
 	}
 
 	type temp_res struct {
-		Flag        string `json:"flag"`
-		Email       string `json:"email"`
-		Name        string `json:"name"`
-		Votes       int    `json:"votes"`
-		BoardgameId int64  `json:"boardgame_id"`
+		Flag        string   `json:"flag"`
+		Email       []string `json:"email"`
+		Name        string   `json:"name"`
+		Votes       int      `json:"votes"`
+		BoardgameId int64    `json:"boardgame_id"`
 	}
 
-	result := map[string]temp_res{}
+	result_party := map[string]temp_res{}
+	result_mid := map[string]temp_res{}
+	result_heavy := map[string]temp_res{}
 
 	for _, item := range participations {
-		// log.Println(item.Boardgame.)
-		result[item.Boardgame.Name] = temp_res{
-			Flag:        item.Boardgame.Square200,
-			Email:       item.Email,
-			Name:        item.Boardgame.Name,
-			Votes:       0,
-			BoardgameId: item.BoardgameId,
+		switch item.Category {
+		case "partyGame":
+			result_party[item.Boardgame.Name] = temp_res{
+				Flag:        item.Boardgame.Square200,
+				Email:       []string{},
+				Name:        item.Boardgame.Name,
+				Votes:       0,
+				BoardgameId: item.BoardgameId,
+			}
+		case "midWeight":
+			result_mid[item.Boardgame.Name] = temp_res{
+				Flag:        item.Boardgame.Square200,
+				Email:       []string{},
+				Name:        item.Boardgame.Name,
+				Votes:       0,
+				BoardgameId: item.BoardgameId,
+			}
+		case "heavyWeight":
+			result_heavy[item.Boardgame.Name] = temp_res{
+				Flag:        item.Boardgame.Square200,
+				Email:       []string{},
+				Name:        item.Boardgame.Name,
+				Votes:       0,
+				BoardgameId: item.BoardgameId,
+			}
+		}
+	}
+
+	for _, item := range participations {
+		switch item.Category {
+		case "partyGame":
+			{
+				tmp := result_party[item.Boardgame.Name]
+				tmp.Email = append(tmp.Email, item.Email)
+				result_party[item.Boardgame.Name] = tmp
+			}
+		case "midWeight":
+			{
+				tmp := result_mid[item.Boardgame.Name]
+				tmp.Email = append(tmp.Email, item.Email)
+				result_mid[item.Boardgame.Name] = tmp
+			}
+		case "heavyWeight":
+			{
+				tmp := result_heavy[item.Boardgame.Name]
+				tmp.Email = append(tmp.Email, item.Email)
+				result_heavy[item.Boardgame.Name] = tmp
+			}
 		}
 	}
 
@@ -159,20 +200,23 @@ func GetEurovisionVotes(req *Map, res *Map) error {
 	}
 
 	type temp struct {
-		Boardgame Boardgame `json:"boardgame"`
+		Party []EurovisionParticipation `json:"partyGame"`
+		Mid   []EurovisionParticipation `json:"midWeight"`
+		Heavy []EurovisionParticipation `json:"heavyWeight"`
 	}
 
 	votes := []int{12, 10, 8, 7, 6, 5, 4, 3, 2, 1}
 
 	for _, vote := range data {
-		var raw []temp
+		var raw temp
+
 		err = json.Unmarshal(vote.Votes, &raw)
 		if err != nil {
 			return err
 		}
 
-		for i, item := range raw {
-			tmp := result[item.Boardgame.Name]
+		for i, item := range raw.Party {
+			tmp := result_party[item.Boardgame.Name]
 			tmp.Name = item.Boardgame.Name
 			tmp.Flag = item.Boardgame.Square200
 			tmp.BoardgameId = item.Boardgame.Id
@@ -181,16 +225,56 @@ func GetEurovisionVotes(req *Map, res *Map) error {
 				tmp.Votes += votes[i]
 			}
 
-			result[item.Boardgame.Name] = tmp
+			result_party[item.Boardgame.Name] = tmp
+		}
+
+		for i, item := range raw.Mid {
+			tmp := result_mid[item.Boardgame.Name]
+			tmp.Name = item.Boardgame.Name
+			tmp.Flag = item.Boardgame.Square200
+			tmp.BoardgameId = item.Boardgame.Id
+
+			if i < len(votes) && i >= 0 {
+				tmp.Votes += votes[i]
+			}
+
+			result_mid[item.Boardgame.Name] = tmp
+		}
+
+		for i, item := range raw.Heavy {
+			tmp := result_heavy[item.Boardgame.Name]
+			tmp.Name = item.Boardgame.Name
+			tmp.Flag = item.Boardgame.Square200
+			tmp.BoardgameId = item.Boardgame.Id
+
+			if i < len(votes) && i >= 0 {
+				tmp.Votes += votes[i]
+			}
+
+			result_heavy[item.Boardgame.Name] = tmp
 		}
 	}
 
-	final := []temp_res{}
-	for _, item := range result {
-		final = append(final, item)
+	final_party := []temp_res{}
+	for _, item := range result_party {
+		final_party = append(final_party, item)
 	}
 
-	res.Set("data", final)
+	final_mid := []temp_res{}
+	for _, item := range result_mid {
+		final_mid = append(final_mid, item)
+	}
+
+	final_heavy := []temp_res{}
+	for _, item := range result_heavy {
+		final_heavy = append(final_heavy, item)
+	}
+
+	res.Set("data", map[string]any{
+		"partyGame":   final_party,
+		"midWeight":   final_mid,
+		"heavyWeight": final_heavy,
+	})
 	return nil
 }
 

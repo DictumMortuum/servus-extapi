@@ -44,6 +44,8 @@ ingress:
           pathType: ImplementationSpecific
     - host: extapi.dictummortuum.com
       paths:
+        - path: /rest/configurations
+          pathType: ImplementationSpecific
         - path: /rest/tables
           pathType: ImplementationSpecific
         - path: /rest/tableparticipants

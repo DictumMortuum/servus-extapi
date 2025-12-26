@@ -1,6 +1,6 @@
 image:
   pullPolicy: IfNotPresent
-  tag: docker.dictummortuum.com/github.com/dictummortuum/servus-extapi/cmd/servus-extapi@sha256:c41d00c2a99cf04cc02adcb82fa553bcb0a0bdbe9ad15dc8c98107cbef169d8d
+  tag: docker.dictummortuum.com/github.com/dictummortuum/servus-extapi/cmd/servus-extapi@sha256:2b7c1caa87825e959159f9a393adce18e62d9075f6295b4b5b00cea51a01937f
 imagePullSecrets: []
 
 ---

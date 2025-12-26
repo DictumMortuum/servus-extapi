@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: docker.dictummortuum.com/servus-admin
   pullPolicy: IfNotPresent
-  tag: 0.1.23
+  tag: 0.1.25
 
 serviceAccount:
   create: false

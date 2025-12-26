@@ -3,6 +3,7 @@ package middleware
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/DictumMortuum/servus-extapi/pkg/model"
@@ -36,6 +37,30 @@ func Paginate(c *gin.Context) {
 	m.Paginate = func(db *gorm.DB) *gorm.DB {
 		return db.Offset(offset).Limit(limit)
 	}
+}
+
+func escapeForLike(s string) string {
+	var b strings.Builder
+	b.Grow(len(s) * 2)
+
+	for _, r := range s {
+		switch r {
+		case '%', '_', '\\':
+			b.WriteRune('\\')
+			b.WriteRune(r)
+		case '\'':
+			// SQL literal: single quotes must be doubled
+			b.WriteString("\\'")
+		case '"':
+			// Optional: escape double quotes if using them in SQL literals
+			b.WriteString("\\\"")
+		default:
+			b.WriteRune(r)
+		}
+	}
+
+	escaped := b.String()
+	return escaped
 }
 
 func argToGorm(db *gorm.DB, key string, val any, whole bool) *gorm.DB {
@@ -74,6 +99,11 @@ func argToGorm(db *gorm.DB, key string, val any, whole bool) *gorm.DB {
 		key = strings.Split(key, "@")[0]
 		term := strings.TrimSpace(sanitize.AlphaNumeric(val.(string), true))
 		return db.Where(key+" LIKE ?", term+"%")
+	} else if strings.Contains(key, "@eurovisionlike") {
+		log.Println("here")
+		key = strings.Split(key, "@")[0]
+		term := escapeForLike(val.(string))
+		return db.Debug().Where(key+" LIKE ?", term+"%")
 	} else {
 		return db.Where(key, val)
 	}

@@ -10,6 +10,7 @@ type Configuration struct {
 	Id     int64  `gorm:"primaryKey" json:"id"`
 	Config string `json:"config"`
 	Value  bool   `json:"value"`
+	Txt    string `json:"txt"`
 }
 
 func (Configuration) TableName() string {
@@ -47,6 +48,7 @@ func (obj Configuration) Update(db *gorm.DB, id int64, body []byte) (any, error)
 	rs := db.Model(&model).Updates(map[string]any{
 		"config": payload.Config,
 		"value":  payload.Value,
+		"txt":    payload.Txt,
 	})
 	if rs.Error != nil {
 		return nil, err

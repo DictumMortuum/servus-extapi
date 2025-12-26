@@ -20,6 +20,14 @@ func main() {
 				Name:   "sync",
 				Action: sync,
 			},
+			{
+				Name:   "cache",
+				Action: cache,
+			},
+			{
+				Name:   "guild",
+				Action: guild,
+			},
 		},
 	}
 
