@@ -1,0 +1,107 @@
+replicaCount: 1
+
+image:
+  registry: ghcr.io
+  repository: lldap/lldap
+  pullPolicy: IfNotPresent
+  # -- Overrides the image tag whose default is the chart appVersion.
+  tag: "2025-05-19-alpine"
+  sha: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+# -- Deployment strategy
+updateStrategy:
+  type: RollingUpdate
+
+# -- Environment variables to add to the lldap pods
+extraEnv: []
+# -- Environment variables from secrets or configmaps to add to the lldap pods
+extraEnvFrom: []
+
+extraInitContainers: []
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  # -- If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+secret:
+  create: true
+  annotations: {}
+  lldapJwtSecret: "wobY6RK/Dc0vL21zFiIZs9iyVy0NQ3ldijYPQ4HLWTc="
+  # default user is admin
+  lldapUserPass: "asdf123456"
+  lldapBaseDn: "dc=dictummortuum,dc=com"
+
+persistence:
+  enabled: true
+  size: 100Mi
+  annotations: {}
+  accessModes:
+    - ReadWriteOnce
+  volumeName: ""
+  storageClass: ""
+
+env:
+  TZ: "UTC"
+  GID: "1000"
+  UID: "1000"
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+podSecurityContext:
+  fsGroup: 1000
+  fsGroupChangePolicy: OnRootMismatch
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  privileged: false
+  runAsUser: 1000
+  runAsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+service:
+  type: ClusterIP
+  annotations: {}
+  ldap_port: 3890
+  ldaps_port: 6360
+  http_port: 17170
+  ldaps_enabled: false
+
+ingress:
+  enabled: true
+  className: nginx-internal
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  tls:
+    - secretName: lldap-tls
+      hosts:
+        - "lldap.dictummortuum.com"
+  hosts:
+    - host: lldap.dictummortuum.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific

@@ -1,2 +1,3 @@
 secrets:
   postgres: ref+sops://secrets.yaml#/postgres/password
+  pg_immich: ref+sops://secrets.yaml#/postgres/immich

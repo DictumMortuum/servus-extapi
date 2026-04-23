@@ -11,6 +11,8 @@ repositories:
     url: https://charts.pascaliske.dev
   - name: gabe565
     url: https://charts.gabe565.com
+  - name: immich
+    url: https://immich-app.github.io/immich-charts
 ---
 releases:
   - name: default-secrets
@@ -22,6 +24,11 @@ releases:
     chart: ./charts/default-ingress
     values:
       - ./charts/default-ingress/values.yaml
+
+  - name: default-nfs
+    chart: ./charts/default-nfs
+    values:
+      - ./charts/default-nfs/values.yaml
 
   - name: servus-player
     chart: ./charts/servus-player
@@ -52,10 +59,10 @@ releases:
     values:
       - ./charts/homepage/values.yaml
 
-  - name: stirling-pdf
-    chart: stirling-pdf/stirling-pdf-chart
-    values:
-      - ./charts/stirling-pdf/values.yaml
+  # - name: stirling-pdf
+  #   chart: stirling-pdf/stirling-pdf-chart
+  #   values:
+  #     - ./charts/stirling-pdf/values.yaml
 
   - name: minio
     chart: bitnami/minio
@@ -82,3 +89,19 @@ releases:
     chart: ./charts/picoshare
     values:
       - ./charts/picoshare/values.yaml
+
+  - name: lldap
+    chart: ./charts/lldap
+    values:
+      - ./charts/lldap/values.yaml
+
+  - name: immich
+    chart: immich/immich
+    version: 0.10.3
+    values:
+      - ./charts/immich/values.yaml
+
+  - name: archivebox
+    chart: ./charts/archivebox
+    values:
+      - ./charts/archivebox/values.yaml
