@@ -3,6 +3,7 @@ package deco
 import (
 	"crypto/md5"
 	"crypto/rsa"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -113,7 +114,15 @@ type PerfResp struct {
 // New creates a new Go client for the Deco-m4 API
 func New(target string) *Client {
 	jar, _ := cookiejar.New(nil)
-	c := &http.Client{Timeout: 10 * time.Second, Jar: jar}
+	c := &http.Client{
+		Timeout: 10 * time.Second,
+		Jar:     jar,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		},
+	}
 
 	baseURL.Host = target
 
